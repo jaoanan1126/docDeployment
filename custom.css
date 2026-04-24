@@ -1,0 +1,4 @@
+/* Homepage only: extra padding on navigation cards (QA: prefer more padding). */
+html[data-current-path="/"] .migration-home-cards card {
+  padding: 1.25rem 1.35rem;
+}

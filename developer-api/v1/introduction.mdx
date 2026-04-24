@@ -1,0 +1,54 @@
+---
+title: "Introduction"
+description: "Automate spend, connect your systems, and build powerful integrations—all with one API."
+sidebarTitle: "Introduction"
+icon: "sparkles"
+---
+
+Automate spend, connect your systems, and build powerful integrations—all with one API.
+
+This Mintlify site mirrors the information architecture of [Ramp Developer API documentation](https://docs.ramp.com/developer-api/v1/introduction). Replace stub pages with migrated content from the source site and [Ramp’s machine-readable guides index](https://docs.ramp.com/llms.txt).
+
+<Columns cols={2}>
+  <Card title="Get started" icon="rocket" href="/developer-api/v1/getting-started">
+    Make your first API call in minutes.
+  </Card>
+  <Card title="OpenAPI spec" icon="braces" href="https://docs.ramp.com/openapi/developer-api.json">
+    Canonical schema for all endpoints (opens JSON).
+  </Card>
+</Columns>
+
+## Quickstart guides
+
+Expand a topic to see how it maps to Ramp’s introduction hub. Each section is a migration placeholder you can replace with full MDX from [`/llms-guides/<slug>.txt`](https://docs.ramp.com/llms.txt).
+
+<AccordionGroup>
+  <Accordion title="Make your first API call in minutes">
+    Follow the [Getting started](https://docs.ramp.com/developer-api/v1/getting-started) flow on the live site, then port the same steps into `getting-started.mdx` using Mintlify `<Steps>` and `<CodeGroup>` where Ramp uses multi-step tutorials.
+  </Accordion>
+  <Accordion title="Authorize with OAuth 2.0 for secure access">
+    Ramp uses OAuth 2.0 with scopes and multiple flows. Migrate content from the [Authorization](https://docs.ramp.com/developer-api/v1/authorization) guide into `authorization.mdx`, using `<Warning>` for credential handling and `<ParamField>` for token fields where appropriate.
+  </Accordion>
+  <Accordion title="Manage team spending with cards and funds">
+    Port [Cards and Funds](https://docs.ramp.com/developer-api/v1/cards-and-funds) workflows—policies, budgets, and real-time spend—into structured sections with `<Tabs>` for optional API variants.
+  </Accordion>
+  <Accordion title="Optimize payments with Virtual Cards">
+    Align with [Virtual Cards](https://docs.ramp.com/developer-api/v1/virtual-cards); call out PCI constraints with `<Warning>` and sandbox vs production behavior with `<Note>`.
+  </Accordion>
+  <Accordion title="Connect your ERP or accounting system">
+    Accounting and ERP guides (for example [Accounting](https://docs.ramp.com/developer-api/v1/accounting)) belong in additional pages under **Guides**; use `<Accordion>` for long reconciliation tables only when it helps scanning.
+  </Accordion>
+  <Accordion title="Use the Ramp MCP to chat with your data">
+    Model Context Protocol content from [MCP](https://docs.ramp.com/developer-api/v1/mcp) fits well with `<Tip>` for security practices and links to Developer MCP resources.
+  </Accordion>
+  <Accordion title="Explore Ramp Data, Ramp Rate, and AI Index">
+    Reference [Ramp Data](https://docs.ramp.com/developer-api/v1/ramp-data) and related subpages; mark beta or subject-to-change APIs with `<Info>` and changelog links.
+  </Accordion>
+  <Accordion title="Manage Ramp from the terminal with the CLI">
+    Mirror [Ramp CLI](https://docs.ramp.com/developer-api/v1/cli) command examples with fenced code blocks and language tags (`bash`).
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+  Need help on the production docs site? Submit a Developer API support ticket from Ramp’s documentation. For this Mintlify migration workspace, use `guides/migration-checklist`.
+</Note>

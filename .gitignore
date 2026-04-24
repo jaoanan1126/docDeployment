@@ -1,0 +1,4 @@
+node_modules/
+.mint/
+*.log
+.DS_Store

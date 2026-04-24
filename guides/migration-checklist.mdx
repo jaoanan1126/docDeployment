@@ -1,0 +1,83 @@
+---
+title: "Migration checklist"
+description: "Scope, content, IA, branding, and QA for migrating docs.ramp.com to Mintlify"
+---
+
+This page integrates the take-home rubric with [Mintlify documentation](https://mintlify.com/docs) and the workflow in this repository’s Mintlify skill files.
+
+## Before you build
+
+<AccordionGroup>
+  <Accordion title="Scope and inventory">
+    - Define **done** against the assignment: every section and page type from [docs.ramp.com](https://docs.ramp.com/).
+    - Sketch **information architecture** (sidebar, top-level tabs, reference vs guides). You will mirror it in [`docs.json` navigation](https://mintlify.com/docs/organize/navigation).
+    - List **media and embeds** (images, video, interactive blocks) and plan `/images` plus supported embed patterns.
+    - **Source stack**: If the incumbent is ReadMe or Docusaurus, consider [@mintlify/scraping](https://www.npmjs.com/package/@mintlify/scraping). Otherwise plan **manual MDX** and map patterns to [components](https://mintlify.com/docs/components).
+  </Accordion>
+  <Accordion title="Mono-repo and `/docs` paths">
+    A `/docs` folder in a **Git** repo is only a directory. Mintlify URLs come from **file paths** and `docs.json`, not from copying `/docs` into public URLs. Use **root-relative internal links** (for example `/guides/foo`), not `/docs/guides/foo`. Subpath hosting is optional and explicit; see [Host at /docs subpath](https://mintlify.com/docs/deploy/vercel#host-at-/docs-subpath).
+  </Accordion>
+</AccordionGroup>
+
+## Content and components
+
+- **Completeness**: Every scoped page exists as MDX with at least `title` and `description` in frontmatter.
+- **Patterns**: Map incumbent UI to Mintlify primitives—for example `<Steps>`, `<Accordion>` / `<AccordionGroup>`, `<Tabs>` / `<CodeGroup>`, and callouts (`<Note>`, `<Info>`, `<Tip>`, `<Warning>`, `<Check>`). See the [components index](https://mintlify.com/docs/components).
+- **Images**: Store under `/images` and reference as `/images/...` with meaningful alt text.
+- **Reuse**: Shared JSX lives under `snippets/` with explicit imports when needed.
+
+## Information architecture
+
+- Add **every** public page to `docs.json` navigation (unlisted pages stay out of the sidebar on purpose).
+- Pick **tabs**, **groups**, **anchors**, or combinations as described in [global settings](https://mintlify.com/docs/organize/settings).
+- Prefer a **shallow** hierarchy so the sidebar stays scannable.
+
+## Branding and homepage
+
+- Prefer **`docs.json`** for theme, `colors`, `logo`, `favicon`, `fonts`, and `appearance` ([appearance and branding](https://mintlify.com/docs/organize/settings-appearance)).
+- Use **`logo.light` and `logo.dark`** (and favicon variants if needed) so both modes look correct.
+- Use **`custom.css`** only when configuration cannot express the layout tweak (for example extra card padding on the homepage).
+- **Homepage QA**: balance card copy length, generous padding, centered hero block, and font weights that match the live site where possible.
+
+## Links and redirects
+
+- Internal links: **root-relative, no file extension** (for example `/guides/migration-checklist`).
+- External links: full URLs.
+- If URLs change versus the old site, add **`redirects`** in `docs.json` ([redirects](https://mintlify.com/docs/create/redirects)).
+
+## Verification commands
+
+Run from the repository root after `npm install`:
+
+```bash
+npm run dev
+npm run validate
+npm run broken-links
+npm run a11y
+```
+
+## Take-home checklist (rubric)
+
+<Check>
+  All scoped content migrated; callouts, steps, accordions, release-style pages, and other patterns represented where the source uses them.
+</Check>
+
+<Check>
+  Images, video, and custom or React snippets work locally and in production.
+</Check>
+
+<Check>
+  Navigation matches the source IA; no accidental reliance on a `/docs` URL prefix unless you intentionally configure subpath hosting.
+</Check>
+
+<Check>
+  `mint broken-links` (or `npm run broken-links`) is clean; spot-check critical external links.
+</Check>
+
+<Check>
+  Homepage and global chrome: cards, hero, padding, typography, light and dark logos, and contrast pass review.
+</Check>
+
+<Tip>
+  Keep `docs.json` as the single configuration file. Do not add deprecated `mint.json`.
+</Tip>

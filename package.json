@@ -1,0 +1,17 @@
+{
+  "name": "doc-deployment",
+  "private": true,
+  "description": "Mintlify docs workspace (Ramp migration take-home)",
+  "scripts": {
+    "dev": "mint dev",
+    "validate": "mint validate",
+    "broken-links": "mint broken-links",
+    "a11y": "mint a11y"
+  },
+  "devDependencies": {
+    "mint": "^4.2.528"
+  },
+  "engines": {
+    "node": ">=20.17.0"
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Ramp Developer API",
+  "description": "Automate spend, connect your systems, and build integrations with the Ramp Developer API.",
+  "colors": {
+    "primary": "#0F172A",
+    "light": "#059669",
+    "dark": "#34D399"
+  },
+  "icons": {
+    "library": "lucide"
+  },
+  "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg",
+    "href": "/developer-api/v1/introduction"
+  },
+  "appearance": {
+    "default": "system"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Changelog",
+        "href": "https://docs.ramp.com/developer-api/v1/changelog",
+        "icon": "scroll-text"
+      },
+      {
+        "label": "OpenAPI",
+        "href": "https://docs.ramp.com/openapi/developer-api.json",
+        "icon": "braces"
+      },
+      {
+        "label": "Support",
+        "href": "https://support.ramp.com/hc/en-us/requests/new",
+        "icon": "life-buoy"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Start building",
+      "href": "/developer-api/v1/getting-started"
+    }
+  },
+  "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Ramp.com",
+          "href": "https://ramp.com",
+          "icon": "arrow-up-right"
+        },
+        {
+          "anchor": "OpenAPI spec",
+          "href": "https://docs.ramp.com/openapi/developer-api.json",
+          "icon": "file-code"
+        }
+      ]
+    },
+    "tabs": [
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Get started",
+            "pages": [
+              "developer-api/v1/introduction",
+              "developer-api/v1/getting-started",
+              "developer-api/v1/authorization",
+              "developer-api/v1/sandbox"
+            ]
+          },
+          {
+            "group": "Core concepts",
+            "pages": [
+              "developer-api/v1/rate-limiting",
+              "developer-api/v1/error-handling",
+              "developer-api/v1/pagination",
+              "developer-api/v1/webhooks"
+            ]
+          },
+          {
+            "group": "Spend & cards",
+            "pages": [
+              "developer-api/v1/cards-and-funds",
+              "developer-api/v1/virtual-cards",
+              "developer-api/v1/bill-pay"
+            ]
+          },
+          {
+            "group": "Build & automate",
+            "pages": [
+              "developer-api/v1/build-with-ramp",
+              "developer-api/v1/mcp",
+              "developer-api/v1/cli"
+            ]
+          },
+          {
+            "group": "Migration (workspace)",
+            "pages": ["guides/migration-checklist"]
+          }
+        ]
+      },
+      {
+        "tab": "API reference",
+        "groups": [
+          {
+            "group": "Reference",
+            "pages": ["developer-api/v1/api/overview"]
+          }
+        ]
+      }
+    ]
+  }
+}
