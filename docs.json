@@ -59,57 +59,147 @@
         }
       ]
     },
-    "tabs": [
+    "groups": [
       {
-        "tab": "Guides",
-        "groups": [
+        "group": "Getting Started",
+        "pages": [
+          "developer-api/v1/introduction",
+          "developer-api/v1/getting-started",
+          "developer-api/v1/build-with-ramp",
+          "developer-api/v1/changelog",
+          "developer-api/v1/cli",
+          "developer-api/v1/agent-cards",
           {
-            "group": "Get started",
+            "group": "MCP",
+            "root": "developer-api/v1/mcp",
+            "expanded": false,
+            "icon": "bot",
             "pages": [
-              "developer-api/v1/introduction",
-              "developer-api/v1/getting-started",
-              "developer-api/v1/authorization",
-              "developer-api/v1/sandbox"
+              "developer-api/v1/ramp-mcp",
+              "developer-api/v1/developer-mcp"
             ]
-          },
-          {
-            "group": "Core concepts",
-            "pages": [
-              "developer-api/v1/rate-limiting",
-              "developer-api/v1/error-handling",
-              "developer-api/v1/pagination",
-              "developer-api/v1/webhooks"
-            ]
-          },
-          {
-            "group": "Spend & cards",
-            "pages": [
-              "developer-api/v1/cards-and-funds",
-              "developer-api/v1/virtual-cards",
-              "developer-api/v1/bill-pay"
-            ]
-          },
-          {
-            "group": "Build & automate",
-            "pages": [
-              "developer-api/v1/build-with-ramp",
-              "developer-api/v1/mcp",
-              "developer-api/v1/cli"
-            ]
-          },
-          {
-            "group": "Migration (workspace)",
-            "pages": ["guides/migration-checklist"]
           }
         ]
       },
       {
-        "tab": "API reference",
-        "groups": [
+        "group": "Guides",
+        "pages": [
           {
-            "group": "Reference",
-            "pages": ["developer-api/v1/api/overview"]
-          }
+            "group": "Accounting",
+            "root": "developer-api/v1/accounting",
+            "expanded": false,
+            "icon": "calculator",
+            "pages": [
+              "developer-api/v1/accounting-erp-migration",
+              "developer-api/v1/tax-codes",
+              "developer-api/v1/vendor-credits",
+              "developer-api/v1/sync-button"
+            ]
+          },
+          {
+            "group": "Custom Records",
+            "root": "developer-api/v1/custom-records",
+            "expanded": false,
+            "icon": "database",
+            "pages": [
+              "developer-api/v1/custom-records/customized-approvers"
+            ]
+          },
+          {
+            "group": "Virtual Cards",
+            "root": "developer-api/v1/virtual-cards",
+            "expanded": false,
+            "icon": "credit-card",
+            "pages": [
+              "developer-api/v1/virtual-cards/embedded-cards"
+            ]
+          },
+          {
+            "group": "Ramp Data",
+            "root": "developer-api/v1/ramp-data",
+            "expanded": false,
+            "icon": "bar-chart-3",
+            "pages": [
+              "developer-api/v1/ramp-data/ramp-rate",
+              "developer-api/v1/ramp-data/ai-index"
+            ]
+          },
+          "developer-api/v1/cards-and-funds",
+          "developer-api/v1/bill-pay",
+          "developer-api/v1/vendors-merchants-accounting-vendors",
+          "developer-api/v1/user-lifecycle",
+          "developer-api/v1/applications"
+        ]
+      },
+      {
+        "group": "Developer Resources",
+        "pages": [
+          "developer-api/v1/authorization",
+          "developer-api/v1/pagination",
+          "developer-api/v1/sandbox",
+          "developer-api/v1/rate-limiting",
+          "developer-api/v1/webhooks",
+          "developer-api/v1/debugging",
+          "developer-api/v1/error-handling",
+          "developer-api/v1/data-relationships",
+          "developer-api/v1/monetary-values",
+          "developer-api/v1/deferred-tasks"
+        ]
+      },
+      {
+        "group": "REST API",
+        "pages": [
+          "developer-api/v1/api/accounting",
+          "developer-api/v1/api/accounting-gl-accounts",
+          "developer-api/v1/api/accounting-connections",
+          "developer-api/v1/api/accounting-inventory-item",
+          "developer-api/v1/api/accounting-sync",
+          "developer-api/v1/api/accounting-tax",
+          "developer-api/v1/api/accounting-vendors",
+          "developer-api/v1/api/applications",
+          "developer-api/v1/api/audit-logs",
+          "developer-api/v1/api/authorization",
+          "developer-api/v1/api/bank-accounts",
+          "developer-api/v1/api/bills",
+          "developer-api/v1/api/blank-canvas-approvals",
+          "developer-api/v1/api/business",
+          "developer-api/v1/api/cards",
+          "developer-api/v1/api/cashbacks",
+          "developer-api/v1/api/custom-form",
+          "developer-api/v1/api/custom-records-configuration",
+          "developer-api/v1/api/custom-records-custom-tables",
+          "developer-api/v1/api/custom-records-matrix-tables",
+          "developer-api/v1/api/custom-records-native-tables",
+          "developer-api/v1/api/departments",
+          "developer-api/v1/api/embedded",
+          "developer-api/v1/api/entities",
+          "developer-api/v1/api/item-receipts",
+          "developer-api/v1/api/limits",
+          "developer-api/v1/api/locations",
+          "developer-api/v1/api/memos",
+          "developer-api/v1/api/merchants",
+          "developer-api/v1/api/purchase-orders",
+          "developer-api/v1/api/receipt-integrations",
+          "developer-api/v1/api/receipts",
+          "developer-api/v1/api/reimbursements",
+          "developer-api/v1/api/repayments",
+          "developer-api/v1/api/spend-programs",
+          "developer-api/v1/api/spend-requests",
+          "developer-api/v1/api/statements",
+          "developer-api/v1/api/transactions",
+          "developer-api/v1/api/transfers",
+          "developer-api/v1/api/trips",
+          "developer-api/v1/api/unified-requests",
+          "developer-api/v1/api/users",
+          "developer-api/v1/api/vault",
+          "developer-api/v1/api/vendors",
+          "developer-api/v1/api/webhooks"
+        ]
+      },
+      {
+        "group": "Migration (workspace)",
+        "pages": [
+          "guides/migration-checklist"
         ]
       }
     ]
