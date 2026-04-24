@@ -91,7 +91,7 @@ curl -X POST "{environment-url}/developer/v1/accounting/connection" \
 }
 ```
 
-Then make a `PATCH` call to [/developer/v1/accounting/connection/{connection_id}](/api-reference/accounting/update-an-accounting-connection#patch-developer-v1-accounting-connection-connection-id), using the `id` from the previous response as the `connection_id`, with `settings.transaction_sync_button_enabled` set to `true`:
+Then make a `PATCH` call to [`/developer/v1/accounting/connection/{connection_id}`](/api-reference/accounting/update-an-accounting-connection#patch-developer-v1-accounting-connection-connection-id), using the `id` from the previous response as the `connection_id`, with `settings.transaction_sync_button_enabled` set to `true`:
 
 ```bash
 curl -X PATCH "{environment-url}/developer/v1/accounting/connection/<connection_id>" \
@@ -244,7 +244,7 @@ curl -X POST "{environment-url}/developer/v1/accounting/connection" \
 }
 ```
 
-Then make a `PATCH` call to [/developer/v1/accounting/connection/{connection_id}](/api-reference/accounting/update-an-accounting-connection#patch-developer-v1-accounting-connection-connection-id), using the `id` from the previous response as the `connection_id`, with `settings.reimbursement_sync_button_enabled` set to `true`:
+Then make a `PATCH` call to [`/developer/v1/accounting/connection/{connection_id}`](/api-reference/accounting/update-an-accounting-connection#patch-developer-v1-accounting-connection-connection-id), using the `id` from the previous response as the `connection_id`, with `settings.reimbursement_sync_button_enabled` set to `true`:
 
 ```bash
 curl -X PATCH "{environment-url}/developer/v1/accounting/connection/<connection_id>" \

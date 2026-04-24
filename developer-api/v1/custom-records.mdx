@@ -4,7 +4,7 @@ description: " "
 ---
 
 <Warning>
-## Custom Records API is in Beta
+**Custom Records API is in Beta**
 
 API endpoints are subject to change.
 </Warning>
@@ -14,7 +14,7 @@ API endpoints are subject to change.
 The Custom Records API allows you to extend Ramp's data models with your own custom fields and data. Whether you need to add custom fields to existing Ramp objects or create entirely new data structures, this API provides the flexibility to integrate Ramp with your business processes.
 
 <Warning>
-## Custom Records are available to Ramp Plus and Ramp Enterprise customers only. For more information, contact your Ramp representative.
+**Custom Records are available to Ramp Plus and Ramp Enterprise customers only. For more information, contact your Ramp representative.**
 </Warning>
 
 ### What You Can Do
@@ -28,7 +28,7 @@ With the Custom Records API you can:
 
 At this time, the API supports writes to custom record values, as well as creating and reading table and column definitions.
 
-To get started, use the [Custom Records Configuration](/api-reference/custom-records/list-custom-tables) API to set up tables and columns.
+To get started, use the [Custom Records Configuration](/api-reference/custom-records/extend-native-ramp-table) API to set up tables and columns.
 Then, use the [Native Tables](/api-reference/custom-records/list-native-ramp-tables) and [Custom Tables](/api-reference/custom-records/list-custom-tables) API to manage and manipulate data.
 
 ## Native Tables vs Custom Tables
@@ -412,7 +412,8 @@ Example query for a information about a specific Ramp user:
 GET /native-tables/users/rows?ramp_id=01956422-6793-7700-adb4-3f1bd635ee49
 ```
 
-<details><summary>Example response:</summary>
+<AccordionGroup>
+<Accordion title="Example response">
 
 ```json
 {
@@ -422,4 +423,164 @@ GET /native-tables/users/rows?ramp_id=01956422-6793-7700-adb4-3f1bd635ee49
     "display_name": "John Doe",
     "cells": [
       {
-        "column
+        "column_id": "<uuid>",
+        "column_display_name": "Home State",
+        "value": {
+          "table_name": "states",
+          "type": "custom_table",
+          "rows": [
+            {
+              "row_id": "<uuid>",
+              "external_key": "California",
+              "display_name": "California",
+              "type": "custom_table"
+            }
+          ],
+          "has_more": false
+        }
+      },
+      {
+        "column_id": "<uuid>",
+        "column_display_name": "Regional Director For",
+        "value": {
+          "table_name": "regions",
+          "type": "custom_table",
+          "rows": [
+            {
+              "row_id": "<uuid>",
+              "external_key": "West",
+              "display_name": "West",
+              "type": "custom_table"
+            },
+            {
+              "row_id": "<uuid>",
+              "external_key": "Northwest",
+              "display_name": "Northwest",
+              "type": "custom_table"
+            }
+          ],
+          "has_more": false
+        }
+      }
+    ]
+  }],
+  "page": {
+    "next": null
+  }
+}
+```
+
+</Accordion>
+</AccordionGroup>
+
+This response shows:
+
+- The user's home state (California)
+- The regions they are a director for (West and Northwest)
+- Both relationships are maintained automatically through bidirectional references
+- `has_more: false` indicates we have all the references for each relationship
+
+## Bidirectional References and `has_more`
+
+When you create a reference between tables, the API automatically maintains the reverse relationship by creating a corresponding column:
+
+- **Reference Column**: The column you create (e.g., `home_state` on Users)
+- **Corresponding Column**: Automatically created on the referenced table (e.g., `residents` on States)
+
+Key points about corresponding columns:
+
+- The `corresponding_column_name` is required when creating a reference
+- The `corresponding_column_label` is optional and will be auto-generated if not provided
+- Corresponding columns have `allows_writes=false` - you must write to the original reference column
+
+This bidirectional relationship allows you to:
+
+- Navigate data relationships in both directions
+- Maintain data consistency
+- Build complex queries from any starting point
+
+When a reference column's contents have `has_more` as `true`, it indicates that not all referenced rows are included in the response. To retrieve the complete set of references, you'll need to query the referenced table directly using the corresponding column.
+To get all states in the West region, query the states table using the corresponding column:
+
+```text
+GET /custom-tables/states/rows?filter.region.one_of=West
+```
+
+This will return all states with the a reference to the West Region in their `region` column.
+
+## Supported Native Tables
+
+Note that when provding a `contents` value that references a ramp object, it should be formatted similarly to: `{"column_name": "id", "value": <UUID>}`. Different Native Ramp tables allow other column names to be used as well.
+
+### Users
+
+| column_name | Contents | Example |
+| --- | --- | --- |
+| `id` | User's Ramp UUID | `{"column_name": "id", "value": "<user_id>"}` |
+| `email` | User's email address | `{"column_name": "email", "value": "user_email@company.com"}` |
+
+[Users endpoint](/api-reference/user/list-users)
+
+### Locations
+
+| column_name | Contents | Example |
+| --- | --- | --- |
+| `id` | Location's Ramp UUID | `{"column_name": "id", "value": "<location_id>"}` |
+| `name` | Location's name | `{"column_name": "name", "value": "New York City"}` |
+
+[Locations endpoint](/api-reference/location/list-locations)
+
+### Departments
+
+| column_name | Contents | Example |
+| --- | --- | --- |
+| `id` | Department's Ramp UUID | `{"column_name": "id", "value": "<department_id>"}` |
+| `name` | Department's name | `{"column_name": "name", "value": "Engineering"}` |
+
+[Departments endpoint](/api-reference/department/list-departments)
+
+### Accounting Field Options
+
+| column_name | Contents | Example |
+| --- | --- | --- |
+| `id` | Option's Ramp UUID | `{"column_name": "id", "value": "<accounting_field_option_id>"}` |
+| `field_id::option_id` | Combined accounting field remote id and accounting field option remote id | `{"column_name": "field_id::option_id", "value": "Projects::Project A"}` |
+
+Make sure that if you're using this format,
+
+[Accounting Field Options endpoint](/api-reference/accounting/list-options-for-a-given-custom-accounting-field)
+
+> **Note:** Use the `ramp_id` from the response to reference the accounting field option in a custom table or row.
+
+### Business Entities
+
+| column_name | Contents | Example |
+| --- | --- | --- |
+| `id` | Entity's Ramp ID | `{"column_name": "id", "value": "<entity_id>"}` |
+| `name` | Enitity's name | `{"column_name": "name", "value": "Acme Corp LLC"}` |
+
+[Entities Endpoint](/api-reference/business-entities/list-business-entities)
+
+### Bills
+
+| column_name | Contents | Example |
+| --- | --- | --- |
+| `id` | Bill's Ramp UUID | `{"column_name": "id", "value": "<bill_id>"}` |
+
+[Bills endpoint](/api-reference/bill/list-bills)
+
+### Transactions
+
+| column_name | Contents | Example |
+| --- | --- | --- |
+| `id` | Transaction's Ramp UUID | `{"column_name": "id", "value": "<transaction_id>"}` |
+
+[Transactions endpoint](/api-reference/transaction/list-transactions)
+
+### Reimbursements
+
+| column_name | Contents | Example |
+| --- | --- | --- |
+| `id` | Reimbursement's Ramp UUID | `{"column_name": "id", "value": "<reimbursement_id>"}` |
+
+[Reimbursements endpoint](/api-reference/reimbursement/list-reimbursements)

@@ -22,7 +22,7 @@ Users created outside the Developer API — via HRIS or SCIM sync, a manual invi
 ### Before you start
 
 - You need an OAuth access token with the `users:read` and `users:write` scopes. See the [Authorization guide](/developer-api/v1/authorization) for how to obtain one.
-- If you plan to set a department, location, or manager on new users, look those up first via [GET /departments](/api-reference/department/list-departments#get-developer-v1-departments), [GET /locations](/api-reference/location/list-locations#get-developer-v1-locations), and [GET /users](/api-reference/user/list-users#get-developer-v1-users).
+- If you plan to set a department, location, or manager on new users, look those up first via [GET /departments](/api-reference/department/list-departments), [GET /locations](/api-reference/location/list-locations), and [GET /users](/api-reference/user/list-users).
 
 ### How asynchronous user creation works
 
@@ -283,4 +283,37 @@ Plans change. `POST /developer/v1/users/{user_id}/invite` takes three actions:
 
 ### The user status model
 
-The `
+The `status` field on a user tells you where they are in the lifecycle. The values you'll see from the Developer API are:
+
+| Status | Meaning |
+| --- | --- |
+| `USER_DRAFT` | The user record exists, but no invite has been sent. They can't log in or spend. Use this to pre-stage users (e.g. new hires starting next month). |
+| `INVITE_PENDING` | An invite email has been sent but the user hasn't accepted it yet. |
+| `USER_ACTIVE` | The user has accepted the invite, is onboarded, and can use Ramp. |
+| `USER_INACTIVE` | The user has been deactivated. Cards are frozen, spend is blocked, and they cannot log in. The record is preserved for history and reactivation. |
+| `USER_SUSPENDED` | Ramp has suspended the user for risk or policy reasons. This is rare and cannot be set by API callers. |
+
+### Listing and filtering users
+
+`GET /developer/v1/users` supports filtering by `role`, `status`, `department_id`, `location_id`, `entity_id`, `email`, and `employee_id`. Useful patterns:
+
+- `GET /users?status=USER_DRAFT` — every user staged as a draft.
+- `GET /users?status=USER_INACTIVE` — deactivated users, e.g. for offboarding audits.
+- `GET /users?email=...` — lookup by email. URL-encode `+` as `%2B` and `@` as `%40`.
+- `GET /users?role=GUEST_USER` — every guest in the business.
+
+Results are paginated with `page_size` (between 2 and 100, default 20) and `start` (the cursor from the previous page's `page.next`). A filtered response:
+
+```json
+{
+  "data": [
+    {"id": "019db12d-6a1d-...", "role": "GUEST_USER", "status": "INVITE_PENDING"},
+    {"id": "448edb2a-eeaa-...", "role": "GUEST_USER", "status": "USER_ACTIVE"}
+  ],
+  "page": {
+    "next": "https://api.ramp.com/developer/v1/users?role=GUEST_USER&page_size=2&start=448edb2a-eeaa-4bb8-a762-6770fc2018f3"
+  }
+}
+```
+
+Follow `page.next` until it returns `null`.

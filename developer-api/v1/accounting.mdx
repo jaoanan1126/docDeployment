@@ -15,11 +15,9 @@ By following this guide, you'll enable seamless data flow between Ramp and your 
 
 Building an accounting integration involves three main steps: configuring the connection, uploading your chart of accounts, and implementing object sync.
 
-Configure: Establish the accounting connection
-
-Upload: Import chart of accounts from your ERP
-
-Sync: Fetch objects from Ramp and mark as synced
+1. Configure: Establish the accounting connection
+2. Upload: Import chart of accounts from your ERP
+3. Sync: Fetch objects from Ramp and mark as synced
 
 ---
 
@@ -29,76 +27,76 @@ Sync: Fetch objects from Ramp and mark as synced
 Review the [Launch Checklist](/developer-api/v1/build-with-ramp#launch-checklist) first, including OAuth2 setup and sandbox testing. This checklist covers accounting-specific implementation steps.
 </Note>
 
-## 1. Configure Accounting Connection
+### 1. Configure Accounting Connection
 
 <Steps>
 <Step title=" ">
-**Implement onboarding flow**
+Implement onboarding flow
 
 Establish an accounting connection between Ramp and your ERP. See [Create Accounting Connection](#create-accounting-connection).
 </Step>
 </Steps>
 
-## 2. Upload COA and Custom Fields
+### 2. Upload COA and Custom Fields
 
 <Steps>
 <Step title=" ">
-**Upload chart of accounts**
+Upload chart of accounts
 
 Import GL accounts and vendors from your ERP into Ramp. See [Chart of Accounts](#chart-of-accounts).
 </Step>
 <Step title=" ">
-**Upload custom fields and options**
+Upload custom fields and options
 
 Add classification fields like Department or Cost Center. See [Creating Custom Fields and Adding Options](#creating-custom-fields-and-adding-options).
 </Step>
 </Steps>
 
-## 3. Implement Object Sync
+### 3. Implement Object Sync
 
 <Steps>
 <Step title=" ">
-**Implement transaction sync (Required)**
+Implement transaction sync (Required)
 
 Fetch ready-to-sync transactions from Ramp, import to your ERP, and mark as synced. See [Object Sync](#object-sync).
 </Step>
 <Step title=" ">
-**Handle sync failures (Required)**
+Handle sync failures (Required)
 
 Report sync failures back to users in Ramp. See [Sync Failures](#sync-failures).
 </Step>
 <Step title=" ">
-**Implement bill and payment sync (Optional)**
+Implement bill and payment sync (Optional)
 
 Fetch bills and bill payments from Ramp, import to your ERP, and mark as synced. See [Object Sync](#object-sync).
 </Step>
 <Step title=" ">
-**Implement reimbursement sync (Optional)**
+Implement reimbursement sync (Optional)
 
 Fetch reimbursements from Ramp, import to your ERP, and mark as synced. See [Object Sync](#object-sync).
 </Step>
 <Step title=" ">
-**Implement statement sync (Optional)**
+Implement statement sync (Optional)
 
 Fetch statements from Ramp, import to your ERP, and mark as synced. See [Object Sync](#object-sync).
 </Step>
 <Step title=" ">
-**Implement cashback sync (Optional)**
+Implement cashback sync (Optional)
 
 Fetch cashbacks from Ramp, import to your ERP, and mark as synced. See [Object Sync](#object-sync).
 </Step>
 </Steps>
 
-## 4. Advanced Configuration (Optional)
+### 4. Advanced Configuration (Optional)
 
 <Steps>
 <Step title=" ">
-**Multi-entity support**
+Multi-entity support
 
 Entities are created in the Ramp UI. Objects are scoped to an entity_id when fetching. See [Multi-Entity Support](#multi-entity-support).
 </Step>
 <Step title=" ">
-**Multi-currency support**
+Multi-currency support
 
 Configure currency mappings if your ERP supports multi-currency transactions. See [Monetary Values](/developer-api/v1/monetary-values).
 </Step>
@@ -112,11 +110,9 @@ There are three core processes that must be built as part of an accounting integ
 <Card title="Configure Connection" icon="settings" href="/developer-api/v1/accounting#create-accounting-connection">
 Establish an accounting connection between Ramp and your ERP system.
 </Card>
-
 <Card title="Chart of Accounts" icon="layers" href="/developer-api/v1/accounting#chart-of-accounts">
 Import GL accounts, custom fields, field options, and vendors from your ERP into Ramp.
 </Card>
-
 <Card title="Object Sync" icon="refresh-ccw" href="/developer-api/v1/accounting#object-sync">
 Fetch ready-to-sync objects from Ramp, transfer them to your ERP, and mark them as synced.
 </Card>
@@ -130,8 +126,7 @@ Before syncing your chart of accounts, you need to establish an accounting conne
   <source src="https://docs.ramp.com/assets/Building%20an%20accounting%20integration%20-%20Getting%20started-vqSjz8LN.mp4" />
 </video>
 
-**Overview of accounting connections in Ramp**
-
+<Accordion title="Overview of accounting connections in Ramp">
 An Accounting Connection is the link between your Ramp account and your company's accounting system (ERP). It allows Ramp to exchange data with your ERP so that transactions, vendors, accounts, and rules stay in sync.
 
 Each accounting connection is uniquely associated with its own set of:
@@ -149,19 +144,35 @@ A single Ramp account can only have one active accounting connection at a time.
 
 Switching the accounting connection will result in a loss of data from these fields and rules, but it is possible to re-activate a connection which will restore them.
 
-**Check Connection Status**
+<Accordion title="Check Connection Status">
+**Via Ramp UI**
+
+Navigate to Settings → Accounting tab
+
+![](https://docs.ramp.com/assets/current-accounting-connection-vqChXzt5.png)
+
+**Via API**
+
+Use the Fetch Accounting Connection endpoint:
+
+`GET /developer/v1/accounting/all-connections`
+
+[View API Documentation →](/api-reference/accounting/fetch-all-accounting-connections-for-the-current-business)
+</Accordion>
 
 **Accounting Connection Types**
 
 There are three types of accounting connections:
 
-### Direct Connection
+**Direct Connection**
 
 Managed by Ramp for out-of-the-box integrations
 
 - Activated when customers onboard to QuickBooks, NetSuite, etc.
 - Ramp-managed setup and maintenance
 - Can only be enabled in the Ramp UI (requires authorization)
+</Accordion>
+
 - Can be disabled via API or Ramp UI
 - When enabled, Custom Fields, Vendors, and GL Accounts become read-only via API
 
@@ -187,7 +198,7 @@ Full API control with advanced features
 - Latest features and capabilities
 - Recommended for custom integrations
 
-**Multi-Entity Connections**
+## Multi-Entity Connections
 
 A single Ramp account can only have one active accounting connection at a time, however Ramp supports multi-entity connections: one NetSuite (or any other kind of accounting connection) account with multiple subsidiaries.
 
@@ -195,7 +206,7 @@ Each subsidiary has its own chart of accounts and sync settings. For example, on
 
 Switching the accounting connection will result in a loss of data from these fields and rules, but it is possible to re-activate a connection which will restore them.
 
-**Migrating Connections**
+## Migrating Connections
 
 <Warning>
 **Migration will result in data loss**
@@ -205,7 +216,7 @@ Migrating Accounting Connections will result in a loss of historical chart of ac
 
 Two accounting connections cannot be active at once. When building an accounting connection to an external system, it is highly recommended to disconnect the existing connection and establish a new one. In case things go wrong, you can always reconnect the previous connection and regain access to the old Custom Fields, Vendors, and GL accounts.
 
-Before disconnecting, it is recommended to fetch all of the existing configuration and store it server-side so that the accounting structure can be rebuilt with the new accounting connection. See more guidance on how to handle migrations in the [Migration section](#migration).
+Before disconnecting, it is recommended to fetch all of the existing configuration and store it server-side so that the accounting structure can be rebuilt with the new accounting connection. See more guidance on how to handle migrations in the [Migration section](/developer-api/v1/accounting#migration).
 
 #### View Current Accounting Connection
 
@@ -230,11 +241,11 @@ curl \
   'https://api.ramp.com/developer/v1/accounting/connection'
 ```
 
-<Warning>
+<Info>
 **Disconnecting will clear accounting data**
 
 Disconnecting an accounting connection will remove all associated custom fields, GL accounts, and vendors. See the [Migration section](#migration) for guidance on preserving data during connection changes.
-</Warning>
+</Info>
 
 #### Create New Accounting Connection
 
@@ -261,6 +272,8 @@ When integrating your ERP with Ramp, one of the first setup steps is syncing you
   <source src="https://docs.ramp.com/assets/Building%20an%20accounting%20integration%20with%20the%20Ramp%20API%20-%20Uploading%20the%20Chart%20of%20Accounts-BbQMK4IQ.mp4" />
 </video>
 
+Your browser does not support the video tag.
+
 This section walks through how to:
 
 - Understand what's imported into Ramp from your ERP
@@ -270,18 +283,18 @@ This section walks through how to:
 #### Chart of Accounts Overview
 
 | **ERP Object** | **Required?** | **Configuration** | **Description** | **Ramp API Endpoint** |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | **GL Accounts** | ✅ Always required | API configurable | Primary accounting categories (e.g., expense or revenue accounts). | [POST /developer/v1/accounting/accounts](/api-reference/accounting/upload-general-ledger-accounts#post-developer-v1-accounting-accounts) |
 | **Custom Fields** | ⚙️ Optional | API configurable | Adds metadata such as department or cost center. | [POST /developer/v1/accounting/fields](/api-reference/accounting/create-a-new-custom-accounting-field#post-developer-v1-accounting-fields) |
 | **Custom Field Options** | ⚙️ Optional | API configurable | Options for custom fields (e.g., department values). | [POST /developer/v1/accounting/field-options](/api-reference/accounting/upload-new-options#post-developer-v1-accounting-field-options) |
 | **Vendors** | ⚙️ Optional | API configurable | Defines supplier names for bills or transactions. | [POST /developer/v1/accounting/vendors](/api-reference/accounting/upload-vendors#post-developer-v1-accounting-vendors) |
 | **Entities** | ✅ Always required | UI only (read-only via API) | Business units or subsidiaries configured directly in Ramp. | UI only |
 
-<Warning>
+<Info>
 **Chart of Accounts cannot be modified for Ramp accounts using a direct accounting connection**
 
 This applies to GL accounts, custom fields, and vendors - they become read-only via API when a direct connection is active.
-</Warning>
+</Info>
 
 #### Uploading GL Accounts
 
@@ -290,12 +303,12 @@ GL Accounts define the categories under which your company records transactions 
 **Example GL accounts:**
 
 | **Classification** | **Code (optional)** | **ID** | **Name** |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | EXPENSE | 6410 | 514 | Employees: Salaries & Wages |
 | EXPENSE | — | 418 | Office/Admin: Phone & Internet |
 | REVENUE | — | 425 | Sales |
 
-To upload your GL accounts to Ramp, use the [POST /developer/v1/accounting/accounts](/api-reference/accounting/update-a-general-ledger-account#patch-developer-v1-accounting-accounts-gl-account-id) endpoint:
+To upload your GL accounts to Ramp, use the [POST /developer/v1/accounting/accounts](/api-reference/accounting/upload-general-ledger-accounts#post-developer-v1-accounting-accounts) endpoint:
 
 ```bash
 curl \
@@ -308,7 +321,7 @@ curl \
 
 Once you make the POST call, this is what the GL accounts look like in the Ramp UI:
 
-**View GL Accounts in Accounting Settings**
+<Accordion title="View GL Accounts in Accounting Settings">
 
 Navigate to Settings → Accounting tab → Accounting fields → select 'Category - Chart of Accounts' field:
 
@@ -322,11 +335,15 @@ Then you will see the GL Accounts listed on the Accounting Category options page
 
 ![Then you will see the GL Accounts listed on the Accounting Category options page:](https://docs.ramp.com/assets/gl_accounts_settings3-BQGSVfEo.png)
 
-**View GL Accounts in Transactions**
+</Accordion>
+
+<Accordion title="View GL Accounts in Transactions">
 
 When viewing transactions in the Ramp portal, the GL account will be listed as options for the 'Accounting Category' field:
 
 ![When viewing transactions in the Ramp portal, the GL account will be listed as options for the 'Accounting Category' field:](https://docs.ramp.com/assets/gl_accounting_transactions-Dcp4x3qf.png)
+
+</Accordion>
 
 #### Creating Custom Fields and Adding Options
 
@@ -338,7 +355,7 @@ Custom fields let you import classifications from your ERP like Department, Cost
 |---|---|
 | Department | SINGLE_CHOICE |
 
-To create a new custom field in Ramp, use the [POST /developer/v1/accounting/fields](/api-reference/accounting/create-a-new-custom-accounting-field#post-developer-v1-accounting-fields) endpoint:
+To create a new custom field in Ramp, use the [POST /developer/v1/accounting/fields](/api-reference/accounting/create-a-new-custom-accounting-field) endpoint:
 
 ```bash
 curl \
@@ -351,6 +368,734 @@ curl \
 
 Once you make the POST call, this is what the custom field looks like in the Ramp UI:
 
-**View Custom Fields in Accounting Settings**
+<Accordion title="View Custom Fields in Accounting Settings">
 
 Navigate to Settings → Accounting tab → Accounting fields:
+
+![Navigate to Settings → Accounting tab → Accounting fields:](https://docs.ramp.com/assets/accounting_field_settings-Crglfvsa.png)
+
+</Accordion>
+
+<Accordion title="View Custom Fields in Transactions">
+
+When viewing transactions in the Ramp portal, custom fields will appear as additional fields that can be filled in for categorization and reporting:
+
+![When viewing transactions in the Ramp portal, custom fields will appear as additional fields that can be filled in for categorization and reporting:](https://docs.ramp.com/assets/accounting_field_transactions-DoDL2gyY.png)
+
+</Accordion>
+
+The POST call to create an accounting field will return a `ramp_id` in the response if successful.
+
+To upload custom field options to Ramp, use the [POST /developer/v1/accounting/field-options](/api-reference/accounting/upload-new-options) endpoint using the `ramp_id` from the API call:
+
+**Example Custom Field Options:**
+
+| **Option ID** | **Value** |
+|---|---|
+| 418 | Engineering & Design |
+| 514 | Sales & Marketing |
+
+```bash
+curl \
+  -X POST \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -d '{"field_id":"46910cc3-ab41-4b80-b4a7-94dab9f1b795","options":[{"id":"418","value":"Engineering & Design"},{"id":"514","value":"Sales & Marketing"}]}' \
+  'https://api.ramp.com/developer/v1/accounting/field-options'
+```
+
+Once you make the POST calls, this is what the field looks like in the Ramp UI:
+
+<Accordion title="View Custom Field Options in Accounting Settings">
+
+Navigate to Settings → Accounting tab → Accounting fields, then select the accounting field you created options for and click on 'Update options':
+
+![Navigate to Settings → Accounting tab → Accounting fields, then select the accounting field you created options for and click on 'Update options':](https://docs.ramp.com/assets/accounting_field_options_settings1-DeUoRJS-.png)
+
+From there, you will be able to view the custom field options you created:
+
+![From there, you will be able to view the custom field options you created:](https://docs.ramp.com/assets/accounting_field_options_settings2-CJnviPaZ.png)
+
+</Accordion>
+
+<Accordion title="View Custom Field Options in Transactions">
+
+When viewing transactions in the Ramp portal, custom field options will appear as selectable options in the dropdown for the custom field:
+
+![When viewing transactions in the Ramp portal, custom field options will appear as selectable options in the dropdown for the custom field:](https://docs.ramp.com/assets/accounting_field_options_transactions-Jxw0KPKY.png)
+
+</Accordion>
+
+#### Uploading Vendors
+
+Vendors represent suppliers or payees from your ERP and allow users to tag bills, transactions, or purchase orders in Ramp.
+
+**Example Vendor Data:**
+
+| **Vendor ID** | **Vendor Name** |
+|---|---|
+| V-5500-0130 | AirTable |
+| V-5500-0135 | Slack Technologies, LLC |
+| V-5500-0142 | Microsoft |
+
+To upload your vendors to Ramp, use the [POST /developer/v1/accounting/vendors](/api-reference/accounting/upload-vendors) endpoint:
+
+```bash
+curl \
+  -X POST \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -d '{
+  "vendors": [
+    {"id": "V-5500-0130", "name": "AirTable"},
+    {"id": "V-5500-0135", "name": "Slack Technologies, LLC"},
+    {"id": "V-5500-0142", "name": "Microsoft"}
+  ]
+}' \
+  'https://api.ramp.com/developer/v1/accounting/vendors'
+```
+
+Once you make the POST call, this is what the field looks like in the Ramp UI:
+
+<Accordion title="View Accounting Vendors in Accounting Settings">
+
+Navigate to Settings → Accounting tab → Accounting fields, then select the 'Merchant' field:
+
+![Navigate to Settings → Accounting tab → Accounting fields, then select the 'Merchant' field:](https://docs.ramp.com/assets/vendor_settings1-BForBbHN.png)
+
+Click on 'Update options':
+
+![Click on 'Update options':](https://docs.ramp.com/assets/vendor_settings2-YMDm41HV.png)
+
+From there, you will be able to view the Accounting Vendors you uploaded:
+
+![From there, you will be able to view the Accounting Vendors you uploaded:](https://docs.ramp.com/assets/vendor_settings3-CIwX3Pe6.png)
+
+</Accordion>
+
+<Accordion title="View Accounting Vendors in Transactions">
+
+When viewing transactions in the Ramp portal, accounting vendors will appear under the 'Accounting Merchant' field:
+
+![When viewing transactions in the Ramp portal, accounting vendors will appear under the 'Accounting Merchant' field:](https://docs.ramp.com/assets/vendor_transactions1-DsQUfVJj.png)
+
+Individual vendors will be listed as selectable options for the dropdown for the Accounting Merchant field:
+
+![Individual vendors will be listed as selectable options for the dropdown for the Accounting Merchant field:](https://docs.ramp.com/assets/vendor_transactions2-DeL16WUG.png)
+
+</Accordion>
+
+#### Managing Chart of Accounts Lifecycle
+
+When managing your chart of accounts in Ramp, there are two distinct ways to remove an item (field option, GL account, or vendor) from cardholder selection: **deleting** (deactivating) and **hiding**. Choosing the right approach depends on whether you want to preserve the ability to sync data for that item in the future.
+
+#### Deleting (Deactivating) an Item
+
+Use the `DELETE` endpoint when you **never want to sync the item again**. This marks the item as inactive (`is_active: false`), which:
+
+- Removes it from cardholder selection in the Ramp UI
+- Prevents it from being used in future transaction coding
+- **Does not** permanently remove the record — it can be reactivated later if needed
+
+Deleting is appropriate for items that have been retired from your ERP and should no longer appear anywhere in Ramp.
+
+| **Resource** | **DELETE Endpoint** |
+|---|---|
+| **Custom field options** | [DELETE /developer/v1/accounting/field-options/&#123;field_option_id&#125;](/api-reference/accounting/delete-a-custom-accounting-field-option) |
+| **Custom fields** | [DELETE /developer/v1/accounting/fields/&#123;field_id&#125;](/api-reference/accounting/delete-a-custom-accounting-field) |
+| **GL accounts** | [DELETE /developer/v1/accounting/accounts/&#123;gl_account_id&#125;](/api-reference/accounting/delete-a-general-ledger-account) |
+| **Vendors** | [DELETE /developer/v1/accounting/vendors/&#123;vendor_id&#125;](/api-reference/accounting/delete-a-vendor) |
+
+**Example — delete a vendor:**
+
+```bash
+curl \
+  -X DELETE \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  'https://api.ramp.com/developer/v1/accounting/vendors/&#123;vendor_id&#125;'
+```
+
+To reactivate any deleted item, send a `PATCH` request with `"reactivate": true`:
+
+```bash
+curl \
+  -X PATCH \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -d '{"reactivate": true}' \
+  'https://api.ramp.com/developer/v1/accounting/vendors/&#123;vendor_id&#125;'
+```
+
+#### Hiding a Field Option
+
+Use the `visibility` field on a **custom field option** when you want to **stop cardholders from coding new transactions with it, but preserve values that have already been coded**. Setting `visibility` to `HIDDEN`:
+
+- Removes the option from cardholder selection dropdowns
+- Keeps the option active (`is_active: true`) so existing codings are preserved and can still be synced
+- Allows you to make it selectable again at any time by setting `visibility` back to `VISIBLE`
+
+Hiding is appropriate when a field option is no longer in active use in your ERP but you still need to sync historical transactions that reference it.
+
+**Example — hide a field option:**
+
+```bash
+curl \
+  -X PATCH \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -d '{"visibility": "HIDDEN"}' \
+  'https://api.ramp.com/developer/v1/accounting/field-options/&#123;field_option_id&#125;'
+```
+
+**Example — make a hidden field option visible again:**
+
+```bash
+curl \
+  -X PATCH \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -d '{"visibility": "VISIBLE"}' \
+  'https://api.ramp.com/developer/v1/accounting/field-options/&#123;field_option_id&#125;'
+```
+
+#### When to Use Delete vs. Hide
+
+|  | **Delete (deactivate)** | **Hide** |
+| --- | --- | --- |
+| **Use when** | You never want to sync this item again | You want to stop new coding but preserve historical values |
+| **Effect on `is_active`** | Sets to `false` | Remains `true` |
+| **Visible to cardholders** | No | No |
+| **Existing codings preserved** | Yes, but item cannot be synced | Yes, and item can still be synced |
+| **How to reverse** | PATCH with `"reactivate": true` | PATCH with `"visibility": "VISIBLE"` |
+| **Applies to** | Fields, field options, GL accounts, vendors | Field options only |
+
+Choosing the right approach
+
+If in doubt, prefer **hiding** over **deleting** for field options. Hiding is less disruptive because it keeps the option active for sync purposes. Only use `DELETE` when you are certain the item should be fully deactivated.
+
+#### Managing Accounting Vendors and Ramp Vendors
+
+Accounting vendors (ERP-side identifiers) and Ramp vendors are separate entities that can be linked together. Here's how to set up and connect them:
+
+**1. Create or update Accounting vendors**
+
+Use the [POST /developer/v1/accounting/vendors](/api-reference/accounting/upload-vendors) endpoint to create accounting vendors with your ERP-side identifiers:
+
+```bash
+curl \
+  -X POST \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -d '{
+  "vendors": [
+    {"id": "V-5500-0130", "name": "AirTable"},
+    {"id": "V-5500-0135", "name": "Slack Technologies, LLC"},
+    {"id": "V-5500-0142", "name": "Microsoft"}
+  ]
+}' \
+  'https://api.ramp.com/developer/v1/accounting/vendors'
+```
+
+**2. Link the Ramp vendor to the Accounting vendor**
+
+Update the existing Ramp vendor to point to the correct accounting vendor using `accounting_vendor_remote_id` via [PATCH /developer/v1/vendors/&#123;vendor_id&#125;](/api-reference/vendor/update-a-vendor):
+
+```bash
+curl \
+  -X PATCH \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -d '{"accounting_vendor_remote_id": "V-5500-0130"}' \
+  'https://api.ramp.com/developer/v1/vendors/&#123;vendor_id&#125;'
+```
+
+**3. (Optional) Set a vendor code on the Accounting vendor**
+
+If your ERP setup expects a separate "code" field (distinct from the remote ID), set it directly on the accounting vendor using [PATCH /developer/v1/accounting/vendors/&#123;vendor_id&#125;](/api-reference/accounting/update-a-vendor):
+
+```bash
+curl \
+  -X PATCH \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -d '{"code": "19566"}' \
+  'https://api.ramp.com/developer/v1/accounting/vendors/&#123;vendor_id&#125;'
+```
+
+#### Multi-Entity Support
+
+For organizations with multiple business entities (subsidiaries, divisions, etc.), entities are created and managed directly in the Ramp UI. When fetching objects via the API, you can scope requests to a specific entity using the `entity_id` parameter.
+
+See [Managing multiple entities](https://support.ramp.com/hc/en-us/articles/25882425720723-Managing-multiple-entities) for more information on setting up entities in Ramp.
+
+#### Batch Upload Limits
+
+When uploading chart of accounts data, several endpoints support batch operations with specific limits. All batch operations use "all-or-nothing" processing - if any item in a batch fails validation, the entire batch is rejected:
+
+| **Endpoint** | **Limit per API call** |
+| --- | --- |
+| [**General Ledger Accounts**](/api-reference/accounting/upload-general-ledger-accounts) | 500 accounts |
+| [**Accounting Vendors**](/api-reference/accounting/upload-vendors) | 500 vendors |
+| [**Custom Field Options**](/api-reference/accounting/upload-new-options) | 500 options |
+| [**Accounting Syncs**](/api-reference/accounting/post-sync-status) | 5,000 records |
+
+<Info>
+Multiple API Calls Supported
+
+These limits apply per API call, not as total limits. You can make multiple API calls to upload more than the per-call limit. For example, to upload 2,000 custom field options, you would make 4 separate API calls with 500 options each.
+</Info>
+
+## Object Sync
+
+<video controls>
+  <source src="https://docs.ramp.com/assets/Building%20an%20accounting%20integration%20-%20Setting%20up%20object%20sync-9P_OJKPu.mp4" />
+</video>
+
+To sync accounting data between Ramp and your ERP system, you'll need to implement an object sync process. This process involves:
+
+1. **Fetching ready-to-sync objects** from Ramp using the API
+2. **Transferring the data** to your ERP system
+3. **Marking objects as synced** in Ramp once successfully transferred using the [Sync Status endpoint](/api-reference/accounting/post-sync-status)
+
+Once an object has been marked as synced, it will no longer be visible in the primary Accounting View of the account.
+
+<Warning>
+Objects cannot be marked as synced via API when using a direct accounting connection
+</Warning>
+
+#### Ready to Sync Objects
+
+Objects in Ramp follow different patterns for when they become ready to sync with your ERP system. Some objects are automatically marked as ready based on their status, while others require manual action by users in the Ramp UI.
+
+| **Object** | **Sync Behavior** | **Criteria/Action Required** |
+| --- | --- | --- |
+| **Bills** | Automatic | Ready when not deleted AND either approved or created (based on accounting settings) AND not yet synced |
+| **Bill Payments** | Automatic | Payment sync becomes relevant when the bill is fully paid (`payment_status=PAID`); query bills with `sync_ready=true`, then use `sync_status` + `payment_status` to determine whether to sync the payment phase |
+| **Transfers** | Automatic | Ready when transfer payment is accepted |
+| **Cashback Payments** | Automatic | Automatically ready to sync without user action |
+| **Transactions** | Manual | Users must mark as 'ready to sync' in Ramp UI |
+| **Reimbursements** | Manual | Users must mark as 'ready to sync' in Ramp UI |
+
+For transactions and reimbursements that require manual action, users can mark them as ready to sync in the Ramp UI:
+
+<Accordion title="Mark ready to sync in Ramp portal">
+
+---
+
+Go to the Accounting tab, find the transaction or reimbursement, and click the checkbox in the Action column on the right:
+
+![Go to the Accounting tab, find the transaction or reimbursement, and click the checkbox in the Action column on the right:](https://docs.ramp.com/assets/mark_ready_to_sync-3k_yeFO-.png)
+
+When viewing the transaction or reimbursement in the Accounting tab, users can mark it as ready to sync:
+
+![When viewing the transaction or reimbursement in the Accounting tab, users can mark it as ready to sync:](https://docs.ramp.com/assets/mark_transaction_ready_to_sync-oS6Q5yXc.png)
+
+</Accordion>
+
+#### Example Transaction Sync
+
+##### 1. ERP makes API call to Ramp to fetch ready-to-sync transactions
+
+To fetch ready-to-sync transactions, make an API call to `GET /developer/v1/transactions?sync_status=SYNC_READY`.
+
+```bash
+curl \
+  -X GET \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  'https://api.ramp.com/developer/v1/transactions?sync_status=SYNC_READY'
+```
+
+##### 2. Ramp responds with list of transactions that are ready to sync
+
+Here's an example response Ramp sends in response to `GET /developer/v1/transactions?sync_status=SYNC_READY` (additional fields are available not shown here):
+
+```json
+{
+  "page": {
+    "next": null
+  },
+  "data": [
+    {
+      "id": "7685698c-9d5c-412b-a728-49063c1b298c",
+      "amount": 352.87,
+      "currency_code": "USD",
+      "memo": "Dinner with team",
+      "sync_status": "SYNC_READY",
+      "accounting_date": "2025-09-02T17:20:23+00:00",
+      "merchant_name": "Kiki's",
+      "card_holder": {
+        "first_name": "Michael",
+        "last_name": "Scott",
+        "department_name": "Operations"
+      },
+      "accounting_categories": [
+        {
+          "category_id": "6410",
+          "category_name": "Employees:Salaries & Wages",
+          "tracking_category_remote_type": "GL_ACCOUNT"
+        },
+        {
+          "category_name": "AirTable",
+          "tracking_category_remote_type": "MERCHANT"
+        },
+        {
+          "category_name": "Engineering & Design",
+          "tracking_category_remote_type": "OTHER"
+        }
+      ],
+      "line_items": [
+        {
+          "amount": {
+            "amount": 35287,
+            "currency_code": "USD"
+          },
+          "accounting_field_selections": [
+            {
+              "name": "Employees:Salaries & Wages",
+              "type": "GL_ACCOUNT",
+              "external_id": "514",
+              "external_code": "6410"
+            },
+            {
+              "name": "Engineering & Design",
+              "type": "OTHER",
+              "external_id": "418"
+            }
+          ]
+        }
+      ]
+      // ... additional fields not shown
+    }
+  ]
+}
+```
+
+##### 3. ERP processes the data and uploads it to the remote accounting system
+
+Process the transaction data and create the corresponding entries in your ERP system using the accounting categories, line items, and other relevant fields.
+
+##### 4. ERP calls Ramp's sync endpoint to mark objects as synced
+
+Call [POST /developer/v1/accounting/syncs](/api-reference/accounting/post-sync-status#post-developer-v1-accounting-syncs) to notify Ramp of a list of sync results. An idempotency key is required to ensure that subsequent requests are properly handled.
+
+```bash
+curl \
+  -X POST \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -d '{
+    "idempotency_key": "txn-sync-7685698c-9d5c-412b-a728-49063c1b298c",
+    "successful_syncs": [
+      {
+        "id": "7685698c-9d5c-412b-a728-49063c1b298c",
+        "reference_id": "ERP-TXN-2025090217-352-87"
+      }
+    ],
+    "sync_type": "TRANSACTION_SYNC"
+  }' \
+  'https://api.ramp.com/developer/v1/accounting/syncs'
+```
+
+#### Example Bill and Bill Payment Sync
+
+## Example Bill and Bill Payment Sync
+
+Use `sync_ready` as the source of truth for whether a bill needs export work. Then use `sync_status` and the returned bill `status` together to determine whether you need to sync the bill, the payment, or both.
+
+A bill with `sync_status=NOT_SYNCED` can already be paid, so filtering only on `sync_status` can miss cases where both the bill and the payment need to be synced.
+
+##### Decide what needs to sync
+
+Fetch bills that are ready to sync:
+
+```bash
+curl \
+  -X GET \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  'https://api.ramp.com/developer/v1/bills?sync_ready=true'
+```
+
+`sync_ready` is a query filter, not a bill response field. In the bill response, payment state is returned as `status` (`OPEN` or `PAID`).
+
+Then inspect each returned bill using this logic:
+
+| `sync_ready` | `sync_status` | `status` | What to sync |
+|---|---|---|---|
+| `true` | `NOT_SYNCED` | `OPEN` | Sync the bill only. |
+| `true` | `NOT_SYNCED` | `PAID` | Sync the bill, then sync the payment. |
+| `true` | `BILL_SYNCED` | `PAID` | Sync the payment only. |
+
+If a bill has `sync_status=BILL_SYNCED` and `status=OPEN`, there is no payment to sync yet, so `sync_ready` will be `false` and that bill will not be returned by the query above.
+
+##### Bill Sync
+
+If you identified a bill with `sync_ready=true` and `sync_status=NOT_SYNCED`, create the invoice in your ERP and then mark the bill as invoice-synced in Ramp:
+
+```bash
+curl \
+  -X POST \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -d '{
+    "successful_syncs": [
+      {
+        "id": "<bill_uuid>",
+        "reference_id": "<erp_invoice_id>"
+      }
+    ],
+    "sync_type": "BILL_SYNC"
+  }' \
+  'https://api.ramp.com/developer/v1/accounting/syncs'
+```
+
+This updates the bill's `sync_status` to `BILL_SYNCED`.
+
+##### Payment Sync
+
+To fetch only bills whose payment-sync phase is ready, narrow the discovery query:
+
+```bash
+curl \
+  -X GET \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  'https://api.ramp.com/developer/v1/bills?sync_status=BILL_SYNCED&sync_ready=true'
+```
+
+If `status=PAID`, create the payment in your ERP and then mark the payment as synced in Ramp.
+
+If the same bill also has `sync_status=NOT_SYNCED`, both phases are still outstanding. In the recommended flow, complete the bill sync above first, then submit the payment sync.
+
+```bash
+curl \
+  -X POST \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -d '{
+    "successful_syncs": [
+      {
+        "id": "<bill_uuid>",
+        "reference_id": "<erp_payment_id>"
+      }
+    ],
+    "sync_type": "BILL_PAYMENT_SYNC"
+  }' \
+  'https://api.ramp.com/developer/v1/accounting/syncs'
+```
+
+#### Retrieval Methods
+
+There are two methods for implementing object sync between Ramp and your remote system:
+
+- **[Polling](#polling)**: Periodically fetch ready-to-sync objects from Ramp API endpoints
+- **[Webhooks](#webhooks)**: Receive real-time notifications when objects become ready to sync
+
+##### Polling
+
+The polling method involves periodically fetching ready-to-sync objects from Ramp API endpoints. We recommend polling every 1–4 hours on weekdays and every 12 hours on weekends for the latest information.
+
+![Object sync polling flow diagram showing the process between ERP and Ramp systems](https://docs.ramp.com/assets/polling_object_sync_chart-DAmjtIRu.png)
+
+The polling object sync process follows this flow:
+
+1. **ERP makes API calls to Ramp** to fetch objects that are ready to sync
+2. **Ramp responds** with a list of objects that are ready to sync
+3. **ERP processes the data** and uploads it to the remote accounting system
+4. **ERP calls Ramp's sync endpoint** to mark objects as synced
+
+Use these endpoints to fetch objects that are ready to sync from Ramp:
+
+| **Object Type** | **Ramp API Endpoint** |
+|---|---|
+| **Bills** | `GET /developer/v1/bills?sync_ready=true` |
+| **Transactions** | `GET /developer/v1/transactions?sync_status=SYNC_READY` |
+| **Reimbursements** | `GET /developer/v1/reimbursements?sync_status=SYNC_READY` |
+| **Transfers** | `GET /developer/v1/transfers?sync_status=SYNC_READY` |
+| **Cashbacks** | `GET /developer/v1/cashbacks?sync_status=SYNC_READY` |
+
+##### Webhooks
+
+Instead of polling for ready-to-sync objects, you can use webhooks to receive real-time notifications when objects become ready to sync. This eliminates the need for frequent polling and provides immediate notifications.
+
+![Webhook object sync flow diagram showing the process between ERP and Ramp systems](https://docs.ramp.com/assets/webhook_object_sync_chart-gvFRUxbQ.png)
+
+**Supported Webhook Events**
+
+You can subscribe to these webhook events for real-time sync notifications:
+
+- `transactions.ready_to_sync`: Triggered when transactions are marked as ready to sync
+
+**Setting Up Webhooks**
+
+To implement webhook-based object sync:
+
+1. **Configure webhook endpoints** in your ERP system to receive notifications
+2. **Subscribe to relevant events** using Ramp's webhook configuration
+3. **Process incoming webhook payloads** to identify ready-to-sync objects
+4. **Fetch object details** using the appropriate API endpoints
+5. **Mark objects as synced** after successful transfer
+
+For detailed webhook setup instructions, see our [Webhooks Guide](/developer-api/v1/webhooks).
+
+<Warning>
+**Manual Exports**
+
+Objects ready to sync can optionally be Exported from the accounting tab, which will automatically mark them as synced. It's important to inform customers using an API-based ERP connection to not use this export button.
+</Warning>
+
+#### Sync Failures
+
+In cases when you are unable to sync an object to the remote system, you can use the `failed_syncs` parameter on the [Sync Status endpoint](/api-reference/accounting/post-sync-status) to convey issues back to the user.
+
+```bash
+curl \
+  -X POST \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -d '{
+    "failed_syncs": [
+      {
+        "error": {
+          "message": "The account period has closed and the account books cannot be updated."
+        },
+        "id": "d471d830-2e73-4082-8a75-68540f83e86e"
+      }
+    ],
+    "idempotency_key": "d471d830-2e73-4082-8a75-68540f83e86e",
+    "sync_type": "TRANSACTION_SYNC"
+  }' \
+  'https://api.ramp.com/developer/v1/accounting/syncs'
+```
+
+These issues will be displayed in the Accounting tab as *Export Errors*.
+
+<Accordion title="View Export Errors in Accounting Tab">
+Export errors appear in the Accounting tab when sync failures are reported:
+
+![Export errors appear in the Accounting tab when sync failures are reported:](https://docs.ramp.com/assets/sync_errors_1-BlEtOfjm.png)
+
+When you click on transaction, you can see details regarding sync failure error:
+
+![When you click on transaction, you can see details regarding sync failure error:](https://docs.ramp.com/assets/sync_errors_2-CLhAVtnT.png)
+</Accordion>
+
+#### Sync Error Best Practices
+
+Errors generally fall into three categories:
+
+| Category | What to show the user | Example |
+|----------|----------------------|---------|
+| **User-actionable** | Error title + resolution steps | "Accounting period is closed. Open the period in NetSuite and retry." |
+| **Transient / retryable** | Error title + prompt to retry | "NetSuite is temporarily unavailable. Please try again in a few minutes." |
+| **Requires integrator support** | Error title + support contact with reference ID | "Unexpected error syncing transaction. Reach out to us at support@example.com with reference ID abc123 for more help." |
+
+## Migration
+
+<Info>
+**Migration**
+
+Automatically migrate your existing accounting connection with our [ERP Migration Tool](/developer-api/v1/accounting-erp-migration).
+</Info>
+
+#### Pre-Work
+
+1. **Sync Outstanding Data**: Ensure all ready-to-sync objects (transactions, bills, reimbursements) are marked as synced via the API or Ramp UI. This avoids losing data during migration.
+2. **Document Rules and Automations**: Export or note all accounting rules, automations, and configurations. These will need to be recreated with the new connection.
+
+#### Data Backup
+
+3. **Fetch and Store the Current Chart of Accounts**:
+   - Use the Accounting Custom Fields API to fetch current custom fields.
+   - Use the Accounting GL Accounts API to fetch all active GL accounts.
+   - Use the Accounting Vendors API to fetch vendor data.
+4. Save the fetched data securely for re-upload after creating the new connection.
+
+#### Migration
+
+5. **Disconnect the Existing Connection**: Use the Accounting Connection API to disable the current connection. This action will clear associated accounting settings (Custom Fields, GL Accounts, Vendors).
+6. **Create the New Connection**: Establish the new connection via the API or Ramp UI.
+7. **Reconfigure and Re-upload Data**:
+   - Use the Accounting Custom Fields API to upload custom fields.
+   - Use the Accounting GL Accounts API to upload GL accounts.
+   - Use the Accounting Vendors API to upload vendor data.
+8. **Verify and Test the New Connection**: Perform a small batch test to ensure the new connection is working as expected. Validate that synced data appears correctly in the new accounting system.
+
+#### Rebuild Accounting Rules
+
+9. Follow the instructions in [this article](https://support.ramp.com/hc/en-us/articles/7317831293203-Accounting-rules-and-automation) to rebuild any accounting automations within the Ramp account.
+
+<Warning>
+Migrating Accounting Connections will result in a loss of historical chart of accounts codings. Ensure chart of accounts is backed up before proceeding with a migration.
+</Warning>
+
+<br />
+
+## Relevant Endpoints
+
+| **Endpoints** | **Use** |
+|--------------|---------|
+| [Accounting Connection](/api-reference/accounting/fetch-the-current-active-accounting-connection) | Understand and manage the current state of an account's Accounting Connection. |
+| [Accounting Custom Fields](/api-reference/accounting/create-a-new-custom-accounting-field) | Leverage fields to code transactions, reimbursements, and bills. |
+| [Accounting Vendors](/api-reference/accounting/list-vendors) | Manage Vendor options for coding transactions, reimbursements, bills, and purchase orders. |
+| [Accounting Sync](/api-reference/accounting/post-sync-status) | Mark objects as 'synced' after successful addition to the remote accounting system. |
+| [Accounting GL Accounts](/api-reference/accounting/list-general-ledger-accounts) | Manage GL accounts used for coding transactions, reimbursements, bills, and purchase orders. |
+| [Entities](/api-reference/business-entities/list-business-entities) | View business entities associated with a Ramp account. |
+| [Transactions](/api-reference/transaction/list-transactions) | Fetch accounting codings and metadata from card transactions. |
+| [Bills](/api-reference/bill/list-bills) | Fetch accounting codings and metadata from bills and payments. |
+| [Reimbursements](/api-reference/reimbursement/list-reimbursements) | Fetch accounting codings and metadata from employee reimbursements. |
+| [Cashbacks](/api-reference/cashback/list-cashback-payments) | Fetch accounting codings and metadata from cashback earned via Ramp cards. |
+| [Statements](/api-reference/statement/list-statements) | Fetch payments for Ramp card statements. |
+| [Purchase Orders](/api-reference/purchase-order/list-purchase-orders) | Fetch and create purchase orders. |
+
+## Common questions
+
+**Are Purchase Orders available with all connection types?**
+
+Yes, purchase orders can be fetched and created via the API regardless of your accounting connection type. POs are not considered part of the accounting connection configuration—they're a separate feature available to all users with API access.
+
+---
+
+**Is it possible to have multiple Accounting Connections active at once as part of a customer migration?**
+
+No, this is a known limitation of migrating Ramp accounts between connections.
+
+---
+
+**Are there any limitations to the lookback period for API objects such as Transactions?**
+
+There are no lookback limits; all historical objects are available via API.
+
+---
+
+**Can I fetch payments associated with a bill via the API?**
+
+Yes, payment details are nested within the Bill object. Query bills with `sync_ready=true`, then use `sync_status` and the returned bill `status` together to determine whether to sync the bill, the payment, or both.
+
+---
+
+**Do users need to configure both Ramp and their finance/ERP systems for integrations to work?**
+
+Yes, most integrations require setup on both ends:
+
+- **Ramp**: Users authorize the app with the necessary permissions for the integration use case.
+- **Remote System**: Users often need to configure endpoints, set up API access, or install connectors to accept data from Ramp.
+
+---
+
+**Does Ramp enforce encryption for data transmissions?**
+
+Yes, Ramp ensures encryption across all data transmissions:
+
+- **HTTPS Encryption**: All API requests and responses are encrypted using HTTPS.
+- **Data Storage**: Data stored in Ramp systems is encrypted for security.
+
+For additional encryption needs, developers can implement payload-level encryption before sending or receiving data, as required.
+
+---
+
+**Can apps be hosted on Ramp infrastructure?**
+
+Currently, apps must be hosted externally, meaning they run on partner infrastructure and integrate with Ramp via APIs. While hosting on Ramp's infrastructure is not currently supported, it could be considered in the future for specific apps requiring deeper integration or enhanced control.
