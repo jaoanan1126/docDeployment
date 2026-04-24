@@ -29,7 +29,7 @@ Embedded Cards is currently in beta. Please reach out via the [support ticket su
 
 This integration follows a four-step flow:
 
-1. **Create a limit** → Create a limit using [`POST /limits`](/developer-api/v1/api/limits#post-developer-v1-limits). A card will be automatically created and each card has a unique `card_id`
+1. **Create a limit** → Create a limit using [`POST /limits`](/api-reference/limit/create-a-limit#post-developer-v1-limits-deferred). A card will be automatically created and each card has a unique `card_id`
 2. **Backend generates embed token** → Your backend calls `/developer/v1/embedded/cards/{card_id}/embed` to generate a secure embed token
 3. **Frontend loads iframe** → Your frontend receives the token and loads it in an iframe pointing to Ramp's embed service
 4. **User views card** → The user's browser requests card details directly from Ramp—card data never touches your servers
@@ -331,7 +331,7 @@ Questions?
 
 #### How do I get a card_id?
 
-You can retrieve card IDs via the [Limits API](/developer-api/v1/api/limits) or when creating cards through the [Virtual Cards guide](/developer-api/v1/virtual-cards).
+You can retrieve card IDs via the [Limits API](/api-reference/limit/list-limits) or when creating cards through the [Virtual Cards guide](/developer-api/v1/virtual-cards).
 
 #### Can I use this in production?
 

@@ -15,7 +15,7 @@ Note: This feature is currently in Alpha.
 
 - **Transaction Sync Button** appears on **Accounting > Transactions** and requires `transactions:read`, `accounting:read`, and `accounting:write`
 - **Reimbursement Sync Button** appears on **Accounting > Reimbursements** and requires `reimbursements:read`, `accounting:read`, and `accounting:write`
-- Both flows use the same accounting connection pattern: subscribe to a webhook, enable the sync button on the connection, fetch items with the `requested_to_sync` filter, then `POST` the sync result back to [/developer/v1/accounting/syncs](https://docs.ramp.com/developer-api/v1/api/accounting-syncs#post-developer-v1-accounting-syncs)
+- Both flows use the same accounting connection pattern: subscribe to a webhook, enable the sync button on the connection, fetch items with the `requested_to_sync` filter, then `POST` the sync result back to [/developer/v1/accounting/syncs](/api-reference/accounting/post-sync-status#post-developer-v1-accounting-syncs)
 
 ## Transaction Sync Button
 
@@ -23,7 +23,7 @@ Note: This feature is currently in Alpha.
 
 Create a webhook subscription with the `transactions.sync_requested` event type. This will fire when the sync button is pressed.
 
-To create the webhook, make a `POST` call to the [/developer/v1/webhooks](https://docs.ramp.com/developer-api/v1/api/webhooks#post-developer-v1-webhooks) endpoint and include `transactions.sync_requested` in the `event_types` array:
+To create the webhook, make a `POST` call to the [/developer/v1/webhooks](/api-reference/webhooks/creates-a-new-webhook-subscription#post-developer-v1-webhooks) endpoint and include `transactions.sync_requested` in the `event_types` array:
 
 ```bash
 curl -X POST "https://api.ramp.com/developer/v1/webhooks" \
@@ -59,7 +59,7 @@ Note
 This setting is managed at the Accounting Connection level. If you plan on creating multiple Accounting Connections, you need to configure this setting for each connection.
 </Info>
 
-**For new connections:** Make a `POST` call to [/developer/v1/accounting/connection](https://docs.ramp.com/developer-api/v1/api/accounting-connections#post-developer-v1-accounting-connection) with `settings.transaction_sync_button_enabled` set to `true`:
+**For new connections:** Make a `POST` call to [/developer/v1/accounting/connection](/api-reference/accounting/register-a-new-api-based-accounting-connection#post-developer-v1-accounting-connection) with `settings.transaction_sync_button_enabled` set to `true`:
 
 ```bash
 curl -X POST "{environment-url}/developer/v1/accounting/connection" \
@@ -74,7 +74,7 @@ curl -X POST "{environment-url}/developer/v1/accounting/connection" \
   }'
 ```
 
-**For existing connections:** First, retrieve your connection ID by making a `GET` call to [/developer/v1/accounting/connection](https://docs.ramp.com/developer-api/v1/api/accounting-connections#get-developer-v1-accounting-all-connections):
+**For existing connections:** First, retrieve your connection ID by making a `GET` call to [/developer/v1/accounting/connection](/api-reference/accounting/fetch-all-accounting-connections-for-the-current-business#get-developer-v1-accounting-all-connections):
 
 ```json
 {
@@ -91,7 +91,7 @@ curl -X POST "{environment-url}/developer/v1/accounting/connection" \
 }
 ```
 
-Then make a `PATCH` call to [/developer/v1/accounting/connection/{connection_id}](https://docs.ramp.com/developer-api/v1/api/accounting-connections#patch-developer-v1-accounting-connection-connection-id), using the `id` from the previous response as the `connection_id`, with `settings.transaction_sync_button_enabled` set to `true`:
+Then make a `PATCH` call to [/developer/v1/accounting/connection/{connection_id}](/api-reference/accounting/update-an-accounting-connection#patch-developer-v1-accounting-connection-connection-id), using the `id` from the previous response as the `connection_id`, with `settings.transaction_sync_button_enabled` set to `true`:
 
 ```bash
 curl -X PATCH "{environment-url}/developer/v1/accounting/connection/<connection_id>" \
@@ -134,14 +134,14 @@ Important: 5-minute response window
 You must respond by posting the Accounting Sync within 5 minutes of receiving the webhook. Transactions that don't have a sync posted within that window will be automatically marked as failed.
 </Warning>
 
-After receiving the `transactions.sync_requested` webhook, fetch the transactions that were requested for sync by calling the [/developer/v1/transactions](https://docs.ramp.com/developer-api/v1/api/transactions#get-developer-v1-transactions) endpoint with the `requested_to_sync` filter. Only the transactions that were requested to sync will be returned.
+After receiving the `transactions.sync_requested` webhook, fetch the transactions that were requested for sync by calling the [/developer/v1/transactions](/api-reference/transaction/list-transactions#get-developer-v1-transactions) endpoint with the `requested_to_sync` filter. Only the transactions that were requested to sync will be returned.
 
 ```bash
 curl -X GET "{environment-url}/developer/v1/transactions?requested_to_sync=True" \
   -H "Authorization: Bearer <token>"
 ```
 
-Once you've synced the transaction data to your system, make a `POST` call to [/developer/v1/accounting/syncs](https://docs.ramp.com/developer-api/v1/api/accounting-syncs#post-developer-v1-accounting-syncs). Include the `sync_request_id` from the webhook payload in the request body.
+Once you've synced the transaction data to your system, make a `POST` call to [/developer/v1/accounting/syncs](/api-reference/accounting/post-sync-status#post-developer-v1-accounting-syncs). Include the `sync_request_id` from the webhook payload in the request body.
 
 ```json
 {
@@ -176,7 +176,7 @@ Customers will see the same sync flow in the UI as they would with a direct Ramp
 
 Create a webhook subscription with the `reimbursements.sync_requested` event type. This will fire when the sync button is pressed.
 
-To create the webhook, make a `POST` call to the [/developer/v1/webhooks](https://docs.ramp.com/developer-api/v1/api/webhooks#post-developer-v1-webhooks) endpoint and include `reimbursements.sync_requested` in the `event_types` array:
+To create the webhook, make a `POST` call to the [/developer/v1/webhooks](/api-reference/webhooks/creates-a-new-webhook-subscription#post-developer-v1-webhooks) endpoint and include `reimbursements.sync_requested` in the `event_types` array:
 
 ```bash
 curl -X POST "https://api.ramp.com/developer/v1/webhooks" \
@@ -212,7 +212,7 @@ Note
 This setting is managed at the Accounting Connection level. If you plan on creating multiple Accounting Connections, you need to configure this setting for each connection.
 </Info>
 
-**For new connections:** Make a `POST` call to [/developer/v1/accounting/connection](https://docs.ramp.com/developer-api/v1/api/accounting-connections#post-developer-v1-accounting-connection) with `settings.reimbursement_sync_button_enabled` set to `true`:
+**For new connections:** Make a `POST` call to [/developer/v1/accounting/connection](/api-reference/accounting/register-a-new-api-based-accounting-connection#post-developer-v1-accounting-connection) with `settings.reimbursement_sync_button_enabled` set to `true`:
 
 ```bash
 curl -X POST "{environment-url}/developer/v1/accounting/connection" \
@@ -227,7 +227,7 @@ curl -X POST "{environment-url}/developer/v1/accounting/connection" \
   }'
 ```
 
-**For existing connections:** First, retrieve your connection ID by making a `GET` call to [/developer/v1/accounting/connection](https://docs.ramp.com/developer-api/v1/api/accounting-connections#get-developer-v1-accounting-all-connections):
+**For existing connections:** First, retrieve your connection ID by making a `GET` call to [/developer/v1/accounting/connection](/api-reference/accounting/fetch-all-accounting-connections-for-the-current-business#get-developer-v1-accounting-all-connections):
 
 ```json
 {
@@ -244,7 +244,7 @@ curl -X POST "{environment-url}/developer/v1/accounting/connection" \
 }
 ```
 
-Then make a `PATCH` call to [/developer/v1/accounting/connection/{connection_id}](https://docs.ramp.com/developer-api/v1/api/accounting-connections#patch-developer-v1-accounting-connection-connection-id), using the `id` from the previous response as the `connection_id`, with `settings.reimbursement_sync_button_enabled` set to `true`:
+Then make a `PATCH` call to [/developer/v1/accounting/connection/{connection_id}](/api-reference/accounting/update-an-accounting-connection#patch-developer-v1-accounting-connection-connection-id), using the `id` from the previous response as the `connection_id`, with `settings.reimbursement_sync_button_enabled` set to `true`:
 
 ```bash
 curl -X PATCH "{environment-url}/developer/v1/accounting/connection/<connection_id>" \
@@ -285,14 +285,14 @@ Important: 5-minute response window
 You must respond by posting the Accounting Sync within 5 minutes of receiving the webhook. Reimbursements that don't have a sync posted within that window will be automatically marked as failed.
 </Warning>
 
-After receiving the `reimbursements.sync_requested` webhook, fetch the reimbursements that were requested for sync by calling the [/developer/v1/reimbursements](https://docs.ramp.com/developer-api/v1/api/reimbursements#get-developer-v1-reimbursements) endpoint with the `requested_to_sync` filter. Only the reimbursements that were requested to sync will be returned.
+After receiving the `reimbursements.sync_requested` webhook, fetch the reimbursements that were requested for sync by calling the [/developer/v1/reimbursements](/api-reference/reimbursement/list-reimbursements#get-developer-v1-reimbursements) endpoint with the `requested_to_sync` filter. Only the reimbursements that were requested to sync will be returned.
 
 ```bash
 curl -X GET "{environment-url}/developer/v1/reimbursements?requested_to_sync=True" \
   -H "Authorization: Bearer <token>"
 ```
 
-Once you've synced the reimbursement data to your system, make a `POST` call to [/developer/v1/accounting/syncs](https://docs.ramp.com/developer-api/v1/api/accounting-syncs#post-developer-v1-accounting-syncs). Include the `sync_request_id` from the webhook payload in the request body.
+Once you've synced the reimbursement data to your system, make a `POST` call to [/developer/v1/accounting/syncs](/api-reference/accounting/post-sync-status#post-developer-v1-accounting-syncs). Include the `sync_request_id` from the webhook payload in the request body.
 
 ```json
 {

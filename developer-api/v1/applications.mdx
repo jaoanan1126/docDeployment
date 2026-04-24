@@ -13,7 +13,7 @@ Note that this API creates and pre-fills but does not submit the application - i
 
 The application flow has three participants: your platform, Ramp, and the applicant (the business signing up).
 
-1. **Submit the application** — You call [POST /applications](/developer-api/v1/api/applications#post-developer-v1-applications) with the applicant's information
+1. **Submit the application** — You call [POST /applications](/api-reference/application/create-a-financing-application#post-developer-v1-applications) with the applicant's information
 2. **Applicant receives an email** — Ramp sends the applicant an email with sign-up instructions
 3. **Applicant completes sign-up** — The applicant creates their Ramp account. At this point, the user may be redirected either to the application or an OAuth consent screen.
 4. **User completes and submits the application in browser** - the user verifies their information is correct, performs final steps and submits application for Ramp review
@@ -32,7 +32,7 @@ You must use the [Client Credentials](/developer-api/v1/authorization#supported-
 
 ## Submitting an Application
 
-Use [POST /applications](/developer-api/v1/api/applications#post-developer-v1-applications) to submit a new application.
+Use [POST /applications](/api-reference/application/create-a-financing-application#post-developer-v1-applications) to submit a new application.
 
 ### Idempotency behavior
 
@@ -102,7 +102,7 @@ Each application moves through the following statuses:
 
 ### Checking application status
 
-Use [GET /applications](/developer-api/v1/api/applications#get-developer-v1-applications) to check the current status. This endpoint requires the `applications:read` scope, which means you'll need an access token obtained through the [Authorization Code](/developer-api/v1/authorization#authorization-code-flow) flow.
+Use [GET /applications](/api-reference/application/fetch-a-financing-application#get-developer-v1-applications) to check the current status. This endpoint requires the `applications:read` scope, which means you'll need an access token obtained through the [Authorization Code](/developer-api/v1/authorization#authorization-code-flow) flow.
 
 ---
 
@@ -124,7 +124,7 @@ The webhook payload includes the application ID and its new status:
 }
 ```
 
-When you receive this event, call [GET /applications](/developer-api/v1/api/applications#get-developer-v1-applications) to fetch the full application details and current status.
+When you receive this event, call [GET /applications](/api-reference/application/fetch-a-financing-application#get-developer-v1-applications) to fetch the full application details and current status.
 
 See the [Webhooks Guide](/developer-api/v1/webhooks) for setup instructions.
 

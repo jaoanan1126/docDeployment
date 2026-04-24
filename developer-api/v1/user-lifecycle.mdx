@@ -11,7 +11,7 @@ This guide covers three example workflows for managing Ramp users over the Devel
 2. [Deactivate and reactivate a user](#scenario-2-deactivate-and-reactivate-a-user)
 3. [Stage a draft user and schedule their invite for later](#scenario-3-stage-a-draft-user-and-schedule-their-invite)
 
-Full endpoint schemas live in the [Users API reference](https://docs.ramp.com/developer-api/v1/api/users). The [Reference](#reference) section covers the status model and listing/filtering patterns.
+Full endpoint schemas live in the [Users API reference](/api-reference/user/list-users). The [Reference](#reference) section covers the status model and listing/filtering patterns.
 
 <Info>
 **Works on users from any source**
@@ -21,8 +21,8 @@ Users created outside the Developer API — via HRIS or SCIM sync, a manual invi
 
 ### Before you start
 
-- You need an OAuth access token with the `users:read` and `users:write` scopes. See the [Authorization guide](https://docs.ramp.com/developer-api/v1/authorization) for how to obtain one.
-- If you plan to set a department, location, or manager on new users, look those up first via [GET /departments](https://docs.ramp.com/developer-api/v1/api/departments#get-developer-v1-departments), [GET /locations](https://docs.ramp.com/developer-api/v1/api/locations#get-developer-v1-locations), and [GET /users](https://docs.ramp.com/developer-api/v1/api/users#get-developer-v1-users).
+- You need an OAuth access token with the `users:read` and `users:write` scopes. See the [Authorization guide](/developer-api/v1/authorization) for how to obtain one.
+- If you plan to set a department, location, or manager on new users, look those up first via [GET /departments](/api-reference/department/list-departments#get-developer-v1-departments), [GET /locations](/api-reference/location/list-locations#get-developer-v1-locations), and [GET /users](/api-reference/user/list-users#get-developer-v1-users).
 
 ### How asynchronous user creation works
 
@@ -98,7 +98,7 @@ Poll the deferred task until it reports `SUCCESS`, then `GET /developer/v1/users
 }
 ```
 
-The user starts in `INVITE_PENDING`. They transition to `USER_ACTIVE` once they click the invite link and complete onboarding — you'll receive the `users.invite_accepted` webhook at that point (see the [Webhooks guide](https://docs.ramp.com/developer-api/v1/webhooks)).
+The user starts in `INVITE_PENDING`. They transition to `USER_ACTIVE` once they click the invite link and complete onboarding — you'll receive the `users.invite_accepted` webhook at that point (see the [Webhooks guide](/developer-api/v1/webhooks)).
 
 <Info>
 **Guest users get an automatic 6-month expiration**

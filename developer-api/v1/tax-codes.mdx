@@ -27,7 +27,7 @@ Tax codes allow you to associate tax rates with transactions in Ramp, keeping yo
 
 ### Step 1. Upload tax rates
 
-Tax rates define the individual rate values (e.g., GST at 5%, PST at 7%) that will be available as options within a tax code. Upload them first using [POST /developer/v1/accounting/tax/rates](https://docs.ramp.com/developer-api/v1/api/accounting-tax#post-developer-v1-accounting-tax-rates):
+Tax rates define the individual rate values (e.g., GST at 5%, PST at 7%) that will be available as options within a tax code. Upload them first using [POST /developer/v1/accounting/tax/rates](/api-reference/accounting/upload-tax-rates#post-developer-v1-accounting-tax-rates):
 
 ```bash
 curl -X POST \
@@ -57,7 +57,7 @@ curl -X POST \
 | `id` | Your ERP's external identifier for this tax rate |
 | `name` | Display name of the tax rate |
 | `rate` | Decimal value (e.g., `"0.05"` for 5%) |
-| `accounting_gl_account_id` | The `ramp_id` of the GL account to associate with this tax rate. Required for API-based connections. <br /> Use [GET /developer/v1/accounting/accounts](https://docs.ramp.com/developer-api/v1/api/accounting-gl-accounts#get-developer-v1-accounting-accounts) to find the `ramp_id`. |
+| `accounting_gl_account_id` | The `ramp_id` of the GL account to associate with this tax rate. Required for API-based connections. <br /> Use [GET /developer/v1/accounting/accounts](/api-reference/accounting/list-general-ledger-accounts#get-developer-v1-accounting-accounts) to find the `ramp_id`. |
 
 You can upload up to 500 tax rates per request. Batches are all-or-nothing: if any rate fails validation, the entire batch is rejected.
 
@@ -73,7 +73,7 @@ You only need to create the tax code field once. If the tax code field already e
 
 The tax code field is the accounting field that holds your tax code options. There can only be one active tax code field per accounting connection, so you only need to perform this step once.
 
-Use [POST /developer/v1/accounting/tax/code](https://docs.ramp.com/developer-api/v1/api/accounting-tax#post-developer-v1-accounting-tax-code) to create it:
+Use [POST /developer/v1/accounting/tax/code](/api-reference/accounting/create-a-new-tax-code-accounting-field#post-developer-v1-accounting-tax-code) to create it:
 
 ```bash
 curl -X POST \
@@ -97,7 +97,7 @@ curl -X POST \
 
 Tax code options are the selectable values within your tax code field. Each option can reference one or more tax rates from Step 1.
 
-Use [POST /developer/v1/accounting/tax/code/options](https://docs.ramp.com/developer-api/v1/api/accounting-tax#post-developer-v1-accounting-tax-code-options) to create them.
+Use [POST /developer/v1/accounting/tax/code/options](/api-reference/accounting/upload-tax-code-options#post-developer-v1-accounting-tax-code-options) to create them.
 
 ```bash
 curl -X POST \

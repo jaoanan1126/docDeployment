@@ -25,7 +25,7 @@ Note
 This setting is managed at the Accounting Connection level. If you plan on creating multiple Accounting Connections, you need to configure this setting for each connection.
 </Info>
 
-**For new connections:** Make a `POST` call to [/developer/v1/accounting/connection](https://docs.ramp.com/developer-api/v1/api/accounting-connections#post-developer-v1-accounting-connection) with `settings.vendor_credits_enabled` set to `true`:
+**For new connections:** Make a `POST` call to [/developer/v1/accounting/connection](/api-reference/accounting/register-a-new-api-based-accounting-connection#post-developer-v1-accounting-connection) with `settings.vendor_credits_enabled` set to `true`:
 
 ```bash
 curl -X POST "{environment-url}/developer/v1/accounting/connection" \
@@ -40,7 +40,7 @@ curl -X POST "{environment-url}/developer/v1/accounting/connection" \
   }'
 ```
 
-**For existing connections:** First, retrieve your connection ID by making a `GET` call to [/developer/v1/accounting/connection](https://docs.ramp.com/developer-api/v1/api/accounting-connections#get-developer-v1-accounting-all-connections):
+**For existing connections:** First, retrieve your connection ID by making a `GET` call to [/developer/v1/accounting/connection](/api-reference/accounting/fetch-all-accounting-connections-for-the-current-business#get-developer-v1-accounting-all-connections):
 
 ```json
 {
@@ -57,7 +57,7 @@ curl -X POST "{environment-url}/developer/v1/accounting/connection" \
 }
 ```
 
-Then make a `PATCH` call to [/developer/v1/accounting/connection/{connection_id}](https://docs.ramp.com/developer-api/v1/api/accounting#patch-developer-v1-accounting-connection-connection-id) with the `id` to enable vendor credits:
+Then make a `PATCH` call to [/developer/v1/accounting/connection/{connection_id}](/api-reference/accounting/update-an-accounting-connection#patch-developer-v1-accounting-connection-connection-id) with the `id` to enable vendor credits:
 
 ```bash
 curl -X PATCH "{environment-url}/developer/v1/accounting/connection/<connection_id>" \
@@ -83,7 +83,7 @@ Once vendor credits are enabled, users can create them in the Ramp platform:
 
 ### Step 3. List vendor credits
 
-To list all vendor credits, make a `GET` call to [/developer/v1/vendors/credits](https://docs.ramp.com/developer-api/v1/api/vendors#get-developer-v1-vendors-credits):
+To list all vendor credits, make a `GET` call to [/developer/v1/vendors/credits](/api-reference/vendor/list-all-vendor-credits-for-all-vendors-of-a-business#get-developer-v1-vendors-credits):
 
 ```bash
 curl -X GET "{environment-url}/developer/v1/vendors/credits" \
@@ -142,7 +142,7 @@ curl -X GET "{environment-url}/developer/v1/vendors/credits" \
 
 **List vendor credits for a specific vendor**
 
-To retrieve all vendor credits associated with a specific vendor, make a `GET` call to [`/developer/v1/vendors/{vendor_id}/credits`](https://docs.ramp.com/developer-api/v1/api/vendors#get-developer-v1-vendors-vendor-id-credits). Use the `vendor_id` from the response above or from your vendor records:
+To retrieve all vendor credits associated with a specific vendor, make a `GET` call to [`/developer/v1/vendors/{vendor_id}/credits`](/api-reference/vendor/list-vendor-credits-by-vendor#get-developer-v1-vendors-vendor-id-credits). Use the `vendor_id` from the response above or from your vendor records:
 
 ```bash
 curl -X GET "{environment-url}/developer/v1/vendors/<vendor_id>/credits" \
@@ -153,7 +153,7 @@ This endpoint returns the same response format as the general credits list, but 
 
 ### Step 4. Get a single vendor credit
 
-To retrieve a specific vendor credit, make a `GET` call to [/developer/v1/vendors/credits](https://docs.ramp.com/developer-api/v1/api/vendors#get-developer-v1-vendors-credits-vendor-credit-id):
+To retrieve a specific vendor credit, make a `GET` call to [/developer/v1/vendors/credits](/api-reference/vendor/fetch-a-vendor-credit#get-developer-v1-vendors-credits-vendor-credit-id):
 
 ```bash
 curl -X GET "{environment-url}/developer/v1/vendors/credits/<vendor_credit_id>" \

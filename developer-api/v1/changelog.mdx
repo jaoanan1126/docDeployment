@@ -9,25 +9,25 @@ Stay up to date with our latest API updates via [RSS feed](https://docs.ramp.com
 
 ## April 17, 2026
 
-- **New blank canvas approvals endpoints** — Approve or reject blank canvas workflow steps, update metadata for external approval requests, and upload documents for blank canvas workflow steps. [View endpoint](/developer-api/v1/api/blank-canvas-approvals#post-developer-v1-blank-canvas-approvals-approval-trigger-instance-id) · [View metadata endpoint](/developer-api/v1/api/blank-canvas-approvals#patch-developer-v1-blank-canvas-approvals-approval-trigger-instance-id-metadata) · [View documents endpoint](/developer-api/v1/api/blank-canvas-approvals#post-developer-v1-blank-canvas-approvals-documents)
+- **New blank canvas approvals endpoints** — Approve or reject blank canvas workflow steps, update metadata for external approval requests, and upload documents for blank canvas workflow steps. [View endpoint](/api-reference/blankcanvas/approve-or-reject-a-blank-canvas-workflow-step#post-developer-v1-blank-canvas-approvals-approval-trigger-instance-id) · [View metadata endpoint](/api-reference/blankcanvas/update-metadata-for-a-blank-canvas-external-approval-request#patch-developer-v1-blank-canvas-approvals-approval-trigger-instance-id-metadata) · [View documents endpoint](/api-reference/blankcanvas/upload-a-document-for-a-blank-canvas-workflow-step#post-developer-v1-blank-canvas-approvals-documents)
 
-- **New repayments endpoint** — List repayments with filtering by entity, funding method, repayment date range, and user. [View endpoint](/developer-api/v1/api/repayments#get-developer-v1-repayments)
+- **New repayments endpoint** — List repayments with filtering by entity, funding method, repayment date range, and user. [View endpoint](/api-reference/repayment/list-repayments#get-developer-v1-repayments)
 
-- **New unified requests endpoints** — List and fetch unified spend requests with filtering by department, entity, location, owner, spend program, request type, status, amount range, and date range. [View endpoint](/developer-api/v1/api/unified-requests#get-developer-v1-unified-requests)
+- **New unified requests endpoints** — List and fetch unified spend requests with filtering by department, entity, location, owner, spend program, request type, status, amount range, and date range. [View endpoint](/api-reference/unified-request/list-unified-requests-with-pagination#get-developer-v1-unified-requests)
 
-- **New spend request endpoints** — Create draft spend requests via OCR, list and create comments on spend request discussion threads. [View endpoint](/developer-api/v1/api/spend-requests#post-developer-v1-spend-requests-draft-via-ocr) · [View comments endpoint](/developer-api/v1/api/spend-requests#get-developer-v1-spend-requests-spend-request-id-comments)
+- **New spend request endpoints** — Create draft spend requests via OCR, list and create comments on spend request discussion threads. [View endpoint](/api-reference/spend-request/create-a-draft-spend-request-via-ocr#post-developer-v1-spend-requests-draft-via-ocr) · [View comments endpoint](/api-reference/spend-request/list-comments-on-a-spend-requests-discussion-thread#get-developer-v1-spend-requests-spend-request-id-comments)
 
-- **New spend program workflow nodes endpoint** — Fetch blank canvas workflow nodes for a spend program, filtered by external approval service key. [View endpoint](/developer-api/v1/api/spend-programs#get-developer-v1-spend-programs-spend-program-id-workflow-nodes)
+- **New spend program workflow nodes endpoint** — Fetch blank canvas workflow nodes for a spend program, filtered by external approval service key. [View endpoint](/api-reference/spend-program/fetch-blank-canvas-workflow-nodes-for-a-spend-program#get-developer-v1-spend-programs-spend-program-id-workflow-nodes)
 
-- **New custom form collection response endpoint** — Fetch a custom form collection response by ID. [View endpoint](/developer-api/v1/api/custom-form#get-developer-v1-custom-form-collections-responses-custom-form-collection-response-id)
+- **New custom form collection response endpoint** — Fetch a custom form collection response by ID. [View endpoint](/api-reference/customform/fetch-a-custom-form-collection-response-by-id#get-developer-v1-custom-form-collections-responses-custom-form-collection-response-id)
 
-- **New vendor agreement endpoints (beta)** — Create, fetch, update, and delete vendor agreements, upload agreement documents, and create agreements for specific vendors. [View endpoint](/developer-api/v1/api/vendors#get-developer-v1-vendors-agreements-agreement-id) · [View documents endpoint](/developer-api/v1/api/vendors#post-developer-v1-vendors-agreements-agreement-id-documents)
+- **New vendor agreement endpoints (beta)** — Create, fetch, update, and delete vendor agreements, upload agreement documents, and create agreements for specific vendors. [View endpoint](/api-reference/vendor/fetch-a-vendor-agreement#get-developer-v1-vendors-agreements-agreement-id) · [View documents endpoint](/api-reference/vendor/upload-documents-for-a-vendor-agreement#post-developer-v1-vendors-agreements-agreement-id-documents)
 
-- **New mock webhook event endpoint** — Create mock webhook events for testing active subscriptions matching a given event type. [View endpoint](/developer-api/v1/api/webhooks#post-developer-v1-webhooks-mock-webhook-event)
+- **New mock webhook event endpoint** — Create mock webhook events for testing active subscriptions matching a given event type. [View endpoint](/api-reference/webhooks/create-a-mock-webhook-event-for-active-subscriptions-matching-the-event-type#post-developer-v1-webhooks-mock-webhook-event)
 
 - **Audit log object filtering** — Added `object_id` and `resource_name` query parameters to the audit logs endpoint for filtering events by specific object ID and resource type. [View endpoint](/developer-apit-developer-v1-audit-logs-events)
 
-- **Purchase order external ID support** — Added `external_id` field to purchase order and line item creation and responses, plus `external_id` and `remote_id` query parameters for filtering purchase orders. [View endpoint](/developer-api/v1/api/purchase-orders#get-developer-v1-purchase-orders)
+- **Purchase order external ID support** — Added `external_id` field to purchase order and line item creation and responses, plus `external_id` and `remote_id` query parameters for filtering purchase orders. [View endpoint](/api-reference/purchase-order/list-purchase-orders#get-developer-v1-purchase-orders)
 
 - **Purchase order shipping fields** — Purchase order responses now include `ship_to_address`, `ship_to_company_name`, `shipping_contact_email`, `shipping_contact_first_name`, `shipping_contact_last_name`, and `shipping_contact_phone_number` fields.
 
@@ -35,13 +35,13 @@ Stay up to date with our latest API updates via [RSS feed](https://docs.ramp.com
 
 - **Accounting connection ID support across accounting endpoints** — Added optional `accounting_connection_id` query parameter to GL accounts, custom fields, custom field options, inventory items, tax codes, tax rates, and accounting vendor endpoints for accessing resources belonging to inactive accounting connections.
 
-- **Enhanced vendor filtering** — Added `to_created_at`, `from_updated_at`, and `to_updated_at` query parameters to the List Vendors endpoint for date-based filtering. [View endpoint](/developer-api/v1/api/vendors#get-developer-v1-vendors)
+- **Enhanced vendor filtering** — Added `to_created_at`, `from_updated_at`, and `to_updated_at` query parameters to the List Vendors endpoint for date-based filtering. [View endpoint](/api-reference/vendor/list-vendors#get-developer-v1-vendors)
 
-- **Draft user status support** — Added `USER_DRAFT` enum value to the user `status` filter and response field, along with a new `scheduled_invitation_date` field on user responses. [View endpoint](/developer-api/v1/api/users#get-developer-v1-users)
+- **Draft user status support** — Added `USER_DRAFT` enum value to the user `status` filter and response field, along with a new `scheduled_invitation_date` field on user responses. [View endpoint](/api-reference/user/list-users#get-developer-v1-users)
 
-- **Business balance structured amounts** — The business balance response now includes `CurrencyAmount` fields (e.g., `available_card_limit_amount`, `card_limit_amount`, `statement_balance_amount`) with explicit currency codes and minor unit values alongside the existing numeric fields. [View endpoint](/developer-api/v1/api/business#get-developer-v1-business-balance)
+- **Business balance structured amounts** — The business balance response now includes `CurrencyAmount` fields (e.g., `available_card_limit_amount`, `card_limit_amount`, `statement_balance_amount`) with explicit currency codes and minor unit values alongside the existing numeric fields. [View endpoint](/api-reference/business/fetch-the-company-balance-information#get-developer-v1-business-balance)
 
-- **Bank account name field** — Bank account responses now include an `account_name` field. [View endpoint](/developer-api/v1/api/bank-accounts#get-developer-v1-bank-accounts)
+- **Bank account name field** — Bank account responses now include an `account_name` field. [View endpoint](/api-reference/bank-accounts/list-bank-accounts#get-developer-v1-bank-accounts)
 
 - **Reimbursement trace ID** — Reimbursement detail responses now include a `trace_id` field with the bank-facing accountability reference for the payment.
 
@@ -57,17 +57,17 @@ Stay up to date with our latest API updates via [RSS feed](https://docs.ramp.com
 
 ## March 30, 2026
 
-- **New List Bank Accounts endpoint** — Retrieve a paginated list of bank accounts associated with your business. Supports `start` and `page_size` query parameters for pagination. [View endpoint](/developer-api/v1/api/bank-accounts#get-developer-v1-bank-accounts)
+- **New List Bank Accounts endpoint** — Retrieve a paginated list of bank accounts associated with your business. Supports `start` and `page_size` query parameters for pagination. [View endpoint](/api-reference/bank-accounts/list-bank-accounts#get-developer-v1-bank-accounts)
 
-- **New List Vendor Agreements endpoint (beta)** — Query vendor agreements with extensive filtering options including date ranges, renewal status, contract owners, departments, total value, and custom record filters via `POST /developer/v1/vendors/agreements`. [View endpoint](/developer-api/v1/api/vendors#post-developer-v1-vendors-agreements)
+- **New List Vendor Agreements endpoint (beta)** — Query vendor agreements with extensive filtering options including date ranges, renewal status, contract owners, departments, total value, and custom record filters via `POST /developer/v1/vendors/agreements`. [View endpoint](/api-reference/vendor/list-vendor-agreements#post-developer-v1-vendors-agreements)
 
-- **Enhanced vendor filtering by timestamps** — Added `to_created_at`, `from_updated_at`, and `to_updated_at` query parameters to the List Vendors endpoint for filtering vendors by creation and update dates. [View endpoint](/developer-api/v1/api/vendors#get-developer-v1-vendors)
+- **Enhanced vendor filtering by timestamps** — Added `to_created_at`, `from_updated_at`, and `to_updated_at` query parameters to the List Vendors endpoint for filtering vendors by creation and update dates. [View endpoint](/api-reference/vendor/list-vendors#get-developer-v1-vendors)
 
-- **Vendor subsidiary data** — Added `include_subsidiary` query parameter to the List Vendors endpoint. When set to `true`, vendor responses include a `subsidiary` field with ERP subsidiary identifiers. [View endpoint](/developer-api/v1/api/vendors#get-developer-v1-vendors)
+- **Vendor subsidiary data** — Added `include_subsidiary` query parameter to the List Vendors endpoint. When set to `true`, vendor responses include a `subsidiary` field with ERP subsidiary identifiers. [View endpoint](/api-reference/vendor/list-vendors#get-developer-v1-vendors)
 
-- **Allowed overage percent override on limits** — The `allowed_overage_percent_override` field is now available when creating limits and is returned in limit responses. This decimal value (0–100) lets you set a fund-level override for the allowed overage percent, independent of the spend program or business default. [View endpoint](/developer-api/v1/api/limits#post-developer-v1-limits-deferred)
+- **Allowed overage percent override on limits** — The `allowed_overage_percent_override` field is now available when creating limits and is returned in limit responses. This decimal value (0–100) lets you set a fund-level override for the allowed overage percent, independent of the spend program or business default. [View endpoint](/api-reference/limit/create-a-limit#post-developer-v1-limits-deferred)
 
-- **Update custom accounting field options** — New `PUT /developer/v1/accounting/field-options/{field_option_id}` endpoint to update existing custom accounting field options. [View endpoint](/developer-api/v1/api/accounting#put-developer-v1-accounting-field-options-field-option-id)
+- **Update custom accounting field options** — New `PUT /developer/v1/accounting/field-options/{field_option_id}` endpoint to update existing custom accounting field options. [View endpoint](/api-reference/accounting/update-a-custom-accounting-field-option#put-developer-v1-accounting-field-options-field-option-id)
 
 - **New audit log event types** — Added `Generated renewal brief for contract`, `Spend allocation change request approval policy updated`, and `Vendor Network updates enabled` event types to the audit logs endpoint.
 
@@ -75,44 +75,44 @@ Stay up to date with our latest API updates via [RSS feed](https://docs.ramp.com
 
 - **Custom records reference columns relaxed** — The `corresponding_column_name` field on reference column configurations is no longer required and defaults to `null`. It will be auto-generated if not provided, simplifying forward-only reference column setup.
 
-- **Auto-match uploaded receipts without a transaction ID** — The `POST /receipts` endpoint can now automatically match uploaded receipts to transactions without requiring a `transaction_id`. [View endpoint](/developer-api/v1/api/receipts#post-developer-v1-receipts)
+- **Auto-match uploaded receipts without a transaction ID** — The `POST /receipts` endpoint can now automatically match uploaded receipts to transactions without requiring a `transaction_id`. [View endpoint](/api-reference/receipt/upload-a-receipt#post-developer-v1-receipts)
 
 ## March 25, 2026
 
-- **New financing applications endpoints (beta)** — Create and fetch financing applications programmatically. Submit applicant details, business information, controlling officers, beneficial owners, and financial details. [View GET endpoint](/developer-api/v1/api/applications#get-developer-v1-applications) | [View POST endpoint](/developer-api/v1/api/applications#post-developer-v1-applications) | [View guide](/developer-api/v1/applications)
+- **New financing applications endpoints (beta)** — Create and fetch financing applications programmatically. Submit applicant details, business information, controlling officers, beneficial owners, and financial details. [View GET endpoint](/api-reference/application/fetch-a-financing-application#get-developer-v1-applications) | [View POST endpoint](/api-reference/application/create-a-financing-application#post-developer-v1-applications) | [View guide](/developer-api/v1/applications)
 
 - **New ready-to-sync endpoint (beta)** — Mark accounting objects as ready to sync by providing a list of `object_ids` and an `object_type` (currently supports `TRANSACTION`). [View endpoint](/developer-apist-developer-v1-accounting-ready-to-sync)
 
-- **New `applications.status_updated` webhook event** — Subscribe to `applications.status_updated` to receive notifications when a financing application's status changes. [View endpoint](/developer-api/v1/api/webhooks#post-developer-v1-webhooks)
+- **New `applications.status_updated` webhook event** — Subscribe to `applications.status_updated` to receive notifications when a financing application's status changes. [View endpoint](/api-reference/webhooks/creates-a-new-webhook-subscription#post-developer-v1-webhooks)
 
-- **New bill payment status `ON_HOLD`** — Added `ON_HOLD` enum value to the bill `payment_status` filter and response, representing bills that have been placed on hold. [View endpoint](/developer-api/v1/api/bills#get-developer-v1-bills)
+- **New bill payment status `ON_HOLD`** — Added `ON_HOLD` enum value to the bill `payment_status` filter and response, representing bills that have been placed on hold. [View endpoint](/api-reference/bill/list-bills#get-developer-v1-bills)
 
-- **New `cancelled` trip status** — The `status` filter on the List Trips endpoint now supports the `cancelled` enum value, and trip responses can include `cancelled` as a status. [View endpoint](/developer-api/v1/api/trips#get-developer-v1-trips)
+- **New `cancelled` trip status** — The `status` filter on the List Trips endpoint now supports the `cancelled` enum value, and trip responses can include `cancelled` as a status. [View endpoint](/api-reference/trips/list-all-trips-for-the-business#get-developer-v1-trips)
 
-- **New audit log event type** — Added `Vendor linked to vendor network` to the list of supported audit log event types. [View endpoint](/developer-api/v1/api/audit-logs#get-developer-v1-audit-logs-events)
+- **New audit log event type** — Added `Vendor linked to vendor network` to the list of supported audit log event types. [View endpoint](/api-reference/audit-log/get-audit-log-events#get-developer-v1-audit-logs-events)
 
 - **New GL account classification types** — Added `AR_CHARGEBACK_CLEARING_ACCOUNT` and `AR_REFUNDS_CLEARING_ACCOUNT` classification enum values for accounting GL accounts.
 
 ## March 19, 2026
 
-- **New bill filtering by payment ID** — Added `customer_friendly_payment_id` query parameter to filter bills by their customer-friendly payment identifier, making it easy to find all bills belonging to the same payment or batch payment. The response also now includes `customer_friendly_payment_id` on bill payment objects. [View endpoint](/developer-api/v1/api/bills#get-developer-v1-bills)
+- **New bill filtering by payment ID** — Added `customer_friendly_payment_id` query parameter to filter bills by their customer-friendly payment identifier, making it easy to find all bills belonging to the same payment or batch payment. The response also now includes `customer_friendly_payment_id` on bill payment objects. [View endpoint](/api-reference/bill/list-bills#get-developer-v1-bills)
 
-- **New bill filtering by draft bill ID** — Added `draft_bill_id` query parameter to the List Bills endpoint to filter by the originating draft bill. The bill response now also includes `draft_bill_id` to indicate which draft bill a bill was created from. [View endpoint](/developer-api/v1/api/bills#get-developer-v1-bills)
+- **New bill filtering by draft bill ID** — Added `draft_bill_id` query parameter to the List Bills endpoint to filter by the originating draft bill. The bill response now also includes `draft_bill_id` to indicate which draft bill a bill was created from. [View endpoint](/api-reference/bill/list-bills#get-developer-v1-bills)
 
-- **New bill and draft bill filtering by remote ID** — Added `remote_id` query parameter to both the List Bills and List Draft Bills endpoints, allowing you to look up bills and drafts by their external system identifier. [View endpoint](/developer-api/v1/api/bills#get-developer-v1-bills) | [View draft bills endpoint](/developer-api/v1/api/bills#get-developer-v1-bills-drafts)
+- **New bill and draft bill filtering by remote ID** — Added `remote_id` query parameter to both the List Bills and List Draft Bills endpoints, allowing you to look up bills and drafts by their external system identifier. [View endpoint](/api-reference/bill/list-bills#get-developer-v1-bills) | [View draft bills endpoint](/api-reference/bill/list-draft-bills#get-developer-v1-bills-drafts)
 
-- **Reactivate deleted inventory item options** — Added `reactivate` field to the `PATCH /developer/v1/accounting/inventory-item/options/{option_id}` request body, bringing parity with custom field options by letting you restore soft-deleted inventory item options. [View endpoint](/developer-api/v1/api/accounting-inventory-item#patch-developer-v1-accounting-inventory-item-options-option-id)
+- **Reactivate deleted inventory item options** — Added `reactivate` field to the `PATCH /developer/v1/accounting/inventory-item/options/{option_id}` request body, bringing parity with custom field options by letting you restore soft-deleted inventory item options. [View endpoint](/api-reference/accounting/update-an-inventory-item-option#patch-developer-v1-accounting-inventory-item-options-option-id)
 
-- **Vendor owner is now optional** — The `vendor_owner_id` field is no longer required when creating a vendor via `POST /developer/v1/vendors`. Omitting it creates the vendor without an owner. [View endpoint](/developer-api/v1/api/vendors#post-developer-v1-vendors)
+- **Vendor owner is now optional** — The `vendor_owner_id` field is no longer required when creating a vendor via `POST /developer/v1/vendors`. Omitting it creates the vendor without an owner. [View endpoint](/api-reference/vendor/create-a-new-vendor#post-developer-v1-vendors)
 
 ## March 18, 2026
 
-- **Decimal quantity support for bill line items** — The `unit_quantity` field has been replaced with `quantity`, which now accepts decimal values (e.g., `2.25`) instead of only integers. `unit_quantity` is still accepted for backwards compatibility. The `unit_price` field also now accepts decimal string or number formats. This applies when creating or updating line items on bills and draft bills. [View endpoint](/developer-api/v1/api/bills#post-developer-v1-bills)
+- **Decimal quantity support for bill line items** — The `unit_quantity` field has been replaced with `quantity`, which now accepts decimal values (e.g., `2.25`) instead of only integers. `unit_quantity` is still accepted for backwards compatibility. The `unit_price` field also now accepts decimal string or number formats. This applies when creating or updating line items on bills and draft bills. [View endpoint](/api-reference/bill/create-a-bill#post-developer-v1-bills)
 
 - **New GL account classification types** — Added six new enum values for GL account classifications: `AR_ACCOUNTS_RECEIVABLE_ACCOUNT`, `AR_BAD_DEBT_ACCOUNT`, `AR_CARD_FEES_ACCOUNT`, `AR_CASH_ACCOUNT_DEFAULT`, `AR_INCOME_ACCOUNT_DEFAULT`, and `AR_UNDEPOSITED_FUNDS_ACCOUNT`, enabling accounts receivable accounting integrations.
 
 ## March 17, 2026
 
-- **Vendor memo support for bills** — Added `vendor_memo` field to create and update bill endpoints, as well as draft bill endpoints, allowing you to set a memo to the vendor (up to 400 characters) on a bill. [View endpoint](/developer-api/v1/api/bills#post-developer-v1-bills) | [View endpoint](/developer-api/v1/api/bills#patch-developer-v1-bills-bill-id) | [View endpoint](/developer-api/v1/api/bills#post-developer-v1-bills-drafts) | [View endpoint](/developer-api/v1/api/bills#patch-developer-v1-bills-drafts-draft-bill-id)
+- **Vendor memo support for bills** — Added `vendor_memo` field to create and update bill endpoints, as well as draft bill endpoints, allowing you to set a memo to the vendor (up to 400 characters) on a bill. [View endpoint](/api-reference/bill/create-a-bill#post-developer-v1-bills) | [View endpoint](/api-reference/bill/update-a-bill#patch-developer-v1-bills-bill-id) | [View endpoint](/api-reference/bill/create-a-draft-bill#post-developer-v1-bills-drafts) | [View endpoint](/api-reference/bill/update-a-draft-bill#patch-developer-v1-bills-drafts-draft-bill-id)
 
 - **Refresh token expiration info** — The token endpoint response now includes a `refresh_token_expires_in` field indicating

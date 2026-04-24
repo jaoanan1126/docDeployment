@@ -1,9 +1,425 @@
 ---
-title: "Custom Records"
-description: "Stub — migrate from Ramp Developer API guides."
-icon: "database"
+title: Custom Records
+description: " "
 ---
 
-<Note>
-  Source: [Ramp documentation](/developer-api/v1/custom-records).
-</Note>
+<Warning>
+## Custom Records API is in Beta
+
+API endpoints are subject to change.
+</Warning>
+
+## Overview
+
+The Custom Records API allows you to extend Ramp's data models with your own custom fields and data. Whether you need to add custom fields to existing Ramp objects or create entirely new data structures, this API provides the flexibility to integrate Ramp with your business processes.
+
+<Warning>
+## Custom Records are available to Ramp Plus and Ramp Enterprise customers only. For more information, contact your Ramp representative.
+</Warning>
+
+### What You Can Do
+
+With the Custom Records API you can:
+
+- **Extend Native Objects**: Add custom fields and relationships to Ramp objects such as Users, Locations, Departments, and Accounting Field Options
+- **Create Custom Tables**: Build your own data structures to store business-specific information
+- **Link Data**: Create relationships between custom and native data
+- **Query and Filter**: Search and retrieve data using flexible filtering options
+
+At this time, the API supports writes to custom record values, as well as creating and reading table and column definitions.
+
+To get started, use the [Custom Records Configuration](/api-reference/custom-records/list-custom-tables) API to set up tables and columns.
+Then, use the [Native Tables](/api-reference/custom-records/list-native-ramp-tables) and [Custom Tables](/api-reference/custom-records/list-custom-tables) API to manage and manipulate data.
+
+## Native Tables vs Custom Tables
+
+Custom Records track data in either Native Tables or Custom Tables, depending on the type of data.
+
+### Native Tables
+
+Native Tables allow extending core Ramp objects with custom fields
+These tables use Ramp IDs for row identification, matching rows to the core Ramp object they extend. See the [Supported Native Tables](#supported-native-tables) section for a list of supported native tables and how to reference them.
+
+- If a Ramp ID is provided that does not yet exist for a table, the row will not be created and an error will be returned.
+- If a referenced native Ramp object is deleted, the extension row will not be accessible. Queries and references will indicate value not found.
+
+### Custom Tables
+
+If additional extensibility above what a Ramp object provides is required, Custom Tables can be used. Custom Tables can store arbitrary data, and can help represent data that doesn't fit into the core Ramp objects.
+Rows that are on Custom Tables are identified using external keys.
+
+- If an `external_key` field is provided that does not yet exist for a table, a new row with that `external_key` will be created.
+- Note that external keys are immutable, case-sensitive, and must be unique within a table.
+
+### Example Schema
+
+![](https://docs.ramp.com/assets/custom-records-example-mermaid-CapLE1vY.png)
+
+This diagram shows:
+
+- **Users** (Native Table)
+  - Has one `home_state` (reference to the States table)
+  - Can be a Regional Director for one or more regions (column corresponding to the `regional_directors` column on the Regions table)
+  - Uses Ramp User UUID as primary key
+- **States** (Custom Table)
+  - Has one `region` (reference to the Region table)
+  - Has many Users (column corresponding to the `home_state` column on the Users table)
+  - Uses `external_key` as primary key
+- **Regions** (Custom Table)
+  - Can have many Regional Directors (reference to the User table)
+  - Has many States (column corresponding to the `region` column on the States table)
+  - Uses `external_key` as primary key
+
+Note how bidirectional relationships are maintained automatically through corresponding columns.
+
+### Example response
+
+```http
+GET developer/v1/custom-records/native-tables/users/columns
+```
+
+```json
+{
+  "data": [
+    {
+      "id": "<uuid>",
+      "display_name": "Home State",
+      "allows_writes": true,
+      "name": "home_state",
+      "type": {
+        "cardinality": "many_to_one",
+        "corresponding_column_id": "<uuid>",
+        "table_id": "<uuid>",
+        "table_name": "states",
+        "type": "custom_reference",
+      }
+    },
+    {
+      "id": "<uuid>",
+      "display_name": "Regional Director For",
+      "allows_writes": false,
+      "name": "regional_director_for", 
+      "type": {
+        "cardinality": "many_to_many",
+        "corresponding_column_id": "<uuid>",
+        "table_id": "<uuid>",
+        "table_name": "regions",
+        "type": "custom_reference",
+      }
+    }
+  ],
+  "page": {
+    "next": null
+  }
+}
+```
+
+The example matches the schema shown in the diagram above, showing how Users can have a home state and be regional directors for multiple regions.
+
+## Creating Tables
+
+### Extending Native Tables
+
+To add custom fields to existing Ramp objects, you need to first extend the native table. This creates a container for your custom columns on that native object:
+
+```http
+POST /developer/v1/custom-records/configure/native-tables
+```
+
+For a list of supported Ramp tables, see the [Supported Native Tables](#supported-native-tables) section.
+
+**Extending the Users table:**
+
+```json
+{
+  "table_name": "users",
+  "type": "native_table"
+}
+```
+
+### Creating Custom Tables
+
+Custom tables allow you to store arbitrary business data that doesn't fit into Ramp's core objects. To create a custom table, use the `/configure/custom-tables` endpoint:
+
+```http
+POST /developer/v1/custom-records/configure/custom-tables
+```
+
+Let's create the States and Regions tables from our example:
+
+**Creating the States table:**
+
+```json
+{
+  "table_label": "States",
+  "table_name": "states",
+  "type": "custom_table"
+}
+```
+
+**Creating the Regions table:**
+
+```json
+{
+  "table_label": "Regions", 
+  "table_name": "regions",
+  "type": "custom_table"
+}
+```
+
+> **Note:** The name (or API name), is used to identify the table across API calls. It must be a lowercase, alpha-only slug. Underscores are permitted, but not at the beginning and end. The table label is displayed to users within Ramp and can be an arbitrary string.
+
+## Creating Columns
+
+Once you've created or extended a table, you can add columns to store data. There are two types of columns: reference columns for relationships between tables, and primitive columns for simple values.
+
+When creating custom columns, you will need to specify a name (also called an API name) and column label. The API name is used to identify the column across API calls while the column label is displayed to users within Ramp. They have the same value constraints as table API names and labels.
+
+### Creating Reference Columns
+
+Reference columns create relationships between tables. When you create a reference, the API automatically creates a corresponding column on the referenced table to maintain bidirectional relationships.
+
+For more information, see the [Bidirectional References and `has_more`](#bidirectional-references-and-has_more) section.
+
+**Adding a home_state column to the Users native table:**
+
+```http
+POST /developer/v1/custom-records/configure/native-tables/users/columns
+```
+
+```json
+{
+  "column_type_name": "custom_reference",
+  "label": "Home State",
+  "name": "home_state",
+  "reference_args": {
+    "cardinality": "many_to_one",
+    "corresponding_column_name": "residents",
+    "corresponding_column_label": "State Residents",
+    "foreign_table": {
+      "table_name": "states",
+      "type": "custom_table"
+    }
+  }
+}
+```
+
+This creates:
+
+- A `home_state` column on Users that references States (many Users can have one State)
+- A `residents` column on States that shows all Users from that state (automatically maintained)
+
+**Adding a region column to the States table:**
+
+```json
+{
+  "column_type_name": "custom_reference",
+  "label": "Region",
+  "name": "region",
+  "reference_args": {
+    "cardinality": "many_to_one",
+    "corresponding_column_name": "states",
+    "foreign_table": {
+      "table_name": "regions",
+      "type": "custom_table"
+    }
+  }
+}
+```
+
+**Adding regional_directors to the Regions table:**
+
+```json
+{
+  "column_type_name": "native_reference",
+  "label": "Regional Directors",
+  "name": "regional_directors",
+  "reference_args": {
+    "cardinality": "many_to_many",
+    "corresponding_column_name": "regional_director_for",
+    "corresponding_column_label": "Regional Director For",
+    "foreign_table": {
+      "table_name": "users",
+      "type": "native_table"
+    }
+  }
+}
+```
+
+### Creating Primitive Columns
+
+Primitive columns store simple data types like text or boolean values, useful for storing properties of an object, like a State's `Name`. To create a column, use the `/columns` endpoint for your table:
+
+```http
+POST /developer/v1/custom-records/configure/custom-tables/{custom_table_name}/columns
+```
+
+**Adding a name column to the States table:**
+
+```json
+{
+  "column_type_name": "text",
+  "label": "State Name",
+  "name": "name"
+}
+```
+
+> **Note:** Primitive columns are typically less useful in workflows, as it's harder to make conditions based on them. If you would like to create workflow conditions that check for a specific value of a column, you should make a Custom Table and use a reference column instead.
+
+## Working with Tables
+
+### Listing Tables and Columns
+
+To get started with either custom or native tables:
+
+1. List available tables using the `/custom-tables` or `/native-tables` endpoints
+2. Get column definitions for a specific table using the `/{table_name}/columns` endpoint
+3. Use the column information to understand the table's structure and available fields
+
+### Types of Custom Record columns
+
+#### Primitive columns
+
+- A `text` column contains simple text/string values
+- A `boolean` column contains `true` or `false` values
+
+#### Reference columns
+
+Reference columns are a special type of column that can reference rows on other tables. They can either be:
+
+- A `native_reference` to a Native Table, linking to core Ramp objects (users, departments, locations, etc.)
+  - When writing a reference value, requires both Ramp `column_name` and Ramp object `value` for identification (e.g., `{"column_name": "id", "value": "<ramp_user_uuid>"}`)
+- A `custom_reference` to a Custom Table, linking to other custom tables you've created
+  - Only requires the external key for identification
+
+### Managing Table Rows
+
+For custom tables, you can:
+
+- Create or update rows using PUT `/custom-tables/{table_name}/rows`
+- Delete rows using DELETE `/custom-tables/{table_name}/rows`
+- Append or remove individual cells using the `-/append` and `-/remove` endpoints
+
+For native tables, you can:
+
+- Read rows using GET `/native-tables/{table_name}/rows`
+- Update custom field values using PUT `/native-tables/{table_name}/rows`
+- Append or remove custom field values using the `-/append` and `-/remove` endpoints
+
+### Writing to Rows
+
+When writing to rows, keep these important points in mind:
+
+- All rows in a single PUT request must write to the same set of columns.
+  - If a row should not have a value for a column, that column must still be included in the request with an explicit null `contents` value.
+- For columns that reference multiple items, each reference must be a separate cell entry
+- References to custom tables require only the external key, while references to native tables require both a column name and value
+- Some columns (those with `allows_writes=False`) do not allow direct writes. In these cases, write to the corresponding, writable column on the other table instead.
+  - For more information, see the [Bidirectional References and `has_more`](#bidirectional-references-and-has_more) section.
+- PUT operations on columns that reference multiple items (lists) will replace all existing values with the provided values. To modify list contents without replacing everything, use the `-/append` and `-/remove` endpoints
+- A PUT operation with a null `contents` value will remove all values from that field
+- For best performance:
+  - Write to one reference column at a time when updating multiple references
+  - Or write to multiple columns at once when setting single values
+
+Using the example Custom Table schema for Regions from above, let's setup the Northeast region to have one regional director (User email=alice@company.com) and Southwest region to have two regional directors (User id=01956422-6793-7700-adb4-3f1bd635ee49, User email=bob@company.com).
+
+```http
+PUT /custom-tables/regions/rows
+```
+
+```json
+{
+  "data": [{
+    "external_key": "Northeast",
+    "cells": [
+      { 
+        "name": "regional_directors", 
+        "contents": { "column_name": "email", "value": "alice@company.com" }
+      }
+    ]
+  }, {
+    "external_key": "Southwest",
+    "cells": [
+      { 
+        "name": "regional_directors", 
+        "contents": { "column_name": "id", "value": "01956422-6793-7700-adb4-3f1bd635ee49" }
+      },
+      {
+        "name": "regional_directors",
+        "contents": { "column_name": "email", "value": "bob@company.com" }
+      }
+    ]
+  }]
+}
+```
+
+Note how:
+
+- The Northeast region has a single director, referenced by email
+- The Southwest region has two directors, one referenced by UUID and one by email
+- Each director reference is a separate cell entry
+- All references to native tables (Users) include both `column_name` and `value`
+
+For more information about referencing native tables, including supported column names for identification, see the [Supported Native Tables](#supported-native-tables) section.
+
+## Pagination and Filtering
+
+When listing rows, both custom and native tables support:
+
+- Page size control (default: 50, max: 100)
+- Cursor-based pagination using the `start` parameter
+- Filtering by external keys (custom tables) or Ramp IDs (native tables)
+- Column-specific filters using `filter.column_name.operation`
+
+### Column Filtering Operations
+
+You can filter table rows by specific column values using the format `filter.column_name.operation=value`. The following operations are supported:
+
+- `one_of`: Match any value in a list
+- `is_not`: Matches no values in a list
+
+For columns that reference other tables, use different identifiers based on the table type:
+
+- Native tables: Use the Ramp ID as the filter value
+- Custom tables: Use the external key as the filter value
+
+Example filters:
+
+```text
+# Get regions that include either New York or Texas as states
+GET /custom-tables/regions/rows?filter.states.one_of=New York&filter.states.one_of=Texas
+
+# Get regions that don't include Arizona
+GET /custom-tables/regions/rows?filter.states.is_not=Arizona
+
+# Get regions managed by a specific regional director
+GET /custom-tables/regions/rows?filter.regional_directors.one_of=<ramp_user_uuid>
+
+# Get regions that aren't managed by certain regional directors
+GET /custom-tables/regions/rows?filter.regional_directors.is_not=<ramp_user_uuid_1>&filter.regional_directors.is_not=<ramp_user_uuid_2>
+
+# Get users who are regional directors for South or West regions
+GET /native-tables/users/rows?filter.regional_director_for.one_of=South&filter.regional_director_for.one_of=West
+
+# Example query for regions managed by John Doe (must use the user's Ramp ID):
+GET /custom-tables/regions/rows?filter.regional_director.one_of=01956422-6793-7700-adb4-3f1bd635ee49
+```
+
+Example query for a information about a specific Ramp user:
+
+```text
+GET /native-tables/users/rows?ramp_id=01956422-6793-7700-adb4-3f1bd635ee49
+```
+
+<details><summary>Example response:</summary>
+
+```json
+{
+  "data": [{
+    "id": "<uuid>",
+    "external_key": "01956422-6793-7700-adb4-3f1bd635ee49",
+    "display_name": "John Doe",
+    "cells": [
+      {
+        "column

@@ -44,17 +44,17 @@ We have draft bill endpoints available to create and update draft bills through 
 
 ## Create Bill Request Builder
 
-Use the [POST /bills](/developer-api/v1/api/bills#post-developer-v1-bills) endpoint to create a bill. This covers the entire bill object, including the bill payment.
+Use the [POST /bills](/api-reference/bill/create-a-bill#post-developer-v1-bills) endpoint to create a bill. This covers the entire bill object, including the bill payment.
 
 The request requires several UUIDs. Fetch these from the endpoints below and use the response field value as the value for the request field.
 
 | Source endpoint | Response field | Request field (for POST /bills) |
 | --- | --- | --- |
-| [GET /entities](/developer-api/v1/api/entities) | `id` | `entity_id` |
-| [GET /entities](/developer-api/v1/api/entities) | `bank_accounts[].id` where `usage_type = BILL_PAY_BANK_ACCOUNT` | `source_bank_account_id` |
-| [GET /vendors](/developer-api/v1/api/vendors) | `id` | `vendor_id` |
-| [GET `/vendors/{id}/contacts`](/developer-api/v1/api/vendors) | `id` | `vendor_contact_id` |
-| [GET `/vendors/{id}/accounts`](/developer-api/v1/api/vendors) | `id` (for ACH/wire/SWIFT only) | `vendor_account_id` |
+| [GET /entities](/api-reference/business-entities/list-business-entities) | `id` | `entity_id` |
+| [GET /entities](/api-reference/business-entities/list-business-entities) | `bank_accounts[].id` where `usage_type = BILL_PAY_BANK_ACCOUNT` | `source_bank_account_id` |
+| [GET /vendors](/api-reference/vendor/list-vendors) | `id` | `vendor_id` |
+| [GET `/vendors/{id}/contacts`](/api-reference/vendor/list-vendors) | `id` | `vendor_contact_id` |
+| [GET `/vendors/{id}/accounts`](/api-reference/vendor/list-vendors) | `id` (for ACH/wire/SWIFT only) | `vendor_account_id` |
 
 <Note>
 **Missing BILL_PAY_BANK_ACCOUNT?**
@@ -74,7 +74,7 @@ Standard bank transfer to vendor's bank account
 
 required
 
-[GET /vendors](/developer-api/v1/api/vendors)
+[GET /vendors](/api-reference/vendor/list-vendors)
 
 Unique identifier of bill vendor.
 
@@ -82,7 +82,7 @@ Unique identifier of bill vendor.
 
 required
 
-[GET `/vendors/{id}/contacts`](/developer-api/v1/api/vendors)
+[GET `/vendors/{id}/contacts`](/api-reference/vendor/list-vendors)
 
 Unique identifier of vendor contact, must be associated with passed vendor.
 
@@ -90,7 +90,7 @@ Unique identifier of vendor contact, must be associated with passed vendor.
 
 required
 
-[GET /entities](/developer-api/v1/api/entities)
+[GET /entities](/api-reference/business-entities/list-business-entities)
 
 Associated business entity.
 
@@ -130,7 +130,7 @@ The expected date the payment will arrive in the vendor's bank account.
 
 required
 
-[GET /entities](/developer-api/v1/api/entities)
+[GET /entities](/api-reference/business-entities/list-business-entities)
 
 Unique identifier of the bank account to pay the bill from. Must have usage_type=BILL_PAY_BANK_ACCOUNT.
 
@@ -138,7 +138,7 @@ Unique identifier of the bank account to pay the bill from. Must have usage_type
 
 required
 
-[GET `/vendors/{id}/accounts`](/developer-api/v1/api/vendors)
+[GET `/vendors/{id}/accounts`](/api-reference/vendor/list-vendors)
 
 Unique identifier of the vendor account to pay the bill to.
 
@@ -168,7 +168,7 @@ POST /developer/v1/bills
 
 ### Attaching documents
 
-Upload invoice PDFs or supporting documents using [POST `/bills/{bill_id}/attachments`](/developer-api/v1/api/bills#post-developer-v1-bills-bill-id-attachments). This endpoint accepts `multipart/form-data`.
+Upload invoice PDFs or supporting documents using [POST `/bills/{bill_id}/attachments`](/api-reference/bill/upload-a-file-attachment-to-an-existing-bill#post-developer-v1-bills-bill-id-attachments). This endpoint accepts `multipart/form-data`.
 
 ```bash
 curl -X POST \
@@ -201,7 +201,7 @@ To filter out one-time card transactions in the Transactions API, set `has_no_sy
 
 ### ACH, Check, Wire, and SWIFT
 
-These payment methods require a `source_bank_account_id` from [GET /entities](/developer-api/v1/api/entities).
+These payment methods require a `source_bank_account_id` from [GET /entities](/api-reference/business-entities/list-business-entities).
 
 | Method | Requirements | Timing |
 | --- | --- | --- |
@@ -211,7 +211,7 @@ These payment methods require a `source_bank_account_id` from [GET /entities](/d
 | **SWIFT** | Verified vendor bank account | Varies (international) |
 
 - Payments arrive by `payment_arrival_date` (cannot be a weekend or bank holiday)
-- Non-check payments require a verified vendor bank account via [GET `/vendors/{id}/accounts`](/developer-api/v1/api/vendors). See [Create Bill Request Builder](#create-bill-request-builder) for full schema details.
+- Non-check payments require a verified vendor bank account via [GET `/vendors/{id}/accounts`](/api-reference/vendor/list-vendors). See [Create Bill Request Builder](#create-bill-request-builder) for full schema details.
 - Check payments require a vendor address on file
 - Expedited ACH and Wire payments are not available via API
 
@@ -270,7 +270,7 @@ When all three documents share the same line item IDs, you have a verified match
 
 ### Other limitations
 
-- Managing entity bank accounts is not supported via API (vendor bank accounts can be managed through [vendor accounts endpoints](/developer-api/v1/api/vendors))
+- Managing entity bank accounts is not supported via API (vendor bank accounts can be managed through [vendor accounts endpoints](/api-reference/vendor/list-vendors))
 
 ---
 

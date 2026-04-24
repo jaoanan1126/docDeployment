@@ -33,137 +33,494 @@
     ]
   },
   "navigation": {
-    "groups": [
+    "tabs": [
       {
-        "group": "Getting Started",
-        "pages": [
-          "developer-api/v1/introduction",
-          "developer-api/v1/getting-started",
-          "developer-api/v1/build-with-ramp",
-          "developer-api/v1/changelog",
-          "developer-api/v1/cli",
-          "developer-api/v1/agent-cards",
+        "tab": "Documentation",
+        "groups": [
           {
-            "group": "MCP",
-            "root": "developer-api/v1/mcp",
-            "expanded": false,
+            "group": "Getting Started",
             "pages": [
-              "developer-api/v1/ramp-mcp",
-              "developer-api/v1/developer-mcp"
+              "developer-api/v1/introduction",
+              "developer-api/v1/getting-started",
+              "developer-api/v1/build-with-ramp",
+              "developer-api/v1/changelog",
+              "developer-api/v1/cli",
+              "developer-api/v1/agent-cards",
+              {
+                "group": "MCP",
+                "root": "developer-api/v1/mcp",
+                "expanded": false,
+                "pages": [
+                  "developer-api/v1/ramp-mcp",
+                  "developer-api/v1/developer-mcp"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              {
+                "group": "Accounting",
+                "root": "developer-api/v1/accounting",
+                "expanded": false,
+                "pages": [
+                  "developer-api/v1/accounting-erp-migration",
+                  "developer-api/v1/tax-codes",
+                  "developer-api/v1/vendor-credits",
+                  "developer-api/v1/sync-button"
+                ]
+              },
+              {
+                "group": "Custom Records",
+                "root": "developer-api/v1/custom-records",
+                "expanded": false,
+                "pages": [
+                  "developer-api/v1/custom-records/customized-approvers"
+                ]
+              },
+              {
+                "group": "Virtual Cards",
+                "root": "developer-api/v1/virtual-cards",
+                "expanded": false,
+                "pages": [
+                  "developer-api/v1/virtual-cards/embedded-cards"
+                ]
+              },
+              {
+                "group": "Ramp Data",
+                "root": "developer-api/v1/ramp-data",
+                "expanded": false,
+                "pages": [
+                  "developer-api/v1/ramp-data/ramp-rate",
+                  "developer-api/v1/ramp-data/ai-index"
+                ]
+              },
+              "developer-api/v1/cards-and-funds",
+              "developer-api/v1/bill-pay",
+              "developer-api/v1/vendors-merchants-accounting-vendors",
+              "developer-api/v1/user-lifecycle",
+              "developer-api/v1/applications"
+            ]
+          },
+          {
+            "group": "Developer Resources",
+            "pages": [
+              "developer-api/v1/authorization",
+              "developer-api/v1/pagination",
+              "developer-api/v1/sandbox",
+              "developer-api/v1/rate-limiting",
+              "developer-api/v1/webhooks",
+              "developer-api/v1/debugging",
+              "developer-api/v1/error-handling",
+              "developer-api/v1/data-relationships",
+              "developer-api/v1/monetary-values",
+              "developer-api/v1/deferred-tasks"
             ]
           }
         ]
       },
       {
-        "group": "Guides",
-        "pages": [
-          {
-            "group": "Accounting",
-            "root": "developer-api/v1/accounting",
-            "expanded": false,
-            "pages": [
-              "developer-api/v1/accounting-erp-migration",
-              "developer-api/v1/tax-codes",
-              "developer-api/v1/vendor-credits",
-              "developer-api/v1/sync-button"
-            ]
-          },
-          {
-            "group": "Custom Records",
-            "root": "developer-api/v1/custom-records",
-            "expanded": false,
-            "pages": [
-              "developer-api/v1/custom-records/customized-approvers"
-            ]
-          },
-          {
-            "group": "Virtual Cards",
-            "root": "developer-api/v1/virtual-cards",
-            "expanded": false,
-            "pages": [
-              "developer-api/v1/virtual-cards/embedded-cards"
-            ]
-          },
-          {
-            "group": "Ramp Data",
-            "root": "developer-api/v1/ramp-data",
-            "expanded": false,
-            "pages": [
-              "developer-api/v1/ramp-data/ramp-rate",
-              "developer-api/v1/ramp-data/ai-index"
-            ]
-          },
-          "developer-api/v1/cards-and-funds",
-          "developer-api/v1/bill-pay",
-          "developer-api/v1/vendors-merchants-accounting-vendors",
-          "developer-api/v1/user-lifecycle",
-          "developer-api/v1/applications"
-        ]
-      },
-      {
-        "group": "Developer Resources",
-        "pages": [
-          "developer-api/v1/authorization",
-          "developer-api/v1/pagination",
-          "developer-api/v1/sandbox",
-          "developer-api/v1/rate-limiting",
-          "developer-api/v1/webhooks",
-          "developer-api/v1/debugging",
-          "developer-api/v1/error",
-          "developer-api/v1/data-relationships",
-          "developer-api/v1/monetary-values",
-          "developer-api/v1/deferred-tasks"
-        ]
-      },
-      {
-        "group": "REST API",
-        "pages": [
-          "developer-api/v1/api/accounting",
-          "developer-api/v1/api/accounting-gl-accounts",
-          "developer-api/v1/api/accounting-connections",
-          "developer-api/v1/api/accounting-inventory-item",
-          "developer-api/v1/api/accounting-sync",
-          "developer-api/v1/api/accounting-tax",
-          "developer-api/v1/api/accounting-vendors",
-          "developer-api/v1/api/applications",
-          "developer-api/v1/api/audit-logs",
-          "developer-api/v1/api/authorization",
-          "developer-api/v1/api/bank-accounts",
-          "developer-api/v1/api/bills",
-          "developer-api/v1/api/blank-canvas-approvals",
-          "developer-api/v1/api/business",
-          "developer-api/v1/api/cards",
-          "developer-api/v1/api/cashbacks",
-          "developer-api/v1/api/custom-form",
-          "developer-api/v1/api/custom-records-configuration",
-          "developer-api/v1/api/custom-records-custom-tables",
-          "developer-api/v1/api/custom-records-matrix-tables",
-          "developer-api/v1/api/custom-records-native-tables",
-          "developer-api/v1/api/departments",
-          "developer-api/v1/api/embedded",
-          "developer-api/v1/api/entities",
-          "developer-api/v1/api/item-receipts",
-          "developer-api/v1/api/limits",
-          "developer-api/v1/api/locations",
-          "developer-api/v1/api/memos",
-          "developer-api/v1/api/merchants",
-          "developer-api/v1/api/purchase-orders",
-          "developer-api/v1/api/receipt-integrations",
-          "developer-api/v1/api/receipts",
-          "developer-api/v1/api/reimbursements",
-          "developer-api/v1/api/repayments",
-          "developer-api/v1/api/spend-programs",
-          "developer-api/v1/api/spend-requests",
-          "developer-api/v1/api/statements",
-          "developer-api/v1/api/transactions",
-          "developer-api/v1/api/transfers",
-          "developer-api/v1/api/trips",
-          "developer-api/v1/api/unified-requests",
-          "developer-api/v1/api/users",
-          "developer-api/v1/api/vault",
-          "developer-api/v1/api/vendors",
-          "developer-api/v1/api/webhooks"
-        ]
+        "tab": "API Reference",
+        "groups":
+          [
+            {
+              "group": "Accounting",
+              "pages": [
+                "api-reference/accounting/list-general-ledger-accounts",
+                "api-reference/accounting/upload-general-ledger-accounts",
+                "api-reference/accounting/fetch-a-general-ledger-account",
+                "api-reference/accounting/delete-a-general-ledger-account",
+                "api-reference/accounting/update-a-general-ledger-account",
+                "api-reference/accounting/fetch-all-accounting-connections-for-the-current-business",
+                "api-reference/accounting/fetch-the-current-active-accounting-connection",
+                "api-reference/accounting/register-a-new-api-based-accounting-connection",
+                "api-reference/accounting/disconnect-an-accounting-connection",
+                "api-reference/accounting/fetch-an-accounting-connection-by-id",
+                "api-reference/accounting/update-an-accounting-connection",
+                "api-reference/accounting/reactivate-a-previously-unlinked-accounting-connection",
+                "api-reference/accounting/list-options-for-a-given-custom-accounting-field",
+                "api-reference/accounting/upload-new-options",
+                "api-reference/accounting/fetch-a-custom-accounting-field-option",
+                "api-reference/accounting/update-a-custom-accounting-field-option",
+                "api-reference/accounting/delete-a-custom-accounting-field-option",
+                "api-reference/accounting/update-a-custom-accounting-field-option-1",
+                "api-reference/accounting/list-custom-accounting-fields",
+                "api-reference/accounting/create-a-new-custom-accounting-field",
+                "api-reference/accounting/fetch-a-custom-accounting-field",
+                "api-reference/accounting/delete-a-custom-accounting-field",
+                "api-reference/accounting/update-a-custom-accounting-field",
+                "api-reference/accounting/fetch-inventory-item-accounting-field",
+                "api-reference/accounting/create-a-new-inventory-item-accounting-field",
+                "api-reference/accounting/delete-inventory-item-accounting-field",
+                "api-reference/accounting/update-inventory-item-accounting-field",
+                "api-reference/accounting/list-inventory-item-options",
+                "api-reference/accounting/upload-inventory-item-options",
+                "api-reference/accounting/delete-an-inventory-item-option",
+                "api-reference/accounting/update-an-inventory-item-option",
+                "api-reference/accounting/post-ready-to-sync-status",
+                "api-reference/accounting/post-sync-status",
+                "api-reference/accounting/fetch-tax-code-accounting-field",
+                "api-reference/accounting/create-a-new-tax-code-accounting-field",
+                "api-reference/accounting/delete-tax-code-accounting-field",
+                "api-reference/accounting/update-tax-code-accounting-field",
+                "api-reference/accounting/list-tax-code-options",
+                "api-reference/accounting/upload-tax-code-options",
+                "api-reference/accounting/delete-a-tax-code-option",
+                "api-reference/accounting/update-a-tax-code-option",
+                "api-reference/accounting/list-tax-rates",
+                "api-reference/accounting/upload-tax-rates",
+                "api-reference/accounting/delete-a-tax-rate",
+                "api-reference/accounting/update-a-tax-rate",
+                "api-reference/accounting/list-vendors",
+                "api-reference/accounting/upload-vendors",
+                "api-reference/accounting/fetch-a-vendor",
+                "api-reference/accounting/delete-a-vendor",
+                "api-reference/accounting/update-a-vendor"
+              ]
+            },
+            {
+              "group": "Application",
+              "pages": [
+                "api-reference/application/fetch-a-financing-application",
+                "api-reference/application/create-a-financing-application"
+              ]
+            },
+            {
+              "group": "Audit Log",
+              "pages": [
+                "api-reference/audit-log/get-audit-log-events"
+              ]
+            },
+            {
+              "group": "Bank Accounts",
+              "pages": [
+                "api-reference/bank-accounts/list-bank-accounts",
+                "api-reference/bank-accounts/get-bank-account-details"
+              ]
+            },
+            {
+              "group": "Bill",
+              "pages": [
+                "api-reference/bill/list-bills",
+                "api-reference/bill/create-a-bill",
+                "api-reference/bill/list-draft-bills",
+                "api-reference/bill/create-a-draft-bill",
+                "api-reference/bill/fetch-a-draft-bill",
+                "api-reference/bill/update-a-draft-bill",
+                "api-reference/bill/upload-a-file-attachment-to-an-existing-draft-bill",
+                "api-reference/bill/fetch-a-bill",
+                "api-reference/bill/archive-a-bill",
+                "api-reference/bill/update-a-bill",
+                "api-reference/bill/upload-a-file-attachment-to-an-existing-bill"
+              ]
+            },
+            {
+              "group": "BlankCanvas",
+              "pages": [
+                "api-reference/blankcanvas/upload-a-document-for-a-blank-canvas-workflow-step",
+                "api-reference/blankcanvas/approve-or-reject-a-blank-canvas-workflow-step",
+                "api-reference/blankcanvas/update-metadata-for-a-blank-canvas-external-approval-request"
+              ]
+            },
+            {
+              "group": "Business",
+              "pages": [
+                "api-reference/business/fetch-the-company-information",
+                "api-reference/business/fetch-the-company-balance-information"
+              ]
+            },
+            {
+              "group": "Card",
+              "pages": [
+                "api-reference/card/list-cards",
+                "api-reference/card/create-a-physical-card",
+                "api-reference/card/fetch-deferred-task-status",
+                "api-reference/card/create-a-virtual-card",
+                "api-reference/card/fetch-a-card",
+                "api-reference/card/update-a-card",
+                "api-reference/card/suspend-a-card",
+                "api-reference/card/terminate-a-card",
+                "api-reference/card/unlock-a-card"
+              ]
+            },
+            {
+              "group": "Cashback",
+              "pages": [
+                "api-reference/cashback/list-cashback-payments",
+                "api-reference/cashback/fetch-a-cashback-payment"
+              ]
+            },
+            {
+              "group": "CustomForm",
+              "pages": [
+                "api-reference/customform/fetch-a-custom-form-collection-response-by-id"
+              ]
+            },
+            {
+              "group": "Custom Records",
+              "pages": [
+                "api-reference/custom-records/create-custom-table",
+                "api-reference/custom-records/create-custom-table-column",
+                "api-reference/custom-records/change-the-api-name-of-a-custom-tables-column",
+                "api-reference/custom-records/extend-native-ramp-table",
+                "api-reference/custom-records/create-native-ramp-table-field",
+                "api-reference/custom-records/change-the-api-name-of-a-native-tables-custom-record-column",
+                "api-reference/custom-records/list-custom-tables",
+                "api-reference/custom-records/list-custom-table-columns",
+                "api-reference/custom-records/list-custom-table-rows",
+                "api-reference/custom-records/set-values-for-rows-of-a-custom-table",
+                "api-reference/custom-records/delete-rows-from-a-custom-table",
+                "api-reference/custom-records/change-the-external-key-of-a-custom-table-row",
+                "api-reference/custom-records/append-cells-to-a-custom-table",
+                "api-reference/custom-records/remove-cells-from-a-custom-table",
+                "api-reference/custom-records/list-all-matrix-tables-for-the-business",
+                "api-reference/custom-records/create-a-matrix-table",
+                "api-reference/custom-records/add-a-result-column-to-an-existing-matrix-table",
+                "api-reference/custom-records/change-the-api-name-of-a-matrix-table-column-input-or-result",
+                "api-reference/custom-records/list-matrix-table-rows",
+                "api-reference/custom-records/change-the-api-name-of-a-matrix-table",
+                "api-reference/custom-records/upsert-matrix-table-rows",
+                "api-reference/custom-records/append-cells-to-matrix-table-rows",
+                "api-reference/custom-records/remove-cells-from-matrix-table-rows",
+                "api-reference/custom-records/delete-a-single-matrix-table-row-by-id",
+                "api-reference/custom-records/list-native-ramp-tables",
+                "api-reference/custom-records/list-custom-columns-for-a-native-ramp-table",
+                "api-reference/custom-records/list-custom-column-values-for-rows-of-a-native-ramp-table",
+                "api-reference/custom-records/set-values-for-rows-of-a-native-ramp-table",
+                "api-reference/custom-records/append-cells-to-a-native-ramp-table",
+                "api-reference/custom-records/remove-cells-from-a-native-ramp-table"
+              ]
+            },
+            {
+              "group": "Department",
+              "pages": [
+                "api-reference/department/list-departments",
+                "api-reference/department/create-a-department",
+                "api-reference/department/fetch-a-department",
+                "api-reference/department/update-a-department"
+              ]
+            },
+            {
+              "group": "Embedded Cards",
+              "pages": [
+                "api-reference/embedded-cards/create-an-embed-init-token-for-a-card"
+              ]
+            },
+            {
+              "group": "Business Entities",
+              "pages": [
+                "api-reference/business-entities/list-business-entities",
+                "api-reference/business-entities/get-a-business-entity"
+              ]
+            },
+            {
+              "group": "Item Receipts",
+              "pages": [
+                "api-reference/item-receipts/list-item-receipts",
+                "api-reference/item-receipts/create-an-item-receipt",
+                "api-reference/item-receipts/fetch-an-item-receipt",
+                "api-reference/item-receipts/delete-an-item-receipt"
+              ]
+            },
+            {
+              "group": "Limit",
+              "pages": [
+                "api-reference/limit/list-limits",
+                "api-reference/limit/create-a-limit",
+                "api-reference/limit/fetch-deferred-task-status",
+                "api-reference/limit/fetch-a-limit",
+                "api-reference/limit/update-a-limit",
+                "api-reference/limit/update-a-limit-1",
+                "api-reference/limit/add-new-users-into-a-shared-limit",
+                "api-reference/limit/terminate-a-limit",
+                "api-reference/limit/remove-users-from-a-shared-limit",
+                "api-reference/limit/suspend-a-limit",
+                "api-reference/limit/unsuspend-a-limit"
+              ]
+            },
+            {
+              "group": "Location",
+              "pages": [
+                "api-reference/location/list-locations",
+                "api-reference/location/create-a-location",
+                "api-reference/location/fetch-a-location",
+                "api-reference/location/update-a-location"
+              ]
+            },
+            {
+              "group": "Memo",
+              "pages": [
+                "api-reference/memo/list-memos",
+                "api-reference/memo/fetch-a-transaction-memo",
+                "api-reference/memo/upload-a-new-memo-for-a-transaction"
+              ]
+            },
+            {
+              "group": "Merchant",
+              "pages": [
+                "api-reference/merchant/list-merchants"
+              ]
+            },
+            {
+              "group": "Purchase Order",
+              "pages": [
+                "api-reference/purchase-order/list-purchase-orders",
+                "api-reference/purchase-order/create-a-purchase-order",
+                "api-reference/purchase-order/fetch-a-purchase-order",
+                "api-reference/purchase-order/update-a-purchase-order",
+                "api-reference/purchase-order/archive-a-purchase-order",
+                "api-reference/purchase-order/add-line-items-to-an-existing-purchase-order",
+                "api-reference/purchase-order/delete-a-single-line-item-from-an-existing-purchase-order",
+                "api-reference/purchase-order/update-a-single-line-item-on-an-existing-purchase-order"
+              ]
+            },
+            {
+              "group": "Receipt Integrations",
+              "pages": [
+                "api-reference/receipt-integrations/list-emails-opted-out-of-receipt-integrations",
+                "api-reference/receipt-integrations/add-a-new-email-to-receipt-integrations-opt-out-list",
+                "api-reference/receipt-integrations/remove-an-email-from-receipt-integration-opt-out-list"
+              ]
+            },
+            {
+              "group": "Receipt",
+              "pages": [
+                "api-reference/receipt/list-receipts",
+                "api-reference/receipt/upload-a-receipt",
+                "api-reference/receipt/fetch-a-receipt"
+              ]
+            },
+            {
+              "group": "Reimbursement",
+              "pages": [
+                "api-reference/reimbursement/list-reimbursements",
+                "api-reference/reimbursement/create-a-mileage-reimbursement",
+                "api-reference/reimbursement/upload-a-receipt-for-a-reimbursement",
+                "api-reference/reimbursement/fetch-a-reimbursement"
+              ]
+            },
+            {
+              "group": "Repayment",
+              "pages": [
+                "api-reference/repayment/list-repayments"
+              ]
+            },
+            {
+              "group": "Spend Program",
+              "pages": [
+                "api-reference/spend-program/list-spend-programs",
+                "api-reference/spend-program/create-a-spend-program",
+                "api-reference/spend-program/fetch-a-spend-program",
+                "api-reference/spend-program/fetch-blank-canvas-workflow-nodes-for-a-spend-program"
+              ]
+            },
+            {
+              "group": "Spend Request",
+              "pages": [
+                "api-reference/spend-request/create-a-draft-spend-request-via-ocr",
+                "api-reference/spend-request/list-comments-on-a-spend-requests-discussion-thread",
+                "api-reference/spend-request/create-a-comment-on-a-spend-requests-discussion-thread"
+              ]
+            },
+            {
+              "group": "Statement",
+              "pages": [
+                "api-reference/statement/list-statements",
+                "api-reference/statement/fetch-a-statement"
+              ]
+            },
+            {
+              "group": "Token",
+              "pages": [
+                "api-reference/token/create-a-token",
+                "api-reference/token/revoke-an-access-or-refresh-token"
+              ]
+            },
+            {
+              "group": "Transaction",
+              "pages": [
+                "api-reference/transaction/list-transactions",
+                "api-reference/transaction/fetch-a-transaction"
+              ]
+            },
+            {
+              "group": "Transfer Payment",
+              "pages": [
+                "api-reference/transfer-payment/list-transfer-payments",
+                "api-reference/transfer-payment/fetch-a-transfer-payment"
+              ]
+            },
+            {
+              "group": "Trips",
+              "pages": [
+                "api-reference/trips/list-all-trips-for-the-business",
+                "api-reference/trips/fetch-a-trip"
+              ]
+            },
+            {
+              "group": "Unified Request",
+              "pages": [
+                "api-reference/unified-request/list-unified-requests-with-pagination",
+                "api-reference/unified-request/get-details-for-a-specific-unifiedrequest"
+              ]
+            },
+            {
+              "group": "User",
+              "pages": [
+                "api-reference/user/list-users",
+                "api-reference/user/create-a-user-invite",
+                "api-reference/user/fetch-deferred-task-status",
+                "api-reference/user/fetch-a-user",
+                "api-reference/user/update-a-user",
+                "api-reference/user/deactivate-a-user",
+                "api-reference/user/reactivate-a-user"
+              ]
+            },
+            {
+              "group": "Card Vault",
+              "pages": [
+                "api-reference/card-vault/create-a-spend-limit-and-retrieve-sensitive-card-details",
+                "api-reference/card-vault/fetch-a-cards-sensitive-details"
+              ]
+            },
+            {
+              "group": "Vendor",
+              "pages": [
+                "api-reference/vendor/list-vendors",
+                "api-reference/vendor/create-a-new-vendor",
+                "api-reference/vendor/list-vendor-agreements",
+                "api-reference/vendor/fetch-a-vendor-agreement",
+                "api-reference/vendor/delete-a-vendor-agreement",
+                "api-reference/vendor/update-a-vendor-agreement",
+                "api-reference/vendor/upload-documents-for-a-vendor-agreement",
+                "api-reference/vendor/list-all-vendor-credits-for-all-vendors-of-a-business",
+                "api-reference/vendor/fetch-a-vendor-credit",
+                "api-reference/vendor/fetch-a-vendor",
+                "api-reference/vendor/delete-a-vendor",
+                "api-reference/vendor/update-a-vendor",
+                "api-reference/vendor/list-vendor-bank-accounts",
+                "api-reference/vendor/fetch-a-vendor-bank-account",
+                "api-reference/vendor/archive-a-vendor-bank-account",
+                "api-reference/vendor/create-a-vendor-agreement",
+                "api-reference/vendor/list-vendor-contacts-for-vendor",
+                "api-reference/vendor/fetch-a-vendor-contact",
+                "api-reference/vendor/list-vendor-credits-by-vendor",
+                "api-reference/vendor/add-to-a-vendors-bank-account-details"
+              ]
+            },
+            {
+              "group": "Webhooks",
+              "pages": [
+                "api-reference/webhooks/get-all-webhook-subscriptions",
+                "api-reference/webhooks/creates-a-new-webhook-subscription",
+                "api-reference/webhooks/create-a-mock-webhook-event-for-active-subscriptions-matching-the-event-type",
+                "api-reference/webhooks/get-a-webhook-subscription-by-id",
+                "api-reference/webhooks/delete-a-webhook-subscription-by-id",
+                "api-reference/webhooks/verify-a-webhook-subscription"
+              ]
+            }
+          ]
       }
     ]
   }

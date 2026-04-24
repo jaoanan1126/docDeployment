@@ -209,7 +209,7 @@ Before disconnecting, it is recommended to fetch all of the existing configurati
 
 #### View Current Accounting Connection
 
-You can check if an accounting connection already exists by calling the [GET /developer/v1/accounting/connection](/developer-api/v1/api/accounting-connections#get-developer-v1-accounting-connection) endpoint:
+You can check if an accounting connection already exists by calling the [GET /developer/v1/accounting/connection](/api-reference/accounting/fetch-the-current-active-accounting-connection#get-developer-v1-accounting-connection) endpoint:
 
 ```bash
 curl \
@@ -220,7 +220,7 @@ curl \
 
 #### Disconnect Accounting Connection
 
-If you need to disconnect an existing accounting connection, use the [DELETE /developer/v1/accounting/connection](/developer-api/v1/api/accounting-connections#delete-developer-v1-accounting-connection) endpoint:
+If you need to disconnect an existing accounting connection, use the [DELETE /developer/v1/accounting/connection](/api-reference/accounting/disconnect-an-accounting-connection#delete-developer-v1-accounting-connection) endpoint:
 
 ```bash
 curl \
@@ -238,7 +238,7 @@ Disconnecting an accounting connection will remove all associated custom fields,
 
 #### Create New Accounting Connection
 
-To create a new Developer API accounting connection, use the [POST /developer/v1/accounting/connection](/developer-api/v1/api/accounting-connections#post-developer-v1-accounting-connection) endpoint:
+To create a new Developer API accounting connection, use the [POST /developer/v1/accounting/connection](/api-reference/accounting/register-a-new-api-based-accounting-connection#post-developer-v1-accounting-connection) endpoint:
 
 ```bash
 curl \
@@ -271,10 +271,10 @@ This section walks through how to:
 
 | **ERP Object** | **Required?** | **Configuration** | **Description** | **Ramp API Endpoint** |
 |---|---|---|---|---|
-| **GL Accounts** | ✅ Always required | API configurable | Primary accounting categories (e.g., expense or revenue accounts). | [POST /developer/v1/accounting/accounts](/developer-api/v1/api/accounting-gl-accounts#post-developer-v1-accounting-accounts) |
-| **Custom Fields** | ⚙️ Optional | API configurable | Adds metadata such as department or cost center. | [POST /developer/v1/accounting/fields](/developer-api/v1/api/accounting#post-developer-v1-accounting-fields) |
-| **Custom Field Options** | ⚙️ Optional | API configurable | Options for custom fields (e.g., department values). | [POST /developer/v1/accounting/field-options](/developer-api/v1/api/accounting#post-developer-v1-accounting-field-options) |
-| **Vendors** | ⚙️ Optional | API configurable | Defines supplier names for bills or transactions. | [POST /developer/v1/accounting/vendors](/developer-api/v1/api/accounting-vendors#post-developer-v1-accounting-vendors) |
+| **GL Accounts** | ✅ Always required | API configurable | Primary accounting categories (e.g., expense or revenue accounts). | [POST /developer/v1/accounting/accounts](/api-reference/accounting/upload-general-ledger-accounts#post-developer-v1-accounting-accounts) |
+| **Custom Fields** | ⚙️ Optional | API configurable | Adds metadata such as department or cost center. | [POST /developer/v1/accounting/fields](/api-reference/accounting/create-a-new-custom-accounting-field#post-developer-v1-accounting-fields) |
+| **Custom Field Options** | ⚙️ Optional | API configurable | Options for custom fields (e.g., department values). | [POST /developer/v1/accounting/field-options](/api-reference/accounting/upload-new-options#post-developer-v1-accounting-field-options) |
+| **Vendors** | ⚙️ Optional | API configurable | Defines supplier names for bills or transactions. | [POST /developer/v1/accounting/vendors](/api-reference/accounting/upload-vendors#post-developer-v1-accounting-vendors) |
 | **Entities** | ✅ Always required | UI only (read-only via API) | Business units or subsidiaries configured directly in Ramp. | UI only |
 
 <Warning>
@@ -295,7 +295,7 @@ GL Accounts define the categories under which your company records transactions 
 | EXPENSE | — | 418 | Office/Admin: Phone & Internet |
 | REVENUE | — | 425 | Sales |
 
-To upload your GL accounts to Ramp, use the [POST /developer/v1/accounting/accounts](/developer-api/v1/api/accounting-gl-accounts#patch-developer-v1-accounting-accounts-gl-account-id) endpoint:
+To upload your GL accounts to Ramp, use the [POST /developer/v1/accounting/accounts](/api-reference/accounting/update-a-general-ledger-account#patch-developer-v1-accounting-accounts-gl-account-id) endpoint:
 
 ```bash
 curl \
@@ -338,7 +338,7 @@ Custom fields let you import classifications from your ERP like Department, Cost
 |---|---|
 | Department | SINGLE_CHOICE |
 
-To create a new custom field in Ramp, use the [POST /developer/v1/accounting/fields](/developer-api/v1/api/accounting#post-developer-v1-accounting-fields) endpoint:
+To create a new custom field in Ramp, use the [POST /developer/v1/accounting/fields](/api-reference/accounting/create-a-new-custom-accounting-field#post-developer-v1-accounting-fields) endpoint:
 
 ```bash
 curl \
