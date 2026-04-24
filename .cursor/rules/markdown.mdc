@@ -1,0 +1,121 @@
+---
+alwaysApply: true
+---
+You are migrating documentation to Mintlify MDX format.
+
+When given raw markdown or scraped page content, replicate the page 
+as accurately as possible using Mintlify components. Include all images, 
+videos, and React components. For text, use ONLY the text given — do not 
+add, rephrase, or summarize any words.
+
+---
+
+FIDELITY RULES
+- Replicate the page to the best of your ability
+- Never add words that are not in the source content
+- Never remove words that are in the source content
+- Preserve all bold, italic, and underlined text exactly as it appears
+- Match font weights to the source: if a word is bold in the source it must be **bold** in MDX
+- If a word is italic in the source it must be *italic* in MDX
+- If a word is underlined in the source it must be <u>underlined</u> in MDX
+- In the MDX file, leave the description parameter empty or " " if a value is needed. DO NOT use the first sentence as the description
+
+---
+
+FRONTMATTER
+- Add --- frontmatter with title and description at the top of every file
+- Use the exact page title as the title field
+- Use the first sentence of the page as the description field
+
+---
+
+CALLOUTS
+- Convert any > **Note:** blocks to <Note>
+- Convert any > **Warning:** blocks to <Warning>
+- Convert any > **Tip:** blocks to <Tip>
+- Convert any > **Error:** blocks to <Warning>
+- Convert any text starting with "Warning:", "Note:", "Important:", "Tip:" to the appropriate callout component
+- Preserve the exact text inside callouts — do not reword
+
+---
+
+STEPS
+- Convert any numbered list that describes a sequential process into <Steps>
+- Leave the title empty, keep the rest as the step body
+- Preserve exact wording
+
+---
+
+CODE BLOCKS
+- Always add a language tag (bash, json, python, javascript etc)
+- Detect language from class names (language-bash, language-json etc) or content
+- Add a label after the language tag when the original has a title e.g. ```bash Request
+- Use <CodeGroup> to wrap request/response pairs shown together
+- Preserve all code content character for character — do not alter code
+
+---
+
+TABLES
+- Keep as markdown tables
+- If a table is inside a callout box in the source, nest it inside the callout component
+- Preserve all cell content exactly
+
+---
+
+IMAGES
+- Use the exact src URL from the scraped content
+- Format as ![alt text](url)
+- If the image has a caption, add it as plain text below the image
+- Do not omit any images
+
+---
+
+VIDEOS
+- For <!-- VIDEO: url --> comments, use:
+  <video controls>
+    <source src="url" />
+  </video>
+- For <!-- IFRAME: url --> YouTube embeds, use:
+  <iframe
+    width="100%"
+    height="400"
+    src="url"
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
+    allowFullScreen
+  />
+- Do not omit any videos
+
+---
+
+CARDS
+- Convert card-like link sections into <CardGroup cols={2}> with <Card> components
+- Use the exact link text as the card title
+- Use the exact description text as the card body
+- Use the exact href from the source link
+
+---
+
+ACCORDIONS
+- Convert FAQ-style or expandable sections into <AccordionGroup> with <Accordion title="...">
+- Use the exact heading as the title
+- Preserve all body content exactly
+
+---
+
+LINKS
+- Convert all internal Ramp doc links from /developer-api/v1/[slug] to /[slug]
+- Keep all external links exactly as they are
+
+---
+
+FONT AND STYLING
+- Do not add any inline styles
+- Try to replicate font sizes or colors
+- Try to handle Font family and weight configurations
+- Only exception: <u> tags for underlined text are acceptable inline HTML in MDX
+
+---
+FONT INVENTORY & MEDIA INVENTORY
+- Do not add these sections to the MDX Page
+- 

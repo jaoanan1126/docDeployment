@@ -1,9 +1,356 @@
 ---
-title: "Accounting"
-description: "Stub — migrate from Ramp Developer API guides."
-icon: "calculator"
+title: Accounting
+description: " "
+---
+
+Ramp's API can be used to keep data in sync between Ramp and an external accounting system.
+
+## Building an Accounting Integration
+
+This guide is targeted towards developers building a connection between Ramp and a remote accounting/ERP system.
+
+By following this guide, you'll enable seamless data flow between Ramp and your ERP, keeping vendors, GL accounts, and transaction data synchronized.
+
+### Implementation Checklist
+
+Building an accounting integration involves three main steps: configuring the connection, uploading your chart of accounts, and implementing object sync.
+
+Configure: Establish the accounting connection
+
+Upload: Import chart of accounts from your ERP
+
+Sync: Fetch objects from Ramp and mark as synced
+
 ---
 
 <Note>
-  Source: [Ramp documentation](https://docs.ramp.com/developer-api/v1/accounting).
+**Before you start**
+
+Review the [Launch Checklist](/developer-api/v1/build-with-ramp#launch-checklist) first, including OAuth2 setup and sandbox testing. This checklist covers accounting-specific implementation steps.
 </Note>
+
+## 1. Configure Accounting Connection
+
+<Steps>
+<Step title=" ">
+**Implement onboarding flow**
+
+Establish an accounting connection between Ramp and your ERP. See [Create Accounting Connection](#create-accounting-connection).
+</Step>
+</Steps>
+
+## 2. Upload COA and Custom Fields
+
+<Steps>
+<Step title=" ">
+**Upload chart of accounts**
+
+Import GL accounts and vendors from your ERP into Ramp. See [Chart of Accounts](#chart-of-accounts).
+</Step>
+<Step title=" ">
+**Upload custom fields and options**
+
+Add classification fields like Department or Cost Center. See [Creating Custom Fields and Adding Options](#creating-custom-fields-and-adding-options).
+</Step>
+</Steps>
+
+## 3. Implement Object Sync
+
+<Steps>
+<Step title=" ">
+**Implement transaction sync (Required)**
+
+Fetch ready-to-sync transactions from Ramp, import to your ERP, and mark as synced. See [Object Sync](#object-sync).
+</Step>
+<Step title=" ">
+**Handle sync failures (Required)**
+
+Report sync failures back to users in Ramp. See [Sync Failures](#sync-failures).
+</Step>
+<Step title=" ">
+**Implement bill and payment sync (Optional)**
+
+Fetch bills and bill payments from Ramp, import to your ERP, and mark as synced. See [Object Sync](#object-sync).
+</Step>
+<Step title=" ">
+**Implement reimbursement sync (Optional)**
+
+Fetch reimbursements from Ramp, import to your ERP, and mark as synced. See [Object Sync](#object-sync).
+</Step>
+<Step title=" ">
+**Implement statement sync (Optional)**
+
+Fetch statements from Ramp, import to your ERP, and mark as synced. See [Object Sync](#object-sync).
+</Step>
+<Step title=" ">
+**Implement cashback sync (Optional)**
+
+Fetch cashbacks from Ramp, import to your ERP, and mark as synced. See [Object Sync](#object-sync).
+</Step>
+</Steps>
+
+## 4. Advanced Configuration (Optional)
+
+<Steps>
+<Step title=" ">
+**Multi-entity support**
+
+Entities are created in the Ramp UI. Objects are scoped to an entity_id when fetching. See [Multi-Entity Support](#multi-entity-support).
+</Step>
+<Step title=" ">
+**Multi-currency support**
+
+Configure currency mappings if your ERP supports multi-currency transactions. See [Monetary Values](/developer-api/v1/monetary-values).
+</Step>
+</Steps>
+
+### Building an Accounting Integration
+
+There are three core processes that must be built as part of an accounting integration:
+
+<CardGroup cols={2}>
+<Card title="Configure Connection" icon="settings" href="/developer-api/v1/accounting#create-accounting-connection">
+Establish an accounting connection between Ramp and your ERP system.
+</Card>
+
+<Card title="Chart of Accounts" icon="layers" href="/developer-api/v1/accounting#chart-of-accounts">
+Import GL accounts, custom fields, field options, and vendors from your ERP into Ramp.
+</Card>
+
+<Card title="Object Sync" icon="refresh-ccw" href="/developer-api/v1/accounting#object-sync">
+Fetch ready-to-sync objects from Ramp, transfer them to your ERP, and mark them as synced.
+</Card>
+</CardGroup>
+
+## Create Accounting Connection
+
+Before syncing your chart of accounts, you need to establish an accounting connection between Ramp and your ERP system. This connection serves as the foundation for all accounting data synchronization.
+
+<video controls>
+  <source src="https://docs.ramp.com/assets/Building%20an%20accounting%20integration%20-%20Getting%20started-vqSjz8LN.mp4" />
+</video>
+
+**Overview of accounting connections in Ramp**
+
+An Accounting Connection is the link between your Ramp account and your company's accounting system (ERP). It allows Ramp to exchange data with your ERP so that transactions, vendors, accounts, and rules stay in sync.
+
+Each accounting connection is uniquely associated with its own set of:
+
+- Accounting Custom Fields
+- Accounting Vendors
+- Accounting GL Accounts
+- Accounting Rules
+
+For more information, [learn about accounting configurations in Ramp](https://support.ramp.com/hc/en-us/sections/4454478746387-Accounting).
+
+**Managing Accounting Connections**
+
+A single Ramp account can only have one active accounting connection at a time.
+
+Switching the accounting connection will result in a loss of data from these fields and rules, but it is possible to re-activate a connection which will restore them.
+
+**Check Connection Status**
+
+**Accounting Connection Types**
+
+There are three types of accounting connections:
+
+### Direct Connection
+
+Managed by Ramp for out-of-the-box integrations
+
+- Activated when customers onboard to QuickBooks, NetSuite, etc.
+- Ramp-managed setup and maintenance
+- Can only be enabled in the Ramp UI (requires authorization)
+- Can be disabled via API or Ramp UI
+- When enabled, Custom Fields, Vendors, and GL Accounts become read-only via API
+
+[Overview of Ramp Accounting](https://support.ramp.com/hc/en-us/articles/4434982407443-Overview-of-Ramp-Accounting)
+
+### Universal CSV
+
+File-based import/export for quick setup
+
+- File-based import and export
+- API compatible with special UI behavior
+- Quick setup for immediate use
+- See Universal CSV Overview guide
+
+[Universal CSV Overview](https://support.ramp.com/hc/en-us/articles/4463895129875-Universal-CSV-overview)
+
+### Developer API
+
+Full API control with advanced features
+
+- Complete API read/write access
+- Optimized for passive sync patterns
+- Latest features and capabilities
+- Recommended for custom integrations
+
+**Multi-Entity Connections**
+
+A single Ramp account can only have one active accounting connection at a time, however Ramp supports multi-entity connections: one NetSuite (or any other kind of accounting connection) account with multiple subsidiaries.
+
+Each subsidiary has its own chart of accounts and sync settings. For example, one NetSuite account with multiple subsidiaries (e.g., TechCorp parent with CloudSoft, DataSys, and MobilePro subsidiaries) is supported by Ramp.
+
+Switching the accounting connection will result in a loss of data from these fields and rules, but it is possible to re-activate a connection which will restore them.
+
+**Migrating Connections**
+
+<Warning>
+**Migration will result in data loss**
+
+Migrating Accounting Connections will result in a loss of historical chart of accounts codings. Ensure chart of accounts is backed up before proceeding with a migration.
+</Warning>
+
+Two accounting connections cannot be active at once. When building an accounting connection to an external system, it is highly recommended to disconnect the existing connection and establish a new one. In case things go wrong, you can always reconnect the previous connection and regain access to the old Custom Fields, Vendors, and GL accounts.
+
+Before disconnecting, it is recommended to fetch all of the existing configuration and store it server-side so that the accounting structure can be rebuilt with the new accounting connection. See more guidance on how to handle migrations in the [Migration section](#migration).
+
+#### View Current Accounting Connection
+
+You can check if an accounting connection already exists by calling the [GET /developer/v1/accounting/connection](/developer-api/v1/api/accounting-connections#get-developer-v1-accounting-connection) endpoint:
+
+```bash
+curl \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  'https://api.ramp.com/developer/v1/accounting/connection'
+```
+
+#### Disconnect Accounting Connection
+
+If you need to disconnect an existing accounting connection, use the [DELETE /developer/v1/accounting/connection](/developer-api/v1/api/accounting-connections#delete-developer-v1-accounting-connection) endpoint:
+
+```bash
+curl \
+  -X DELETE \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  'https://api.ramp.com/developer/v1/accounting/connection'
+```
+
+<Warning>
+**Disconnecting will clear accounting data**
+
+Disconnecting an accounting connection will remove all associated custom fields, GL accounts, and vendors. See the [Migration section](#migration) for guidance on preserving data during connection changes.
+</Warning>
+
+#### Create New Accounting Connection
+
+To create a new Developer API accounting connection, use the [POST /developer/v1/accounting/connection](/developer-api/v1/api/accounting-connections#post-developer-v1-accounting-connection) endpoint:
+
+```bash
+curl \
+  -X POST \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -d '{
+    "remote_provider_name": "ACCOUNTING_SEED"
+  }' \
+  'https://api.ramp.com/developer/v1/accounting/connection'
+```
+
+The `remote_provider_name` field identifies your accounting system.
+
+## Chart of Accounts and Custom Fields
+
+When integrating your ERP with Ramp, one of the first setup steps is syncing your chart of accounts — the list of general ledger accounts, vendors, and classification fields that ensure every Ramp transaction is properly coded in your ERP.
+
+<video controls>
+  <source src="https://docs.ramp.com/assets/Building%20an%20accounting%20integration%20with%20the%20Ramp%20API%20-%20Uploading%20the%20Chart%20of%20Accounts-BbQMK4IQ.mp4" />
+</video>
+
+This section walks through how to:
+
+- Understand what's imported into Ramp from your ERP
+- Upload data for each category (GL Accounts, Custom Fields, Vendors)
+- Verify the data inside the Ramp UI after import
+
+#### Chart of Accounts Overview
+
+| **ERP Object** | **Required?** | **Configuration** | **Description** | **Ramp API Endpoint** |
+|---|---|---|---|---|
+| **GL Accounts** | ✅ Always required | API configurable | Primary accounting categories (e.g., expense or revenue accounts). | [POST /developer/v1/accounting/accounts](/developer-api/v1/api/accounting-gl-accounts#post-developer-v1-accounting-accounts) |
+| **Custom Fields** | ⚙️ Optional | API configurable | Adds metadata such as department or cost center. | [POST /developer/v1/accounting/fields](/developer-api/v1/api/accounting#post-developer-v1-accounting-fields) |
+| **Custom Field Options** | ⚙️ Optional | API configurable | Options for custom fields (e.g., department values). | [POST /developer/v1/accounting/field-options](/developer-api/v1/api/accounting#post-developer-v1-accounting-field-options) |
+| **Vendors** | ⚙️ Optional | API configurable | Defines supplier names for bills or transactions. | [POST /developer/v1/accounting/vendors](/developer-api/v1/api/accounting-vendors#post-developer-v1-accounting-vendors) |
+| **Entities** | ✅ Always required | UI only (read-only via API) | Business units or subsidiaries configured directly in Ramp. | UI only |
+
+<Warning>
+**Chart of Accounts cannot be modified for Ramp accounts using a direct accounting connection**
+
+This applies to GL accounts, custom fields, and vendors - they become read-only via API when a direct connection is active.
+</Warning>
+
+#### Uploading GL Accounts
+
+GL Accounts define the categories under which your company records transactions — such as expenses, revenue, or assets. These accounts are imported from your ERP and uploaded to Ramp to ensure consistent coding across systems.
+
+**Example GL accounts:**
+
+| **Classification** | **Code (optional)** | **ID** | **Name** |
+|---|---|---|---|
+| EXPENSE | 6410 | 514 | Employees: Salaries & Wages |
+| EXPENSE | — | 418 | Office/Admin: Phone & Internet |
+| REVENUE | — | 425 | Sales |
+
+To upload your GL accounts to Ramp, use the [POST /developer/v1/accounting/accounts](/developer-api/v1/api/accounting-gl-accounts#patch-developer-v1-accounting-accounts-gl-account-id) endpoint:
+
+```bash
+curl \
+  -X POST \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -d '{"gl_accounts":[{"classification":"EXPENSE","code":"6410","id":"514","name":"Employees:Salaries & Wages"},{"classification":"EXPENSE","id":"418","name":"Office/Admin:Phone & Internet"},{"classification":"REVENUE","id":"425","name":"Sales"}]}' \
+  'https://api.ramp.com/developer/v1/accounting/accounts'
+```
+
+Once you make the POST call, this is what the GL accounts look like in the Ramp UI:
+
+**View GL Accounts in Accounting Settings**
+
+Navigate to Settings → Accounting tab → Accounting fields → select 'Category - Chart of Accounts' field:
+
+![Navigate to Settings → Accounting tab → Accounting fields → select 'Category - Chart of Accounts' field:](https://docs.ramp.com/assets/gl_accounts_settings1-BGpSTnEs.png)
+
+From this view, you will be able to view the GL accounts by clicking on 'Update options':
+
+![From this view, you will be able to view the GL accounts by clicking on 'Update options':](https://docs.ramp.com/assets/gl_accounts_settings2-BtsE3sWj.png)
+
+Then you will see the GL Accounts listed on the Accounting Category options page:
+
+![Then you will see the GL Accounts listed on the Accounting Category options page:](https://docs.ramp.com/assets/gl_accounts_settings3-BQGSVfEo.png)
+
+**View GL Accounts in Transactions**
+
+When viewing transactions in the Ramp portal, the GL account will be listed as options for the 'Accounting Category' field:
+
+![When viewing transactions in the Ramp portal, the GL account will be listed as options for the 'Accounting Category' field:](https://docs.ramp.com/assets/gl_accounting_transactions-Dcp4x3qf.png)
+
+#### Creating Custom Fields and Adding Options
+
+Custom fields let you import classifications from your ERP like Department, Cost Center, or Location.
+
+**Example Custom Field:**
+
+| **Field Name** | **Input Type** |
+|---|---|
+| Department | SINGLE_CHOICE |
+
+To create a new custom field in Ramp, use the [POST /developer/v1/accounting/fields](/developer-api/v1/api/accounting#post-developer-v1-accounting-fields) endpoint:
+
+```bash
+curl \
+  -X POST \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -d '{"id":"Department","input_type":"SINGLE_CHOICE","is_splittable":"True","name":"Department"}' \
+  'https://api.ramp.com/developer/v1/accounting/fields'
+```
+
+Once you make the POST call, this is what the custom field looks like in the Ramp UI:
+
+**View Custom Fields in Accounting Settings**
+
+Navigate to Settings → Accounting tab → Accounting fields:

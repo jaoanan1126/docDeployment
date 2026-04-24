@@ -1,9 +1,381 @@
 ---
-title: "Cards and funds"
-description: "Programmatic control over funds, cards, and spending policies."
-icon: "credit-card"
+title: "Cards and Funds"
+description: " "
 ---
 
-<Note>
-  Stub page. Source: [Cards and Funds](https://docs.ramp.com/developer-api/v1/cards-and-funds) · [`llms-guides/cards-and-funds.txt`](https://docs.ramp.com/llms-guides/cards-and-funds.txt).
-</Note>
+Ramp's Developer API gives you programmatic control over funds, cards, and spending policies to help your teams spend responsibly and track budgets in real time. Whether you're managing departmental budgets, team events, or office expenses, these APIs provide the building blocks for automated spend management.
+
+**What you'll learn:**
+
+- How to create funds with built-in controls using the Limits API
+- How to scale spending policies with reusable templates using the Spend Programs API
+- When to use virtual vs physical cards for different scenarios
+
+---
+
+## How Ramp Funds, Cards, and Spend Programs Work Together
+
+Here's how these three concepts work together for effective spend management:
+
+![Spend Management Relationships](https://docs.ramp.com/assets/spend-management-relationships-ZEskrMfv.png)
+
+### Funds (Managed via Limits API)
+
+**Funds** act as predefined budgets you assign to employees, teams, or initiatives:
+
+- They can include merchant and category restrictions, as well as expiration controls
+- They can be shared across multiple users or assigned individually
+- Examples: "Marketing Q2 Budget", "Engineering Team Offsite", "Office Supplies - Austin"
+
+### Cards
+
+**Cards** are the payment methods users spend funds with:
+
+- **Virtual cards** are used for online transactions and subscriptions
+- **Physical cards** are shipped to users for in-person spending
+- Each card draws from its connected fund's available balance
+- Multiple cards can share the same fund, or one card can access multiple funds
+
+<Info>
+**Card Data Access:** Standard API responses return masked card numbers for security. Full 16-digit card numbers and CVVs require additional security review and PCI API access. [Submit a Developer API support ticket](/developer-api/v1/debugging#how-to-submit-a-developer-api-support-ticket) if your platform needs to process payments directly using full card data.
+</Info>
+
+### Spend Programs
+
+**Spend Programs** group funds, users, and cards under shared policies. Think of them as "blueprints" that make fund creation faster and more consistent
+
+- They can enforce consistent spending rules across multiple funds
+- They can enable automated fund provisioning based on employee attributes
+- Examples: "Team Budgets", "Team Offsites", "Professional Services Procurement"
+
+## Relevant Endpoints
+
+| **Endpoints** | **Use** | **Relevant Scopes** |
+|---|---|---|
+| [Limits](/developer-api/v1/api/limits) | Create and manage funds. Funds are automatically linked to virtual cards. | `limits:read`, `limits:write` |
+| [Spend Programs](/developer-api/v1/api/spend-programs) | Create reusable spending policy templates for consistent fund creation. | `spend_programs:read`, `spend_programs:write` |
+| [Cards](/developer-api/v1/api/cards) | Issue and manage physical cards. | `cards:read`, `cards:write` |
+| [Transactions](/developer-api/v1/api/transactions) | View spending activity across cards and funds. | `transactions:read` |
+
+## Complete Walkthrough: Managing a Team Offsite
+
+We'll walk you through managing a quarterly team offsite to show how spend programs, funds, and cards work together. This scenario covers the complete lifecycle from setup to monitoring.
+
+### Step 1: Create a Spend Program Template for "Team Offsites"
+
+First, create a reusable template for team offsites that can be used across multiple departments:
+
+<CodeGroup dropdown>
+```bash Create spend program for team offsites
+curl --request POST \
+  --url https://demo-api.ramp.com/developer/v1/spend-programs \
+  --header 'Authorization: Bearer $RAMP_API_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "display_name": "Team Offsites",
+  "description": "Budget template for quarterly team offsites including meals, activities, and supplies",
+  "icon": "TeamSocialIcon",
+  "is_shareable": true,
+  "permitted_spend_types": {
+    "primary_card_enabled": true,
+    "reimbursements_enabled": true
+  },
+  "spending_restrictions": {
+    "limit": {
+      "amount": 1000000,
+      "currency_code": "USD"
+    },
+    "interval": "ANNUAL",
+    "allowed_categories": [19, 6, 4]
+  }
+}'
+```
+
+```javascript Create spend program for team offsites
+const spendProgramResponse = await fetch('https://demo-api.ramp.com/developer/v1/spend-programs', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${process.env.RAMP_API_TOKEN}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    display_name: "Team Offsites",
+    description: "Budget template for quarterly team offsites including meals, activities, and supplies",
+    icon: "TeamSocialIcon",
+    is_shareable: true,
+    permitted_spend_types: {
+      primary_card_enabled: true,
+      reimbursements_enabled: true
+    },
+    spending_restrictions: {
+      limit: {
+        amount: 1000000,
+        currency_code: "USD"
+      },
+      interval: "ANNUAL",
+      allowed_categories: [19, 6, 4]
+    }
+  })
+});
+```
+
+```python Create spend program for team offsites
+import requests
+
+
+spend_program_response = requests.post(
+    'https://demo-api.ramp.com/developer/v1/spend-programs',
+    headers={
+        'Authorization': f'Bearer {os.environ["RAMP_API_TOKEN"]}',
+        'Content-Type': 'application/json'
+    },
+    json={
+        "display_name": "Team Offsites",
+        "description": "Budget template for quarterly team offsites including meals, activities, and supplies",
+        "icon": "TeamSocialIcon",
+        "is_shareable": True,
+        "permitted_spend_types": {
+            "primary_card_enabled": True,
+            "reimbursements_enabled": True
+        },
+        "spending_restrictions": {
+            "limit": {
+                "amount": 1000000,
+                "currency_code": "USD"
+            },
+            "interval": "ANNUAL",
+            "allowed_categories": [19, 6, 4]
+        }
+    }
+)
+
+
+spend_program_id = spend_program_response.json()['id']
+```
+</CodeGroup>
+
+This creates a template that allows spending on meals (category 19), lodging (category 6), and airlines (category 4).
+
+### Step 2: Create Funds for Your Specific Offsite
+
+Now create a fund for a Q1 Engineering Team Offsite using the template:
+
+<Info>
+**Before running these commands:** Replace the placeholder values (`$SPEND_PROGRAM_ID`, `$USER_ID`, etc.) with actual IDs from your Ramp account. The placeholders are formatted for bash compatibility - you can set them as environment variables or replace them directly in the commands.
+</Info>
+
+<CodeGroup dropdown>
+```bash Create funds from spend program
+curl --request POST \
+  --url https://demo-api.ramp.com/developer/v1/limits/deferred \
+  --header 'Authorization: Bearer $RAMP_API_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "display_name": "Engineering Q1 Offsite",
+  "spend_program_id": "$SPEND_PROGRAM_ID",
+  "idempotency_key": "$IDEMPOTENCY_KEY",
+  "user_id": "$USER_ID"
+}'
+
+
+# This returns a task_id. Check the status to get the spend_limit_id:
+curl --request GET \
+  --url https://demo-api.ramp.com/developer/v1/limits/deferred/status/$TASK_ID \
+  --header 'Authorization: Bearer $RAMP_API_TOKEN'
+
+
+# Response will include: {"status": "SUCCESS", "data": {"spend_limit_id": "c8b7262c-c896-4dd8-bf41-de59c4e7d6ba"}}
+```
+
+```javascript Create funds from spend program
+const fundsResponse = await fetch('https://demo-api.ramp.com/developer/v1/limits/deferred', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${process.env.RAMP_API_TOKEN}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    display_name: "Engineering Q1 Offsite",
+    spend_program_id: "$SPEND_PROGRAM_ID",
+    idempotency_key: "$IDEMPOTENCY_KEY",
+    user_id: "$USER_ID"
+  })
+});
+
+
+// Check creation status
+const fundsData = await fundsResponse.json();
+const taskId = fundsData.task_id;
+
+
+// Poll for completion
+const statusResponse = await fetch(`https://demo-api.ramp.com/developer/v1/limits/deferred/status/${taskId}`, {
+  headers: { 'Authorization': `Bearer ${process.env.RAMP_API_TOKEN}` }
+});
+const statusData = await statusResponse.json();
+const limitId = statusData.data.spend_limit_id; // Extract from status response
+```
+
+```python Create funds from spend program
+funds_response = requests.post(
+    'https://demo-api.ramp.com/developer/v1/limits/deferred',
+    headers={
+        'Authorization': f'Bearer {os.environ["RAMP_API_TOKEN"]}',
+        'Content-Type': 'application/json'
+    },
+    json={
+        "display_name": "Engineering Q1 Offsite",
+        "spend_program_id": "$SPEND_PROGRAM_ID",
+        "idempotency_key": "$IDEMPOTENCY_KEY",
+        "user_id": "$USER_ID"
+    }
+)
+
+
+task_id = funds_response.json()['task_id']
+
+
+# Poll for completion
+status_response = requests.get(
+    f'https://demo-api.ramp.com/developer/v1/limits/deferred/status/{task_id}',
+    headers={'Authorization': f'Bearer {os.environ["RAMP_API_TOKEN"]}'}
+)
+status_data = status_response.json()
+limit_id = status_data['data']['spend_limit_id']  # Extract from status response
+```
+</CodeGroup>
+
+When creating a fund from a spend program, you only need to provide:
+
+- `display_name` - Name for this specific fund
+- `spend_program_id` - ID of the spend program template to use
+- `user_id` - The initial user who will have access to the fund
+- `idempotency_key` - Ensures the request isn't duplicated
+
+The fund automatically inherits all spending restrictions and policies from the spend program template.
+
+### Step 3: Add Additional Users to the Fund
+
+If you need to add more team members to the offsite after initial creation, you can add users to the existing fund:
+
+<CodeGroup dropdown>
+```bash Add users to existing fund
+curl --request PUT \
+  --url https://demo-api.ramp.com/developer/v1/limits/$LIMIT_ID/add-users \
+  --header 'Authorization: Bearer $RAMP_API_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "user_ids": [
+    "62701f3e-d2ac-4993-b7e9-c659771959b8f",
+    "7568fddf-e13f-4548-945c-232093c7c27f"
+  ]
+}'
+```
+
+```javascript Add users to existing fund
+const addUsersResponse = await fetch(`https://demo-api.ramp.com/developer/v1/limits/${limitId}/add-users`, {
+  method: 'PUT',
+  headers: {
+    'Authorization': `Bearer ${process.env.RAMP_API_TOKEN}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    user_ids: [
+      "62701f3e-d2ac-4993-b7e9-c659771959b8f",
+      "7568fddf-e13f-4548-945c-232093c7c27f"
+    ]
+  })
+});
+```
+
+```python Add users to existing fund
+add_users_response = requests.put(
+    f'https://demo-api.ramp.com/developer/v1/limits/{limit_id}/add-users',
+    headers={
+        'Authorization': f'Bearer {os.environ["RAMP_API_TOKEN"]}',
+        'Content-Type': 'application/json'
+    },
+    json={
+        "user_ids": [
+            "62701f3e-d2ac-4993-b7e9-c659771959b8f",
+            "7568fddf-e13f-4548-945c-232093c7c27f"
+        ]
+    }
+)
+```
+</CodeGroup>
+
+This adds the specified users to the fund, giving them access to spend from the shared offsite budget.
+
+### Step 4: Monitor Spending During the Offsite
+
+During the offsite, monitor spending across both your funds and cards:
+
+<CodeGroup dropdown>
+```bash Monitor offsite spending
+# Check current fund balance and spending
+curl --request GET \
+  --url https://demo-api.ramp.com/developer/v1/limits/$LIMIT_ID \
+  --header 'Authorization: Bearer $RAMP_API_TOKEN'
+
+# Get recent transactions for this fund
+curl --request GET \
+  --url 'https://demo-api.ramp.com/developer/v1/transactions?limit_id=$LIMIT_ID' \
+  --header 'Authorization: Bearer $RAMP_API_TOKEN'
+
+# Get reimbursements for this fund
+curl --request GET \
+  --url 'https://demo-api.ramp.com/developer/v1/reimbursements?spend_limit_id=$LIMIT_ID' \
+  --header 'Authorization: Bearer $RAMP_API_TOKEN'
+```
+
+```javascript Monitor offsite spending
+// Monitor fund balance
+const fundStatus = await fetch(`https://demo-api.ramp.com/developer/v1/limits/${limitId}`, {
+  headers: { 'Authorization': `Bearer ${process.env.RAMP_API_TOKEN}` }
+});
+
+
+const fundData = await fundStatus.json();
+console.log(`Remaining budget: $${(fundData.balance.total / 100).toFixed(2)}`);
+
+
+// Get recent transactions
+const transactions = await fetch(`https://demo-api.ramp.com/developer/v1/transactions?limit_id=${limitId}`, {
+  headers: { 'Authorization': `Bearer ${process.env.RAMP_API_TOKEN}` }
+});
+
+
+// Get reimbursements for this fund
+const reimbursements = await fetch(`https://demo-api.ramp.com/developer/v1/reimbursements?spend_limit_id=${limitId}`, {
+  headers: { 'Authorization': `Bearer ${process.env.RAMP_API_TOKEN}` }
+});
+```
+
+```python Monitor offsite spending
+# Monitor fund balance
+fund_response = requests.get(
+    f'https://demo-api.ramp.com/developer/v1/limits/{limit_id}',
+    headers={'Authorization': f'Bearer {os.environ["RAMP_API_TOKEN"]}'}
+)
+
+
+fund_data = fund_response.json()
+remaining_budget = fund_data['balance']['total'] / 100
+print(f"Remaining budget: ${remaining_budget:.2f}")
+
+
+# Get recent transactions
+transactions_response = requests.get(
+    f'https://demo-api.ramp.com/developer/v1/transactions?limit_id={limit_id}',
+    headers={'Authorization': f'Bearer {os.environ["RAMP_API_TOKEN"]}'}
+)
+
+
+# Get reimbursements for this fund
+reimbursements_response = requests.get(
+    f'https://demo-api.ramp.com/developer/v1/reimbursements?spend_limit_id={limit_id}',
+    headers={'Authorization': f'Bearer {os.environ["RAMP_API_TOKEN"]}'}
+)
+```
+</CodeGroup>

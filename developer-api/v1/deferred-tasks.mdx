@@ -1,9 +1,55 @@
 ---
-title: "Deferred tasks"
-description: "Stub — migrate from Ramp Developer API guides."
-icon: "clock"
+title: "Deferred Tasks"
+description: " "
 ---
 
-<Note>
-  Source: [Ramp documentation](https://docs.ramp.com/developer-api/v1/deferred-tasks).
-</Note>
+Some API calls, for example requesting for a new card, require asynchronous processing. They are all denoted with `/deferred/` in the request URL.
+
+For these tasks, the API will return immediately with a task ID. This ID can then be used to call a `GET deferred/status/{id}` endpoint to check the status of the corresponding task.
+
+## Example: Creating a Virtual Card
+
+For example, let's create a new virtual card. The initial request to `POST /developer/v1/cards/deferred/virtual` will return an ID.
+
+```json
+{
+  "id": "eca553b8-6923-42b2-aea9-8f3c15b079ff"
+}
+```
+
+This means that asynchronous task processing has started. Information about the task can be requested by calling the relevant deferred task status endpoint, in this case by calling `GET /developer/v1/card/deferred/status/eca553b8-6923-42b2-aea9-8f3c15b079ff`.
+
+## Task Status Response
+
+The following information is made available:
+
+- **`status`**: Represented by one of the following - `STARTED`, `IN_PROGRESS`, `ERROR`, `SUCCESS`.
+- **`data`**: Additional details on status. If the task processing succeeded, `status="SUCCESS"`; in the case of creation tasks, the `id` field returns the new object ID. If the task processing failed, as indicated by `status="ERROR"`, the `error` field is populated with information about the error.
+- **`context`**: Static information about the initial request such as `acting_user_id`. For tasks with existing objects, such as card suspension, the ID of the targeted Ramp object is available.
+
+```json
+{
+  "id": "eca553b8-6923-42b2-aea9-8f3c15b079ff",
+  "data": {
+    "error": null,
+    "id": null,
+    "misc": null
+  },
+  "status": "STARTED",
+  "context": {
+    "acting_user_id": "afb554f5-ccef-4d53-bf74-bec80f5f4866"
+  }
+}
+```
+
+## Polling for Completion
+
+You should poll the status endpoint periodically until the task completes:
+
+```bash
+# Poll the status endpoint
+curl "https://api.ramp.com/developer/v1/card/deferred/status/eca553b8-6923-42b2-aea9-8f3c15b079ff" \
+  -H "Authorization: Bearer $RAMP_API_TOKEN"
+```
+
+Once the status becomes `SUCCESS` or `ERROR`, the task is complete and you can proceed accordingly.

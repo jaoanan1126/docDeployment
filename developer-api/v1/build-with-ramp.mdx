@@ -1,9 +1,262 @@
 ---
-title: "Build with Ramp"
-description: "Partner integrations, testing, and listing on the Ramp Integrations page."
-icon: "puzzle"
+title: Build with Ramp
+description: " "
 ---
 
-<Note>
-  Stub page. Source: [Build with Ramp](https://docs.ramp.com/developer-api/v1/build-with-ramp) · [`llms-guides/build-with-ramp.txt`](https://docs.ramp.com/llms-guides/build-with-ramp.txt).
-</Note>
+Ramp enables technology partners to build integrations that reach 50,000+ businesses. This guide walks you through building, testing, and publicly listing on the [Ramp Integrations page](https://ramp.com/integrations).
+
+## Why Build on Ramp?
+
+- **Monetize your integration** — You keep 100% of your revenue. Set your own pricing, charge customers directly, and grow your business without revenue sharing or platform fees.
+- **Public marketplace listing** — Your integration gets featured on the [Ramp Integrations page](https://ramp.com/integrations), giving you visibility and credibility with prospective customers.
+
+This guide applies to all integration categories. Additional guidance for Accounting/ERP integrations is linked where relevant.
+
+## What the Partnership Looks Like
+
+Building an integration with Ramp means entering a partnership focused on delivering a high-quality experience to our shared customers. Each side plays a clear role in making that happen.
+
+**Your side:**
+
+- **Pricing and monetization** — You set your pricing, bill customers directly, and keep 100% of revenue. Ramp does not process payments or participate in billing.
+- **Building and hosting your integration** — You develop and maintain your integration using Ramp's APIs.
+- **Customer support** — You assist customers through your own support channels and provide a public support email.
+- **Documentation** — You host setup guides, workflow instructions, and troubleshooting on your site.
+- **Marketing assets** — You supply the logo, descriptions, screenshots, and videos for your listing.
+
+**Ramp's side:**
+
+- **API troubleshooting & advisory** — Our team helps you debug API issues and offers guidance on best practices and specific use cases.
+- **Product review and guidance** — We review your integration flows and provide feedback. Approval is required before production access.
+- **Distribution** — Your integration reaches 50,000+ businesses once approved.
+
+This partnership model gives you full ownership of your product while Ramp provides oversight, guidance, and reach.
+
+## Launch Checklist
+
+Each integration must go through the following three stages; below is a checklist to help you work your way through each stage.
+
+Build: Develop and test in a sandbox environment
+
+Production: Onboard customers in a production environment
+
+Listing: Get listed on ramp.com/integrations
+
+---
+
+### Phase 1: Build
+
+<Steps>
+<Step title=" ">
+Apply for a developer account
+
+Submit application at [ramp.com/developer-api](https://ramp.com/developer-api?utm_source=docs)
+</Step>
+<Step title=" ">
+Accept workspace invites
+
+Accept both Sandbox and Production environment invites via email
+</Step>
+<Step title=" ">
+Make your first API call
+
+Follow the [Getting Started guide](/developer-api/v1/getting-started) to make your first API call
+</Step>
+<Step title=" ">
+Review implementation guides
+
+Review relevant implementation guides based on your use case: [Accounting](/developer-api/v1/accounting), [Virtual Cards](/developer-api/v1/virtual-cards), [Cards & Funds](/developer-api/v1/cards-and-funds)
+</Step>
+<Step title=" ">
+Define OAuth2 scopes and redirect URLs
+
+Document which API scopes your integration needs and your OAuth2 redirect URLs
+</Step>
+<Step title=" ">
+Implement OAuth2 Authorization Code Flow
+
+Build the OAuth2 handoff to authenticate customers - see [Authorization Code Flow guide](/developer-api/v1/getting-started#-authorization-code-for-multi-customer-apps)
+</Step>
+<Step title=" ">
+Test end-to-end flows in Sandbox
+
+Validate all key workflows work correctly before production
+</Step>
+<Step title=" ">
+Set up integration monitoring
+
+Implement error tracking and alerting for your integration
+</Step>
+</Steps>
+
+### Phase 2: Apply for Production Access
+
+<Steps>
+<Step title=" ">
+Disable password login in developer console
+
+[Set up SSO](https://support.ramp.com/hc/en-us/articles/24997409838739-Setting-up-single-sign-on-SSO-in-Ramp) or other secure authentication method for your developer account
+</Step>
+<Step title=" ">
+Choose integration name and description
+
+Pick your integration name and write a clear description (you can change these later)
+</Step>
+<Step title=" ">
+Record demo video with voiceover
+
+Create a walkthrough video showing OAuth2 handoff and core user flows, clearly demonstrating where each requested API scope is used
+</Step>
+<Step title=" ">
+Prepare security documentation
+
+Gather all required security materials - see [Security Requirements](#security-requirements)
+</Step>
+<Step title=" ">
+Submit production access application
+
+Submit your application directly from the developer console
+</Step>
+</Steps>
+
+### Phase 3: Beta Testing
+
+<Steps>
+<Step title=" ">
+Onboard 3+ beta customers
+
+Successfully onboard at least 3 customers into production using OAuth2
+</Step>
+<Step title=" ">
+Validate end-to-end data flows
+
+Confirm all key workflows work correctly with real production data
+</Step>
+<Step title=" ">
+Gather and address customer feedback
+
+Collect beta user feedback on usability and stability, then iterate
+</Step>
+</Steps>
+
+### Phase 4: Apply for a Public Listing
+
+<Steps>
+<Step title=" ">
+Prepare logo
+
+1024x1024px, transparent PNG or SVG format
+</Step>
+<Step title=" ">
+Write description
+
+Create a clear, compelling description that explains your integration's value to customers
+</Step>
+<Step title=" ">
+Prepare marketing screenshots
+
+Capture high-quality screenshots showcasing your integration
+</Step>
+<Step title=" ">
+Define pricing model (optional)
+
+Document your pricing strategy if charging for your integration - see [Pricing Guidance](#pricing-guidance-optional)
+</Step>
+<Step title=" ">
+Set up support email and SLAs
+
+Create a dedicated support email alias and define response time commitments
+</Step>
+<Step title=" ">
+Create internal support guidelines
+
+Provide documentation to help Ramp's support team assist your customers
+</Step>
+<Step title=" ">
+Finalize public documentation
+
+Complete customer docs - see [Writing Great Documentation](#writing-great-documentation)
+</Step>
+<Step title=" ">
+Submit listing application
+
+Submit your listing application from the developer console
+</Step>
+</Steps>
+
+## Appendix
+
+### Pricing Guidance (Optional)
+
+You control your pricing. Ramp does not charge fees or take a revenue share. Many integrations are free, while others charge for their services—the choice is yours.
+
+Best practices for pricing:
+
+- Price relative to the value your integration delivers to customers.
+- Keep pricing predictable and easy to understand.
+- Factor in implementation cost, ongoing maintenance, and support burden.
+
+Common pricing models include:
+
+- Flat annual subscription.
+- Implementation fee plus annual renewal.
+- Usage-based pricing (for example, per transaction or per bill).
+- Tiered feature bundles based on functionality.
+
+### Writing Great Documentation
+
+High-quality documentation improves customer activation and reduces support load. It is also heavily used by Ramp's sales, customer success, and support teams when discussing your integration.
+
+Your documentation should:
+
+- Be publicly accessible and hosted on your website.
+- Include prerequisites for both Ramp and your platform.
+- Provide step-by-step setup instructions.
+- Detail key user workflows and common use cases.
+- Offer troubleshooting tips and a frequently asked questions section.
+
+Examples of strong integration documentation:
+
+- [Dualentry](https://www.dualentry.com/ramp-integration)
+- [Ramp for FE](https://rampforfe.freshdesk.com/support/solutions/articles/156000202598-ramp-for-fe-setup-guide)
+- [Acumatica](https://support.ramp.com/hc/en-us/articles/30437158529811-Acumatica-overview)
+
+Ramp's systems may surface your documentation links when customers and internal teams ask about your integration, so strong docs are one of your most effective marketing and support assets.
+
+### Security Requirements
+
+Partners must fully complete security disclosures and provide:
+
+- Security certifications and/or attestations such as SOC 2 Type II, ISO 27001, PCI, or a recent third-party penetration test.
+- Full certification and/or pen test reports (not just summary letters).
+- A public URL to your security policy.
+- A dedicated and monitored security contact email address.
+- Written descriptions covering:
+  - What data your integration processes and how it is secured.
+  - Where and how data is stored.
+  - Your data retention policy.
+  - Whether and how employees at your company can access customer data.
+
+Early-stage companies may use a recent third-party pen test in place of full SOC 2 or ISO 27001 certifications, subject to Ramp's review.
+
+### Support Expectations
+
+You own first-line support for your integration. Ramp will route customer questions about your integration to you.
+
+- Provide a public support email address; this will be visible to customers and used by them to troubleshoot issues.
+- Maintain clear customer-facing documentation for setup, key workflows, and troubleshooting.
+- Provide an internal support guide for Ramp teams that explains how to triage issues, what information to collect, and how to escalate to your team.
+
+---
+
+## Example Listing
+
+![Example listing](https://docs.ramp.com/assets/app-center-listing-DUqzcZCC.png)
+
+Example listing
+
+---
+
+## Need Help?
+
+If you have questions while building or preparing your submission, [submit a Developer API support ticket](/developer-api/v1/debugging#how-to-submit-a-developer-api-support-ticket).

@@ -1,9 +1,66 @@
 ---
-title: "Debugging"
-description: "Stub — migrate from Ramp Developer API guides."
-icon: "bug"
+title: Debugging
+description: " "
 ---
 
-<Note>
-  Source: [Ramp documentation](https://docs.ramp.com/developer-api/v1/debugging).
-</Note>
+Ramp APIs will return an `x-trace-id` header in all API responses. The `x-trace-id` is particularly helpful for debugging, as it enables correlation between logs, metrics, and the API response, providing greater visibility into how the request was processed.
+
+## Usage
+
+- Include the `x-trace-id` when reaching out to Ramp support for quicker issue resolution.
+- Use the `x-trace-id` to track specific requests across different systems and identify potential bottlenecks or failures.
+- Make sure to log the `x-trace-id` in your application for easy reference in case you need to troubleshoot any API interactions.
+
+## Example
+
+Every API response includes the trace ID in the headers:
+
+```bash
+curl -I https://api.ramp.com/developer/v1/business \
+  -H "Authorization: Bearer $RAMP_API_TOKEN"
+
+# Response headers include:
+# x-trace-id: 1234567890abcdef1234567890abcdef
+```
+
+When contacting support, always include this trace ID for faster resolution.
+
+## How to Submit a Developer API Support Ticket
+
+Open [Developer Support](https://app.ramp.com/chat?entryVariant=developerSupport) and click **Connect to Developer Support team** to start a ticket directly. You can also follow the in-product steps below.
+
+### Steps
+
+**1. Navigate to Company > Developer**
+
+In the left-hand navigation, click **Company** to expand the menu, then select **Developer**. (You can skip this step if you're accessing directly from the developer console.)
+
+![Navigate to Company then Developer in the left-hand navigation](https://docs.ramp.com/assets/debugging-support-ticket-step1-BfCzfkJh.png)
+
+**2. Open Developer API Support**
+
+On the Developer page, click the **Developer API Support** card.
+
+![Click the Developer API Support card on the Developer page](https://docs.ramp.com/assets/debugging-support-ticket-step2-DGDhhjzY.png)
+
+**3. Select "Connect to Developer Support team"**
+
+In the chat window, select **Connect to Developer Support team**.
+
+![Select Connect to Developer Support team in the chat window](https://docs.ramp.com/assets/debugging-support-ticket-step3-Du_GCIEV.png)
+
+**4. Answer the agent's questions**
+
+The AI assistant will ask you a few questions about your issue. Answer as completely as you can, then review the pre-filled support ticket form to confirm the details look accurate.
+
+![Review the pre-filled support ticket form](https://docs.ramp.com/assets/debugging-support-ticket-step4-CxBd2tyj.png)
+
+**5. Click "Submit Ticket"**
+
+Click **Submit Ticket** to send your request to the team.
+
+![Confirmation that the developer support team will follow up over email](https://docs.ramp.com/assets/debugging-support-ticket-step5-BUgNX2nE.png)
+
+### What happens next
+
+Our Developer Support team will follow up with you over email.

@@ -1,9 +1,135 @@
 ---
-title: "Applications"
-description: "Stub — migrate from Ramp Developer API guides."
-icon: "layout-grid"
+title: Applications
+description: " "
 ---
 
+The Applications API lets developers programmatically pre-fill Ramp applications on behalf of new businesses. Each application creates a new business in Ramp and kicks off an asynchronous approval process.
+
+Note that this API creates and pre-fills but does not submit the application - in all cases, the end user will have to submit the application from the Ramp UX.
+
+## How It Works
+
+### Overview
+
+The application flow has three participants: your platform, Ramp, and the applicant (the business signing up).
+
+1. **Submit the application** — You call [POST /applications](/developer-api/v1/api/applications#post-developer-v1-applications) with the applicant's information
+2. **Applicant receives an email** — Ramp sends the applicant an email with sign-up instructions
+3. **Applicant completes sign-up** — The applicant creates their Ramp account. At this point, the user may be redirected either to the application or an OAuth consent screen.
+4. **User completes and submits the application in browser** - the user verifies their information is correct, performs final steps and submits application for Ramp review
+5. **Ramp reviews the application** — The application goes through Ramp's approval process
+6. **Application is approved or rejected** — Subscribe to webhooks to get notified of status changes
+
 <Note>
-  Source: [Ramp documentation](https://docs.ramp.com/developer-api/v1/applications).
+**Authorization**
+
+You must use the [Client Credentials](/developer-api/v1/authorization#supported-grant-types) grant type to create a new application; the `POST` endpoint does not require any scopes. To read application status afterward, you'll need the `applications:read` scope granted on the applicant business via the Authorization Code flow.
 </Note>
+
+![Application flow sequence diagram showing interactions between your platform, Ramp API, Ramp, and the applicant](https://docs.ramp.com/assets/applications-flow-CuZq0ZkJ.png)
+
+---
+
+## Submitting an Application
+
+Use [POST /applications](/developer-api/v1/api/applications#post-developer-v1-applications) to submit a new application.
+
+### Idempotency behavior
+
+The POST endpoint is designed to be safely retried:
+
+- If the applicant's email doesn't exist in Ramp, a new business and application are created
+- If the email already exists and the business is still in the application stage, the invitation email is re-sent
+- If the business is already approved, the request is a no-op
+
+The endpoint returns a success response in all cases, with no response body.
+
+---
+
+## OAuth
+
+Provide `oauth_authorize_params` in your request to redirect the user to Ramp's OAuth consent screen after accepting their invite.
+
+### How it works
+
+1. You include `oauth_authorize_params` with a `redirect_uri` and `state` in the `POST` request
+2. After the applicant accepts the invite and signs up, they're shown an OAuth consent screen asking them to grant your app the `applications:read` and `applications:write` scopes
+3. Upon approval, the applicant is redirected to your `redirect_uri` with an authorization `code` and `state`
+4. You exchange the code for an access token, giving you API access to the application for the new business
+
+Without `oauth_authorize_params`, the applicant is sent directly to the Ramp application after accepting the invite — no OAuth consent screen is shown. However, you may still prompt the user to authorize the connection later.
+
+<Info>
+**redirect_uri requirements**
+
+The `redirect_uri` must be registered in your app's configuration in the [Ramp Developer Console](https://app.ramp.com/settings/ramp-developer) and must use HTTPS (or localhost for development).
+</Info>
+
+After the applicant approves access, exchange the authorization code for a token as described in the [Authorization Guide](/developer-api/v1/authorization#authorization-code-flow).
+
+---
+
+## Directing Applicants to Ramp
+
+After the OAuth handoff completes — or at any point after submitting an application — you can link the applicant to Ramp's sign-in page to finish their application:
+
+```text
+https://app.ramp.com/sign-in?email={email_address}
+```
+
+The `email` query parameter is optional. When provided, it auto-populates the email field on the sign-in page so the applicant doesn't have to type it in.
+
+<Info>
+**Invite must be accepted first**
+
+The applicant won't be able to sign in until they've accepted the email invite from Ramp. If they haven't received or accepted the invite yet, direct them to check their inbox first.
+</Info>
+
+---
+
+## Application Status Lifecycle
+
+Each application moves through the following statuses:
+
+| Status | Description |
+| --- | --- |
+| `STARTED` | Application has been created but the applicant hasn't completed sign-up yet |
+| `IN_REVIEW` | Application has been submitted and is under review by Ramp |
+| `FOLLOW_UPS_REQUIRED` | Ramp needs additional information from the applicant |
+| `APPROVED` | Application has been approved — the business can start using Ramp |
+| `REJECTED` | Application has been rejected |
+| `WITHDRAWN` | Application has been withdrawn by the applicant |
+
+### Checking application status
+
+Use [GET /applications](/developer-api/v1/api/applications#get-developer-v1-applications) to check the current status. This endpoint requires the `applications:read` scope, which means you'll need an access token obtained through the [Authorization Code](/developer-api/v1/authorization#authorization-code-flow) flow.
+
+---
+
+## Webhooks
+
+Subscribe to the `applications.status_updated` webhook event to get notified when an application's status changes.
+
+The webhook payload includes the application ID and its new status:
+
+```json
+{
+  "id": "a461a658-8d78-4e66-b1fd-9c818bcfea6b",
+  "type": "applications.status_updated",
+  "created_at": "2025-04-01T12:00:00Z",
+  "business_id": "945c7d8f-6c35-4d63-9c1c-79e67c9cee73",
+  "object": {
+    "id": "123e4567-e89b-12d3-a456-426614174000"
+  }
+}
+```
+
+When you receive this event, call [GET /applications](/developer-api/v1/api/applications#get-developer-v1-applications) to fetch the full application details and current status.
+
+See the [Webhooks Guide](/developer-api/v1/webhooks) for setup instructions.
+
+---
+
+## Questions?
+
+[Submit a Developer API support ticket](/developer-api/v1/debugging#how-to-submit-a-developer-api-support-ticket) and our team will follow up.

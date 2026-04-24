@@ -13,8 +13,8 @@
   },
   "favicon": "/favicon.svg",
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg",
+    "light": "/logo/ramp_light.png",
+    "dark": "/logo/ramp-dark.png",
     "href": "/developer-api/v1/introduction"
   },
   "appearance": {
@@ -23,42 +23,16 @@
   "navbar": {
     "links": [
       {
-        "label": "Changelog",
-        "href": "https://docs.ramp.com/developer-api/v1/changelog",
-        "icon": "scroll-text"
-      },
-      {
         "label": "OpenAPI",
-        "href": "https://docs.ramp.com/openapi/developer-api.json",
-        "icon": "braces"
+        "href": "https://docs.ramp.com/openapi/developer-api.json"
       },
       {
         "label": "Support",
-        "href": "https://support.ramp.com/hc/en-us/requests/new",
-        "icon": "life-buoy"
+        "href": "https://support.ramp.com/hc/en-us/requests/new"
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Start building",
-      "href": "/developer-api/v1/getting-started"
-    }
+    ]
   },
   "navigation": {
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Ramp.com",
-          "href": "https://ramp.com",
-          "icon": "arrow-up-right"
-        },
-        {
-          "anchor": "OpenAPI spec",
-          "href": "https://docs.ramp.com/openapi/developer-api.json",
-          "icon": "file-code"
-        }
-      ]
-    },
     "groups": [
       {
         "group": "Getting Started",
@@ -73,7 +47,6 @@
             "group": "MCP",
             "root": "developer-api/v1/mcp",
             "expanded": false,
-            "icon": "bot",
             "pages": [
               "developer-api/v1/ramp-mcp",
               "developer-api/v1/developer-mcp"
@@ -88,7 +61,6 @@
             "group": "Accounting",
             "root": "developer-api/v1/accounting",
             "expanded": false,
-            "icon": "calculator",
             "pages": [
               "developer-api/v1/accounting-erp-migration",
               "developer-api/v1/tax-codes",
@@ -100,7 +72,6 @@
             "group": "Custom Records",
             "root": "developer-api/v1/custom-records",
             "expanded": false,
-            "icon": "database",
             "pages": [
               "developer-api/v1/custom-records/customized-approvers"
             ]
@@ -109,7 +80,6 @@
             "group": "Virtual Cards",
             "root": "developer-api/v1/virtual-cards",
             "expanded": false,
-            "icon": "credit-card",
             "pages": [
               "developer-api/v1/virtual-cards/embedded-cards"
             ]
@@ -118,7 +88,6 @@
             "group": "Ramp Data",
             "root": "developer-api/v1/ramp-data",
             "expanded": false,
-            "icon": "bar-chart-3",
             "pages": [
               "developer-api/v1/ramp-data/ramp-rate",
               "developer-api/v1/ramp-data/ai-index"
@@ -140,7 +109,7 @@
           "developer-api/v1/rate-limiting",
           "developer-api/v1/webhooks",
           "developer-api/v1/debugging",
-          "developer-api/v1/error-handling",
+          "developer-api/v1/error",
           "developer-api/v1/data-relationships",
           "developer-api/v1/monetary-values",
           "developer-api/v1/deferred-tasks"
@@ -194,12 +163,6 @@
           "developer-api/v1/api/vault",
           "developer-api/v1/api/vendors",
           "developer-api/v1/api/webhooks"
-        ]
-      },
-      {
-        "group": "Migration (workspace)",
-        "pages": [
-          "guides/migration-checklist"
         ]
       }
     ]

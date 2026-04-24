@@ -1,9 +1,95 @@
 ---
-title: "Monetary values"
-description: "Stub — migrate from Ramp Developer API guides."
-icon: "dollar-sign"
+title: Monetary Values
+description: " "
 ---
 
-<Note>
-  Source: [Ramp documentation](https://docs.ramp.com/developer-api/v1/monetary-values).
-</Note>
+In the Ramp API, monetary values are represented by the `currency_code` and `amount`. All `currency_code` values are three-letter acronyms as defined in **ISO 4217** (e.g., USD for US Dollars). There are two representations of the amount:
+
+## Canonical representation (Preferred)
+
+Ramp's preferred method for representing monetary values is **canonical representation**, which uses the `CurrencyAmount` type to group `amount` and `currency_code` together. The `amount` is represented as an integer in the smallest denomination to avoid precision loss.
+
+For example:
+
+- **USD**: $40 is represented as `4000` (since 1 USD = 100 cents)
+- **JPY**: ¥5000 is represented as `5000` (since 1 JPY = 1 yen)
+
+```json
+{
+  "amount": 4000,
+  "currency_code": "USD"
+}
+```
+
+### Currency Precision
+
+To calculate the correct amount for different currencies, the **canonical representation** multiplies the amount by 10 raised to the power of `D`, where `D` is the number of decimal places for the currency. You can find the `D` value for any currency in the [ISO 4217 Wikipedia page](https://en.wikipedia.org/wiki/ISO_4217).
+
+- **USD, EUR, GBP, etc.**: `D = 2` (i.e., multiply the amount by 100 for cents)
+- **JPY**: `D = 0` (i.e., no decimal places)
+
+**Formula:**
+
+```text
+Canonical amount = Raw amount * 10^D
+```
+
+For example, for USD:
+
+```text
+$40 = 40 * 10^2 = 4000 (canonical amount)
+```
+
+### Supported Currencies
+
+| Currency | Example Amount (Canonical) | Precision (Decimal Places) |
+|----------|----------------------------|----------------------------|
+| USD | 4000 ($40.00) | 2 |
+| EUR | 10000 (€100.00) | 2 |
+| JPY | 5000 (¥5000) | 0 |
+| GBP | 2500 (£25.00) | 2 |
+
+### Schema Definition
+
+Below is the schema definition of `CurrencyAmount` type:
+
+```json
+{
+   "properties":{
+      "amount":{
+         "description":"the amount of money represented in the smallest denomination of the currency. For example, when the currency is USD, then the amount is expressed in cents.",
+         "type":"integer"
+      },
+      "currency_code":{
+         "default":"USD",
+         "description":"The type of currency, in ISO 4217 format. e.g. USD for US dollars",
+         "type":"string"
+      }
+   },
+   "required":[
+      "amount",
+      "currency_code"
+   ],
+   "type":"object"
+}
+```
+
+## Legacy representation (Deprecated)
+
+The legacy representation is an older way of representing amounts. Although this method is still supported for backward compatibility, it is **deprecated** and will be replaced in future releases. You should **migrate to the canonical representation** for new development.
+
+```json
+{
+  "amount": 40.00,
+  "currency_code": "USD"
+}
+```
+
+## Date and Time Format
+
+Date and DateTime are represented using a string that conforms to [ISO8601](https://en.wikipedia.org/wiki/ISO_8601); UTC is assumed if no timezone offset is specified. For example,
+
+```json
+{
+  "created_at": "2022-04-28T21:36:29.604020"
+}

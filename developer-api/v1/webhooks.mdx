@@ -1,9 +1,442 @@
 ---
-title: "Webhooks"
-description: "Receive real-time notifications for events in your Ramp account."
-icon: "zap"
+title: Webhooks
+description: " "
 ---
 
+## Overview
+
+Webhooks allow your application to receive real-time notifications about events that occur in your Ramp account. Instead of polling our API, webhooks push notifications to your specified endpoint whenever an event happens.
+
+**Key benefits:**
+
+- Instant notification of events like transactions, approvals, or reimbursements
+- Reduces the need for polling APIs to check for updates
+- Enables automation of downstream workflows (e.g., syncing with accounting software)
+
+---
+
+## Available Events
+
+Webhooks are organized by resource type. Your access token must include the appropriate scope to subscribe to events for each resource.
+
+| **Resource** | **Required Scope** | **Event** | **Description** |
+| --- | --- | --- | --- |
+| **Applications** | `applications:read` | `applications.status_updated` | Application status has changed (e.g., approved, rejected) |
+| **Transactions** | `transactions:read` | `transactions.ready_for_review` | Transaction needs review or coding |
+|  |  | `transactions.cleared` | Transaction has been settled (also fires for refunds and reversals) |
+|  |  | `transactions.authorized` | Transaction has been authorized |
+|  |  | `transactions.ready_to_sync` | Transaction is ready to sync to accounting system |
+|  |  | `transactions.declined` | Transaction has been declined |
+| **Bills** | `bills:read` | `bills.created` | New bill has been created |
+|  |  | `bills.approved` | Bill has been approved for payment |
+|  |  | `bills.rejected` | Bill has been rejected |
+|  |  | `bills.paid` | Bill payment has been completed |
+| **Purchase Orders** | `purchase_orders:read` | `purchase_orders.created` | New purchase order has been created |
+|  |  | `purchase_orders.updated` | Purchase order has been modified |
+|  |  | `purchase_orders.archived` | Purchase order has been archived |
+| **Spend Requests** | `spend_requests:read` | `spend_requests.comment_created` | New comment has been added to a spend request |
+| **Unified Requests** | `unified_requests:read` | `unified_requests.external_approval_request` | Unified request is is ready for external approval |
+|  |  | `unified_requests.external_approval_request_reset` | External approval request on a unified request has been reset |
+
+---
+
+## Getting Started
+
+### 1. Create a Webhook Endpoint
+
+Set up an HTTPS endpoint (URL) on your server that can receive `POST` requests from Ramp. Your endpoint must:
+
+- Be publicly accessible
+- Use HTTPS
+- Return a 2xx status code for successful receipt
+- Process requests within 10 seconds
+
+<CodeGroup dropdown>
+```bash Basic webhook endpoint
+# Test your endpoint is reachable
+curl -X POST https://your-domain.com/webhooks \
+  -H "Content-Type: application/json" \
+  -d '{"test": "webhook"}'
+```
+```javascript Basic webhook endpoint
+// Express.js example
+const express = require('express')
+const app = express()
+
+
+app.use(express.json())
+
+
+app.post('/webhooks', (req, res) => {
+  console.log('Received webhook:', req.body)
+  
+  // Process the webhook payload
+  const { id, type, object } = req.body
+  
+  // Always respond quickly with 2xx status
+  res.status(200).json({ received: true })
+  
+  // Handle the event asynchronously
+  processWebhookAsync(req.body)
+})
+
+
+async function processWebhookAsync(payload) {
+  // Your business logic here
+}
+
+
+app.listen(3000)
+```
+```python Basic webhook endpoint
+# Flask example
+from flask import Flask, request, jsonify
+import threading
+
+
+app = Flask(__name__)
+
+
+@app.route('/webhooks', methods=['POST'])
+def handle_webhook():
+    data = request.get_json()
+    print(f"Received webhook: {data}")
+    
+    # Always respond quickly with 2xx status
+    response = jsonify({"received": True})
+    
+    # Process webhook asynchronously
+    thread = threading.Thread(target=process_webhook_async, args=(data,))
+    thread.start()
+    
+    return response, 200
+
+
+def process_webhook_async(payload):
+    # Your business logic here
+    pass
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=3000)
+```
+</CodeGroup>
+
+### 2. Subscribe to Events
+
+Create a webhook subscription using the `/webhooks` endpoint. You must have the appropriate scopes in your access token.
+
+<CodeGroup dropdown>
+```bash Subscribe to webhook events
+curl -X POST https://api.ramp.com/developer/v1/webhooks \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "endpoint_url": "https://your-domain.com/webhooks",
+    "event_types": ["transactions.authorized", "transactions.cleared"]
+  }'
+# Response includes a 'secret' field - save it securely to verify webhook signatures
+```
+```javascript Subscribe to webhook events
+const response = await fetch('https://api.ramp.com/developer/v1/webhooks', {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${RAMP_API_TOKEN}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    endpoint_url: 'https://your-domain.com/webhooks',
+    event_types: ['transactions.authorized', 'transactions.cleared']
+  })
+})
+
+
+const webhook = await response.json()
+console.log('Created webhook:', webhook)
+// Save webhook.secret securely - you'll need it to verify signatures
+```
+```python Subscribe to webhook events
+import requests
+
+
+headers = {
+    "Authorization": f"Bearer {RAMP_API_TOKEN}",
+    "Content-Type": "application/json"
+}
+
+
+payload = {
+    "endpoint_url": "https://your-domain.com/webhooks",
+    "event_types": ["transactions.authorized", "transactions.cleared"]
+}
+
+
+response = requests.post(
+    "https://api.ramp.com/developer/v1/webhooks",
+    headers=headers,
+    json=payload
+)
+
+
+webhook = response.json()
+print(f"Created webhook: {webhook}")
+# Save webhook['secret'] securely - you'll need it to verify signatures
+```
+</CodeGroup>
+
+### 3. Verify Your Webhook
+
+Ramp will send a `POST` request with a challenge to your endpoint during setup.
+
+1. Receive the `challenge` string from Ramp
+2. Respond by making a verification API call:
+
+<CodeGroup dropdown>
+```bash Verify webhook endpoint
+curl -X POST https://api.ramp.com/developer/v1/webhooks/{webhook_id}/verify \
+  -H "Authorization: Bearer $RAMP_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "challenge": "CHALLENGE_STRING_FROM_RAMP"
+  }'
+```
+```javascript Verify webhook endpoint
+const response = await fetch(`https://api.ramp.com/developer/v1/webhooks/${webhookId}/verify`, {
+  method: 'POST',
+  headers: {
+    'Authorization': `Bearer ${RAMP_API_TOKEN}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    challenge: 'CHALLENGE_STRING_FROM_RAMP'
+  })
+})
+
+
+const result = await response.json()
+console.log('Verification result:', result)
+```
+```python Verify webhook endpoint
+verification_response = requests.post(
+    f"https://api.ramp.com/developer/v1/webhooks/{webhook_id}/verify",
+    headers=headers,
+    json={"challenge": "CHALLENGE_STRING_FROM_RAMP"}
+)
+
+
+print(f"Verification result: {verification_response.json()}")
+```
+</CodeGroup>
+
+---
+
+## Webhook Payload Format
+
+All webhook payloads follow this consistent structure:
+
+```json
+{
+  "id": "a461a658-8d78-4e66-b1fd-9c818bcfea6b",
+  "type": "transactions.cleared",
+  "created_at": "2025-04-01T12:00:00Z",
+  "business_id": "945c7d8f-6c35-4d63-9c1c-79e67c9cee73",
+  "object": {
+    "id": "<resource-id>"
+  }
+}
+```
+
+**Payload fields:**
+
+- `id`: Unique event ID (constant across retries)
+- `type`: Event type from the available events table
+- `created_at`: Event timestamp in ISO 8601 format
+- `business_id`: Identifies which business the event belongs to
+- `object`: Contains the affected resource ID
+
+### Example Payloads
+
+**Transaction Event:**
+
+```json
+{
+  "id": "a461a658-8d78-4e66-b1fd-9c818bcfea6b",
+  "type": "transactions.cleared",
+  "created_at": "2025-04-01T12:00:00Z",
+  "business_id": "945c7d8f-6c35-4d63-9c1c-79e67c9cee73",
+  "object": {
+    "id": "3aa9eed1-c793-4b52-a502-e7f2a7e4c1b2"
+  }
+}
+```
+
+**Bill Event:**
+
+```json
+{
+  "id": "c683g860-0f90-5g88-d725-1f040gegdg8e",
+  "type": "bills.ready_to_sync",
+  "created_at": "2025-04-01T12:10:00Z",
+  "business_id": "945c7d8f-6c35-4d63-9c1c-79e67c9cee73",
+  "object": {
+    "id": "9cd3f558-g005-5e34-0d26-3f9g8c7b4d2e"
+  }
+}
+```
+
+**Purchase Order Event:**
+
+```json
+{
+  "id": "d794h971-1g01-6h99-e836-2g151hgghg9f",
+  "type": "purchase_orders.ready_to_sync",
+  "created_at": "2025-04-01T12:15:00Z",
+  "business_id": "945c7d8f-6c35-4d63-9c1c-79e67c9cee73",
+  "object": {
+    "id": "0de4g669-h116-6f45-1e37-4g0h9d8c5e3f"
+  }
+}
+```
+
+To get the full resource details, use the resource ID to fetch from the appropriate API endpoint (e.g., `/transactions/{id}` for transaction events, `/reimbursements/{id}` for reimbursement events).
+
+---
+
+## Verifying Webhook Signatures
+
+To help ensure the security of your integration, Ramp includes a cryptographic signature with every webhook event we send. This allows you to verify that the payload was sent by Ramp and hasn't been modified in transit.
+
+While payload validation is optional, we recommend implementing it for any production environment.
+
 <Note>
-  Stub page. Source: [Webhooks](https://docs.ramp.com/developer-api/v1/webhooks) · [`llms-guides/webhooks.txt`](https://docs.ramp.com/llms-guides/webhooks.txt).
+**Using a no-code or low-code platform?**
+
+If you're using a no-code or low-code platform (like Zapier, Make, or Pipedream), you may not have access to custom code for signature verification — and that's okay. Validation is encouraged, but not required for webhooks to work.
 </Note>
+
+### How it works
+
+When you create a webhook subscription, Ramp provides a `secret` field in the response. You'll use this secret to verify the authenticity of all subsequent webhook events.
+
+Every webhook request from Ramp includes an `X-Ramp-Signature` header, which contains an HMAC-SHA256 hash of the raw request body, signed with your webhook secret.
+
+**Sample X-Ramp-Signature from Ramp:**
+
+```text
+X-Ramp-Signature: 7f2a8b9c3d4e5f6a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e
+```
+
+### Implementation
+
+<CodeGroup dropdown>
+```bash Verify webhook signatures
+# Signature verification should be done in your application code
+# This is just an example of extracting the header
+curl -v https://your-domain.com/webhooks \
+  -H "X-Ramp-Signature: expected_signature_here"
+```
+```javascript Verify webhook signatures
+const crypto = require('crypto')
+
+
+function verifyWebhookSignature(payload, signature, secret) {
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(payload, 'utf8')
+    .digest('hex')
+  
+  return crypto.timingSafeEqual(
+    Buffer.from(expectedSignature, 'hex'),
+    Buffer.from(signature, 'hex')
+  )
+}
+
+
+// In your webhook handler
+app.post('/webhooks', (req, res) => {
+  const signature = req.headers['x-ramp-signature']
+  const payload = JSON.stringify(req.body)
+  
+  if (!verifyWebhookSignature(payload, signature, WEBHOOK_SECRET)) {
+    return res.status(401).send('Invalid signature')
+  }
+  
+  // Process webhook...
+  res.status(200).json({ received: true })
+})
+```
+```python Verify webhook signatures
+import hmac
+import hashlib
+
+
+def verify_webhook_signature(payload, signature, secret):
+    expected_signature = hmac.new(
+        secret.encode('utf-8'),
+        payload.encode('utf-8'),
+        hashlib.sha256
+    ).hexdigest()
+    return hmac.compare_digest(expected_signature, signature)
+
+
+# In your Flask route
+@app.route('/webhooks', methods=['POST'])
+def handle_webhook():
+    signature = request.headers.get('X-Ramp-Signature')
+    payload = request.get_data(as_text=True)
+    
+    if not verify_webhook_signature(payload, signature, WEBHOOK_SECRET):
+        return jsonify({"error": "Invalid signature"}), 401
+    
+    data = request.get_json()
+    # Process webhook...
+    return jsonify({"received": True}), 200
+```
+</CodeGroup>
+
+---
+
+## Delivery and Retry Logic
+
+### Rate Limiting
+
+Webhook delivery throughput is not limited on Ramp's end. However, if your endpoint returns a `429 Too Many Requests` status, Ramp has built-in mitigations to handle rate limiting gracefully.
+
+### Retry Schedule
+
+Ramp's retry behavior depends on the HTTP status code returned by your webhook endpoint:
+
+| Status Code | Behavior |
+| --- | --- |
+| **2xx** | Delivery successful - no retries |
+| **3xx, 4xx** (except 429) | Instant delivery failure - no retries |
+| **429, 5xx** (including timeouts) | Retry up to **10 times** with exponential backoff |
+
+**Retry Timing:** Failed deliveries use exponential backoff with jitter, starting between 0-60 seconds and growing exponentially with each failed attempt. Webhook requests timeout after 10 seconds.
+
+**Important:** The same event `id` is used for all retry attempts, allowing you to implement idempotency checks.
+
+**Event Ordering:** Webhooks may arrive out of order. For example:
+
+- `transactions.authorized` might be delayed or retried
+- `transactions.cleared` may arrive earlier if successful
+
+Design your system to handle **out-of-order events** gracefully by checking the event timestamp and fetching the latest resource state when needed.
+
+---
+
+## Best Practices
+
+### Reliability
+
+- **Implement idempotency checks** using the event `id` to handle duplicate deliveries
+- **Return 2xx responses within 10 seconds** to avoid timeout retries
+- **Process payloads asynchronously** to respond quickly
+- **Log raw payloads** for debugging and audit trails
+- **Handle retries gracefully** - the same event may be delivered up to 10 times for 429/5xx responses
+
+### Security
+
+- **Always verify webhook signatures** before processing
+- **Use HTTPS endpoints** to encrypt data in transit
+- **Validate event types**
