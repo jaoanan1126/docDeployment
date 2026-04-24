@@ -1,5 +1,5 @@
 ---
-title: Bill Pay
+title: "Bill Pay"
 description: " "
 ---
 
@@ -34,11 +34,11 @@ Bills move through the following statuses:
 
 Bills created via API are automatically approved and enter the workflow at the **Approved** status.
 
-<Note>
+<Info>
 **Draft bill endpoints**
 
 We have draft bill endpoints available to create and update draft bills through the API. Draft bills must be approved through the Ramp dashboard—approval via API is not supported. [Submit a Developer API support ticket](/developer-api/v1/debugging#how-to-submit-a-developer-api-support-ticket) for early access.
-</Note>
+</Info>
 
 ---
 
@@ -50,101 +50,190 @@ The request requires several UUIDs. Fetch these from the endpoints below and use
 
 | Source endpoint | Response field | Request field (for POST /bills) |
 | --- | --- | --- |
-| [GET /entities](/api-reference/business-entities/list-business-entities) | `id` | `entity_id` |
-| [GET /entities](/api-reference/business-entities/list-business-entities) | `bank_accounts[].id` where `usage_type = BILL_PAY_BANK_ACCOUNT` | `source_bank_account_id` |
-| [GET /vendors](/api-reference/vendor/list-vendors) | `id` | `vendor_id` |
-| [GET `/vendors/{id}/contacts`](/api-reference/vendor/list-vendors) | `id` | `vendor_contact_id` |
-| [GET `/vendors/{id}/accounts`](/api-reference/vendor/list-vendors) | `id` (for ACH/wire/SWIFT only) | `vendor_account_id` |
+| [GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities) | `id` | `entity_id` |
+| [GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities) | `bank_accounts[].id` where `usage_type = BILL_PAY_BANK_ACCOUNT` | `source_bank_account_id` |
+| [GET /vendors](/api-reference/vendor/list-vendors#get-developer-v1-vendors) | `id` | `vendor_id` |
+| [GET /vendors/&#123;id&#125;/contacts](/api-reference/vendor/list-vendor-contacts-for-vendor#get-developer-v1-vendors-vendor-id-contacts) | `id` | `vendor_contact_id` |
+| [GET /vendors/&#123;id&#125;/accounts](/api-reference/vendor/list-vendor-bank-accounts#get-developer-v1-vendors-vendor-id-accounts) | `id` (for ACH/wire/SWIFT only) | `vendor_account_id` |
 
-<Note>
+<Info>
 **Missing BILL_PAY_BANK_ACCOUNT?**
 
 If you don't see a bank account with `usage_type = BILL_PAY_BANK_ACCOUNT` in your GET /entities response, Bill Pay hasn't been set up for your organization yet. Follow the steps in the [Bill Pay set up guide](https://support.ramp.com/hc/en-us/articles/4417760908435-Bill-Pay-set-up) to configure it, then retry your API call.
-</Note>
+</Info>
 
-Payment Method:
-
-ACH
+<Tabs>
+<Tab title="ACH">
 
 Standard bank transfer to vendor's bank account
 
 **Required Fields**
 
-**vendor_id**
-
-required
-
-[GET /vendors](/api-reference/vendor/list-vendors)
-
+<ParamField body="vendor_id" type="uuid" required>
 Unique identifier of bill vendor.
 
-**vendor_contact_id**
+[GET /vendors](/api-reference/vendor/list-vendors#get-developer-v1-vendors)
+</ParamField>
 
-required
-
-[GET `/vendors/{id}/contacts`](/api-reference/vendor/list-vendors)
-
+<ParamField body="vendor_contact_id" type="uuid" required>
 Unique identifier of vendor contact, must be associated with passed vendor.
 
-**entity_id**
+[GET /vendors/&#123;id&#125;/contacts](/api-reference/vendor/list-vendor-contacts-for-vendor#get-developer-v1-vendors-vendor-id-contacts)
+</ParamField>
 
-required
-
-[GET /entities](/api-reference/business-entities/list-business-entities)
-
+<ParamField body="entity_id" type="uuid" required>
 Associated business entity.
 
-**invoice_number**
+[GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities)
+</ParamField>
 
-required
-
+<ParamField body="invoice_number" type="string" required>
 The invoice number on the bill. Max 20 characters.
+</ParamField>
 
-**invoice_currency**
-
-required
-
+<ParamField body="invoice_currency" type="string" required>
 Currency of the invoice (ISO 4217 code).
+</ParamField>
 
-**issued_at**
-
-required
-
+<ParamField body="issued_at" type="date" required>
 Issued date of the bill.
+</ParamField>
 
-**due_at**
-
-required
-
+<ParamField body="due_at" type="date" required>
 Due date of the bill.
+</ParamField>
 
-**Payment Details** (required for ACH)
+**Payment Details (required for ACH)**
 
-**payment_arrival_date**
-
-required
-
+<ParamField body="payment_arrival_date" type="date" required>
 The expected date the payment will arrive in the vendor's bank account.
+</ParamField>
 
-**source_bank_account_id**
-
-required
-
-[GET /entities](/api-reference/business-entities/list-business-entities)
-
+<ParamField body="source_bank_account_id" type="uuid" required>
 Unique identifier of the bank account to pay the bill from. Must have usage_type=BILL_PAY_BANK_ACCOUNT.
 
-**vendor_account_id**
+[GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities)
+</ParamField>
 
-required
-
-[GET `/vendors/{id}/accounts`](/api-reference/vendor/list-vendors)
-
+<ParamField body="vendor_account_id" type="uuid" required>
 Unique identifier of the vendor account to pay the bill to.
 
-**Optional Fields**
+[GET /vendors/&#123;id&#125;/accounts](/api-reference/vendor/list-vendor-bank-accounts#get-developer-v1-vendors-vendor-id-accounts)
+</ParamField>
 
-Expand
+<AccordionGroup>
+<Accordion title="Optional Fields">
+
+<ParamField body="memo" type="string">
+Memo of the bill. Max 1000 characters.
+</ParamField>
+
+<ParamField body="attachment_id" type="uuid">
+UUID of a previously uploaded file to attach to this bill.
+
+[POST /bills/drafts/&#123;draft_bill_id&#125;/attachments](/api-reference/bill/upload-a-file-attachment-to-an-existing-draft-bill#post-developer-v1-bills-drafts-draft-bill-id-attachments)
+</ParamField>
+
+<ParamField body="enable_accounting_sync" type="boolean">
+Set to false to prevent this bill from syncing to your ERP. Must be true when remote_id is provided.
+</ParamField>
+
+<ParamField body="posting_date" type="date">
+The date the bill is posted to the accounting system.
+</ParamField>
+
+<ParamField body="remote_id" type="string">
+An ID that identifies the bill on client's side. Note: enable_accounting_sync must be true when remote_id is provided.
+</ParamField>
+
+<Accordion title="line_items (array)">
+
+List of line items related to the bill.
+
+**Item 1**
+
+<ParamField body="amount" type="number">
+Amount for the line item.
+</ParamField>
+
+<ParamField body="memo" type="string">
+Memo for the line item.
+</ParamField>
+
+</Accordion>
+
+<Accordion title="inventory_line_items (array)">
+
+List of inventory line items related to the bill.
+
+**Item 1**
+
+<ParamField body="amount" type="number">
+Amount for the inventory line item.
+</ParamField>
+
+<ParamField body="memo" type="string">
+Memo for the inventory line item.
+</ParamField>
+
+</Accordion>
+
+</Accordion>
+</AccordionGroup>
+
+<ParamField body="accounting_field_selections" type="array">
+
+List of accounting field options selected to code the bill.
+
+<AccordionGroup>
+<Accordion title=" ">
+
+**Selection 1**
+
+<ParamField body="accounting_field_id" type="uuid">
+
+[GET /accounting/fields](/api-reference/accounting/list-custom-accounting-fields#get-developer-v1-accounting-fields)
+
+Unique identifier of the accounting field.
+
+</ParamField>
+
+<ParamField body="accounting_field_option_id" type="uuid">
+
+[GET /accounting/fields](/api-reference/accounting/list-custom-accounting-fields#get-developer-v1-accounting-fields)
+
+Unique identifier of the accounting field option.
+
+</ParamField>
+
+</Accordion>
+</AccordionGroup>
+
+</ParamField>
+
+<ParamField body="purchase_order_ids" type="array">
+
+Unique identifiers of the purchase orders to match this bill to.
+
+<AccordionGroup>
+<Accordion title=" ">
+
+**ID 1**
+
+<ParamField body="purchase_order_id" type="uuid">
+
+[GET /purchase-orders](/api-reference/purchase-order/list-purchase-orders#get-developer-v1-purchase-orders)
+
+UUID of a purchase order to match to this bill.
+
+</ParamField>
+
+</Accordion>
+</AccordionGroup>
+
+</ParamField>
+
+---
 
 POST /developer/v1/bills
 
@@ -165,10 +254,1164 @@ POST /developer/v1/bills
   }
 }
 ```
+</Tab>
+<Tab title="Check">
+
+Physical check mailed to vendor
+
+**Required Fields**
+
+<ParamField body="vendor_id" type="uuid" required>
+Unique identifier of bill vendor.
+
+[GET /vendors](/api-reference/vendor/list-vendors#get-developer-v1-vendors)
+</ParamField>
+
+<ParamField body="vendor_contact_id" type="uuid" required>
+Unique identifier of vendor contact, must be associated with passed vendor.
+
+[GET /vendors/&#123;id&#125;/contacts](/api-reference/vendor/list-vendor-contacts-for-vendor#get-developer-v1-vendors-vendor-id-contacts)
+</ParamField>
+
+<ParamField body="entity_id" type="uuid" required>
+Associated business entity.
+
+[GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities)
+</ParamField>
+
+<ParamField body="invoice_number" type="string" required>
+The invoice number on the bill. Max 20 characters.
+</ParamField>
+
+<ParamField body="invoice_currency" type="string" required>
+Currency of the invoice (ISO 4217 code).
+</ParamField>
+
+<ParamField body="issued_at" type="date" required>
+Issued date of the bill.
+</ParamField>
+
+<ParamField body="due_at" type="date" required>
+Due date of the bill.
+</ParamField>
+
+**Payment Details (required for ACH)**
+
+<ParamField body="payment_arrival_date" type="date" required>
+The expected date the payment will arrive in the vendor's bank account.
+</ParamField>
+
+<ParamField body="source_bank_account_id" type="uuid" required>
+Unique identifier of the bank account to pay the bill from. Must have usage_type=BILL_PAY_BANK_ACCOUNT.
+
+[GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities)
+</ParamField>
+
+<ParamField body="vendor_account_id" type="uuid" required>
+Unique identifier of the vendor account to pay the bill to.
+
+[GET /vendors/&#123;id&#125;/accounts](/api-reference/vendor/list-vendor-bank-accounts#get-developer-v1-vendors-vendor-id-accounts)
+</ParamField>
+
+<AccordionGroup>
+<Accordion title="Optional Fields">
+
+<ParamField body="memo" type="string">
+Memo of the bill. Max 1000 characters.
+</ParamField>
+
+<ParamField body="attachment_id" type="uuid">
+UUID of a previously uploaded file to attach to this bill.
+
+[POST /bills/drafts/&#123;draft_bill_id&#125;/attachments](/api-reference/bill/upload-a-file-attachment-to-an-existing-draft-bill#post-developer-v1-bills-drafts-draft-bill-id-attachments)
+</ParamField>
+
+<ParamField body="enable_accounting_sync" type="boolean">
+Set to false to prevent this bill from syncing to your ERP. Must be true when remote_id is provided.
+</ParamField>
+
+<ParamField body="posting_date" type="date">
+The date the bill is posted to the accounting system.
+</ParamField>
+
+<ParamField body="remote_id" type="string">
+An ID that identifies the bill on client's side. Note: enable_accounting_sync must be true when remote_id is provided.
+</ParamField>
+
+<Accordion title="line_items (array)">
+
+List of line items related to the bill.
+
+**Item 1**
+
+<ParamField body="amount" type="number">
+Amount for the line item.
+</ParamField>
+
+<ParamField body="memo" type="string">
+Memo for the line item.
+</ParamField>
+
+</Accordion>
+
+<Accordion title="inventory_line_items (array)">
+
+List of inventory line items related to the bill.
+
+**Item 1**
+
+<ParamField body="amount" type="number">
+Amount for the inventory line item.
+</ParamField>
+
+<ParamField body="memo" type="string">
+Memo for the inventory line item.
+</ParamField>
+
+</Accordion>
+
+</Accordion>
+</AccordionGroup>
+
+<ParamField body="accounting_field_selections" type="array">
+
+List of accounting field options selected to code the bill.
+
+<AccordionGroup>
+<Accordion title=" ">
+
+**Selection 1**
+
+<ParamField body="accounting_field_id" type="uuid">
+
+[GET /accounting/fields](/api-reference/accounting/list-custom-accounting-fields#get-developer-v1-accounting-fields)
+
+Unique identifier of the accounting field.
+
+</ParamField>
+
+<ParamField body="accounting_field_option_id" type="uuid">
+
+[GET /accounting/fields](/api-reference/accounting/list-custom-accounting-fields#get-developer-v1-accounting-fields)
+
+Unique identifier of the accounting field option.
+
+</ParamField>
+
+</Accordion>
+</AccordionGroup>
+
+</ParamField>
+
+<ParamField body="purchase_order_ids" type="array">
+
+Unique identifiers of the purchase orders to match this bill to.
+
+<AccordionGroup>
+<Accordion title=" ">
+
+**ID 1**
+
+<ParamField body="purchase_order_id" type="uuid">
+
+[GET /purchase-orders](/api-reference/purchase-order/list-purchase-orders#get-developer-v1-purchase-orders)
+
+UUID of a purchase order to match to this bill.
+
+</ParamField>
+
+</Accordion>
+</AccordionGroup>
+
+</ParamField>
+
+---
+
+POST /developer/v1/bills
+
+```json
+{
+  "vendor_id": "<uuid>",
+  "vendor_contact_id": "<uuid>",
+  "entity_id": "<uuid>",
+  "invoice_number": "INV-2024-001",
+  "invoice_currency": "USD",
+  "issued_at": "2024-11-15",
+  "due_at": "2024-12-15",
+  "payment_method": "ACH",
+  "payment_details": {
+    "payment_arrival_date": "2024-12-15",
+    "source_bank_account_id": "<uuid>",
+    "vendor_account_id": "<uuid>"
+  }
+}
+```
+</Tab>
+<Tab title="Domestic Wire">
+
+Same-day or next-day wire transfer within the US
+
+**Required Fields**
+
+<ParamField body="vendor_id" type="uuid" required>
+Unique identifier of bill vendor.
+
+[GET /vendors](/api-reference/vendor/list-vendors#get-developer-v1-vendors)
+</ParamField>
+
+<ParamField body="vendor_contact_id" type="uuid" required>
+Unique identifier of vendor contact, must be associated with passed vendor.
+
+[GET /vendors/&#123;id&#125;/contacts](/api-reference/vendor/list-vendor-contacts-for-vendor#get-developer-v1-vendors-vendor-id-contacts)
+</ParamField>
+
+<ParamField body="entity_id" type="uuid" required>
+Associated business entity.
+
+[GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities)
+</ParamField>
+
+<ParamField body="invoice_number" type="string" required>
+The invoice number on the bill. Max 20 characters.
+</ParamField>
+
+<ParamField body="invoice_currency" type="string" required>
+Currency of the invoice (ISO 4217 code).
+</ParamField>
+
+<ParamField body="issued_at" type="date" required>
+Issued date of the bill.
+</ParamField>
+
+<ParamField body="due_at" type="date" required>
+Due date of the bill.
+</ParamField>
+
+**Payment Details (required for ACH)**
+
+<ParamField body="payment_arrival_date" type="date" required>
+The expected date the payment will arrive in the vendor's bank account.
+</ParamField>
+
+<ParamField body="source_bank_account_id" type="uuid" required>
+Unique identifier of the bank account to pay the bill from. Must have usage_type=BILL_PAY_BANK_ACCOUNT.
+
+[GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities)
+</ParamField>
+
+<ParamField body="vendor_account_id" type="uuid" required>
+Unique identifier of the vendor account to pay the bill to.
+
+[GET /vendors/&#123;id&#125;/accounts](/api-reference/vendor/list-vendor-bank-accounts#get-developer-v1-vendors-vendor-id-accounts)
+</ParamField>
+
+<AccordionGroup>
+<Accordion title="Optional Fields">
+
+<ParamField body="memo" type="string">
+Memo of the bill. Max 1000 characters.
+</ParamField>
+
+<ParamField body="attachment_id" type="uuid">
+UUID of a previously uploaded file to attach to this bill.
+
+[POST /bills/drafts/&#123;draft_bill_id&#125;/attachments](/api-reference/bill/upload-a-file-attachment-to-an-existing-draft-bill#post-developer-v1-bills-drafts-draft-bill-id-attachments)
+</ParamField>
+
+<ParamField body="enable_accounting_sync" type="boolean">
+Set to false to prevent this bill from syncing to your ERP. Must be true when remote_id is provided.
+</ParamField>
+
+<ParamField body="posting_date" type="date">
+The date the bill is posted to the accounting system.
+</ParamField>
+
+<ParamField body="remote_id" type="string">
+An ID that identifies the bill on client's side. Note: enable_accounting_sync must be true when remote_id is provided.
+</ParamField>
+
+<Accordion title="line_items (array)">
+
+List of line items related to the bill.
+
+**Item 1**
+
+<ParamField body="amount" type="number">
+Amount for the line item.
+</ParamField>
+
+<ParamField body="memo" type="string">
+Memo for the line item.
+</ParamField>
+
+</Accordion>
+
+<Accordion title="inventory_line_items (array)">
+
+List of inventory line items related to the bill.
+
+**Item 1**
+
+<ParamField body="amount" type="number">
+Amount for the inventory line item.
+</ParamField>
+
+<ParamField body="memo" type="string">
+Memo for the inventory line item.
+</ParamField>
+
+</Accordion>
+
+</Accordion>
+</AccordionGroup>
+
+<ParamField body="accounting_field_selections" type="array">
+
+List of accounting field options selected to code the bill.
+
+<AccordionGroup>
+<Accordion title=" ">
+
+**Selection 1**
+
+<ParamField body="accounting_field_id" type="uuid">
+
+[GET /accounting/fields](/api-reference/accounting/list-custom-accounting-fields#get-developer-v1-accounting-fields)
+
+Unique identifier of the accounting field.
+
+</ParamField>
+
+<ParamField body="accounting_field_option_id" type="uuid">
+
+[GET /accounting/fields](/api-reference/accounting/list-custom-accounting-fields#get-developer-v1-accounting-fields)
+
+Unique identifier of the accounting field option.
+
+</ParamField>
+
+</Accordion>
+</AccordionGroup>
+
+</ParamField>
+
+<ParamField body="purchase_order_ids" type="array">
+
+Unique identifiers of the purchase orders to match this bill to.
+
+<AccordionGroup>
+<Accordion title=" ">
+
+**ID 1**
+
+<ParamField body="purchase_order_id" type="uuid">
+
+[GET /purchase-orders](/api-reference/purchase-order/list-purchase-orders#get-developer-v1-purchase-orders)
+
+UUID of a purchase order to match to this bill.
+
+</ParamField>
+
+</Accordion>
+</AccordionGroup>
+
+</ParamField>
+
+---
+
+POST /developer/v1/bills
+
+```json
+{
+  "vendor_id": "<uuid>",
+  "vendor_contact_id": "<uuid>",
+  "entity_id": "<uuid>",
+  "invoice_number": "INV-2024-001",
+  "invoice_currency": "USD",
+  "issued_at": "2024-11-15",
+  "due_at": "2024-12-15",
+  "payment_method": "ACH",
+  "payment_details": {
+    "payment_arrival_date": "2024-12-15",
+    "source_bank_account_id": "<uuid>",
+    "vendor_account_id": "<uuid>"
+  }
+}
+```
+</Tab>
+<Tab title="SWIFT">
+
+International wire transfer via SWIFT network
+
+**Required Fields**
+
+<ParamField body="vendor_id" type="uuid" required>
+Unique identifier of bill vendor.
+
+[GET /vendors](/api-reference/vendor/list-vendors#get-developer-v1-vendors)
+</ParamField>
+
+<ParamField body="vendor_contact_id" type="uuid" required>
+Unique identifier of vendor contact, must be associated with passed vendor.
+
+[GET /vendors/&#123;id&#125;/contacts](/api-reference/vendor/list-vendor-contacts-for-vendor#get-developer-v1-vendors-vendor-id-contacts)
+</ParamField>
+
+<ParamField body="entity_id" type="uuid" required>
+Associated business entity.
+
+[GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities)
+</ParamField>
+
+<ParamField body="invoice_number" type="string" required>
+The invoice number on the bill. Max 20 characters.
+</ParamField>
+
+<ParamField body="invoice_currency" type="string" required>
+Currency of the invoice (ISO 4217 code).
+</ParamField>
+
+<ParamField body="issued_at" type="date" required>
+Issued date of the bill.
+</ParamField>
+
+<ParamField body="due_at" type="date" required>
+Due date of the bill.
+</ParamField>
+
+**Payment Details (required for ACH)**
+
+<ParamField body="payment_arrival_date" type="date" required>
+The expected date the payment will arrive in the vendor's bank account.
+</ParamField>
+
+<ParamField body="source_bank_account_id" type="uuid" required>
+Unique identifier of the bank account to pay the bill from. Must have usage_type=BILL_PAY_BANK_ACCOUNT.
+
+[GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities)
+</ParamField>
+
+<ParamField body="vendor_account_id" type="uuid" required>
+Unique identifier of the vendor account to pay the bill to.
+
+[GET /vendors/&#123;id&#125;/accounts](/api-reference/vendor/list-vendor-bank-accounts#get-developer-v1-vendors-vendor-id-accounts)
+</ParamField>
+
+<AccordionGroup>
+<Accordion title="Optional Fields">
+
+<ParamField body="memo" type="string">
+Memo of the bill. Max 1000 characters.
+</ParamField>
+
+<ParamField body="attachment_id" type="uuid">
+UUID of a previously uploaded file to attach to this bill.
+
+[POST /bills/drafts/&#123;draft_bill_id&#125;/attachments](/api-reference/bill/upload-a-file-attachment-to-an-existing-draft-bill#post-developer-v1-bills-drafts-draft-bill-id-attachments)
+</ParamField>
+
+<ParamField body="enable_accounting_sync" type="boolean">
+Set to false to prevent this bill from syncing to your ERP. Must be true when remote_id is provided.
+</ParamField>
+
+<ParamField body="posting_date" type="date">
+The date the bill is posted to the accounting system.
+</ParamField>
+
+<ParamField body="remote_id" type="string">
+An ID that identifies the bill on client's side. Note: enable_accounting_sync must be true when remote_id is provided.
+</ParamField>
+
+<Accordion title="line_items (array)">
+
+List of line items related to the bill.
+
+**Item 1**
+
+<ParamField body="amount" type="number">
+Amount for the line item.
+</ParamField>
+
+<ParamField body="memo" type="string">
+Memo for the line item.
+</ParamField>
+
+</Accordion>
+
+<Accordion title="inventory_line_items (array)">
+
+List of inventory line items related to the bill.
+
+**Item 1**
+
+<ParamField body="amount" type="number">
+Amount for the inventory line item.
+</ParamField>
+
+<ParamField body="memo" type="string">
+Memo for the inventory line item.
+</ParamField>
+
+</Accordion>
+
+</Accordion>
+</AccordionGroup>
+
+<ParamField body="accounting_field_selections" type="array">
+
+List of accounting field options selected to code the bill.
+
+<AccordionGroup>
+<Accordion title=" ">
+
+**Selection 1**
+
+<ParamField body="accounting_field_id" type="uuid">
+
+[GET /accounting/fields](/api-reference/accounting/list-custom-accounting-fields#get-developer-v1-accounting-fields)
+
+Unique identifier of the accounting field.
+
+</ParamField>
+
+<ParamField body="accounting_field_option_id" type="uuid">
+
+[GET /accounting/fields](/api-reference/accounting/list-custom-accounting-fields#get-developer-v1-accounting-fields)
+
+Unique identifier of the accounting field option.
+
+</ParamField>
+
+</Accordion>
+</AccordionGroup>
+
+</ParamField>
+
+<ParamField body="purchase_order_ids" type="array">
+
+Unique identifiers of the purchase orders to match this bill to.
+
+<AccordionGroup>
+<Accordion title=" ">
+
+**ID 1**
+
+<ParamField body="purchase_order_id" type="uuid">
+
+[GET /purchase-orders](/api-reference/purchase-order/list-purchase-orders#get-developer-v1-purchase-orders)
+
+UUID of a purchase order to match to this bill.
+
+</ParamField>
+
+</Accordion>
+</AccordionGroup>
+
+</ParamField>
+
+---
+
+POST /developer/v1/bills
+
+```json
+{
+  "vendor_id": "<uuid>",
+  "vendor_contact_id": "<uuid>",
+  "entity_id": "<uuid>",
+  "invoice_number": "INV-2024-001",
+  "invoice_currency": "USD",
+  "issued_at": "2024-11-15",
+  "due_at": "2024-12-15",
+  "payment_method": "ACH",
+  "payment_details": {
+    "payment_arrival_date": "2024-12-15",
+    "source_bank_account_id": "<uuid>",
+    "vendor_account_id": "<uuid>"
+  }
+}
+```
+</Tab>
+<Tab title="International">
+
+International payment (non-SWIFT)
+
+**Required Fields**
+
+<ParamField body="vendor_id" type="uuid" required>
+Unique identifier of bill vendor.
+
+[GET /vendors](/api-reference/vendor/list-vendors#get-developer-v1-vendors)
+</ParamField>
+
+<ParamField body="vendor_contact_id" type="uuid" required>
+Unique identifier of vendor contact, must be associated with passed vendor.
+
+[GET /vendors/&#123;id&#125;/contacts](/api-reference/vendor/list-vendor-contacts-for-vendor#get-developer-v1-vendors-vendor-id-contacts)
+</ParamField>
+
+<ParamField body="entity_id" type="uuid" required>
+Associated business entity.
+
+[GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities)
+</ParamField>
+
+<ParamField body="invoice_number" type="string" required>
+The invoice number on the bill. Max 20 characters.
+</ParamField>
+
+<ParamField body="invoice_currency" type="string" required>
+Currency of the invoice (ISO 4217 code).
+</ParamField>
+
+<ParamField body="issued_at" type="date" required>
+Issued date of the bill.
+</ParamField>
+
+<ParamField body="due_at" type="date" required>
+Due date of the bill.
+</ParamField>
+
+**Payment Details (required for ACH)**
+
+<ParamField body="payment_arrival_date" type="date" required>
+The expected date the payment will arrive in the vendor's bank account.
+</ParamField>
+
+<ParamField body="source_bank_account_id" type="uuid" required>
+Unique identifier of the bank account to pay the bill from. Must have usage_type=BILL_PAY_BANK_ACCOUNT.
+
+[GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities)
+</ParamField>
+
+<ParamField body="vendor_account_id" type="uuid" required>
+Unique identifier of the vendor account to pay the bill to.
+
+[GET /vendors/&#123;id&#125;/accounts](/api-reference/vendor/list-vendor-bank-accounts#get-developer-v1-vendors-vendor-id-accounts)
+</ParamField>
+
+<AccordionGroup>
+<Accordion title="Optional Fields">
+
+<ParamField body="memo" type="string">
+Memo of the bill. Max 1000 characters.
+</ParamField>
+
+<ParamField body="attachment_id" type="uuid">
+UUID of a previously uploaded file to attach to this bill.
+
+[POST /bills/drafts/&#123;draft_bill_id&#125;/attachments](/api-reference/bill/upload-a-file-attachment-to-an-existing-draft-bill#post-developer-v1-bills-drafts-draft-bill-id-attachments)
+</ParamField>
+
+<ParamField body="enable_accounting_sync" type="boolean">
+Set to false to prevent this bill from syncing to your ERP. Must be true when remote_id is provided.
+</ParamField>
+
+<ParamField body="posting_date" type="date">
+The date the bill is posted to the accounting system.
+</ParamField>
+
+<ParamField body="remote_id" type="string">
+An ID that identifies the bill on client's side. Note: enable_accounting_sync must be true when remote_id is provided.
+</ParamField>
+
+<Accordion title="line_items (array)">
+
+List of line items related to the bill.
+
+**Item 1**
+
+<ParamField body="amount" type="number">
+Amount for the line item.
+</ParamField>
+
+<ParamField body="memo" type="string">
+Memo for the line item.
+</ParamField>
+
+</Accordion>
+
+<Accordion title="inventory_line_items (array)">
+
+List of inventory line items related to the bill.
+
+**Item 1**
+
+<ParamField body="amount" type="number">
+Amount for the inventory line item.
+</ParamField>
+
+<ParamField body="memo" type="string">
+Memo for the inventory line item.
+</ParamField>
+
+</Accordion>
+
+</Accordion>
+</AccordionGroup>
+
+<ParamField body="accounting_field_selections" type="array">
+
+List of accounting field options selected to code the bill.
+
+<AccordionGroup>
+<Accordion title=" ">
+
+**Selection 1**
+
+<ParamField body="accounting_field_id" type="uuid">
+
+[GET /accounting/fields](/api-reference/accounting/list-custom-accounting-fields#get-developer-v1-accounting-fields)
+
+Unique identifier of the accounting field.
+
+</ParamField>
+
+<ParamField body="accounting_field_option_id" type="uuid">
+
+[GET /accounting/fields](/api-reference/accounting/list-custom-accounting-fields#get-developer-v1-accounting-fields)
+
+Unique identifier of the accounting field option.
+
+</ParamField>
+
+</Accordion>
+</AccordionGroup>
+
+</ParamField>
+
+<ParamField body="purchase_order_ids" type="array">
+
+Unique identifiers of the purchase orders to match this bill to.
+
+<AccordionGroup>
+<Accordion title=" ">
+
+**ID 1**
+
+<ParamField body="purchase_order_id" type="uuid">
+
+[GET /purchase-orders](/api-reference/purchase-order/list-purchase-orders#get-developer-v1-purchase-orders)
+
+UUID of a purchase order to match to this bill.
+
+</ParamField>
+
+</Accordion>
+</AccordionGroup>
+
+</ParamField>
+
+---
+
+POST /developer/v1/bills
+
+```json
+{
+  "vendor_id": "<uuid>",
+  "vendor_contact_id": "<uuid>",
+  "entity_id": "<uuid>",
+  "invoice_number": "INV-2024-001",
+  "invoice_currency": "USD",
+  "issued_at": "2024-11-15",
+  "due_at": "2024-12-15",
+  "payment_method": "ACH",
+  "payment_details": {
+    "payment_arrival_date": "2024-12-15",
+    "source_bank_account_id": "<uuid>",
+    "vendor_account_id": "<uuid>"
+  }
+}
+```
+</Tab>
+<Tab title="Card">
+
+Pay with an existing Ramp card and match to a transaction
+
+**Required Fields**
+
+<ParamField body="vendor_id" type="uuid" required>
+Unique identifier of bill vendor.
+
+[GET /vendors](/api-reference/vendor/list-vendors#get-developer-v1-vendors)
+</ParamField>
+
+<ParamField body="vendor_contact_id" type="uuid" required>
+Unique identifier of vendor contact, must be associated with passed vendor.
+
+[GET /vendors/&#123;id&#125;/contacts](/api-reference/vendor/list-vendor-contacts-for-vendor#get-developer-v1-vendors-vendor-id-contacts)
+</ParamField>
+
+<ParamField body="entity_id" type="uuid" required>
+Associated business entity.
+
+[GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities)
+</ParamField>
+
+<ParamField body="invoice_number" type="string" required>
+The invoice number on the bill. Max 20 characters.
+</ParamField>
+
+<ParamField body="invoice_currency" type="string" required>
+Currency of the invoice (ISO 4217 code).
+</ParamField>
+
+<ParamField body="issued_at" type="date" required>
+Issued date of the bill.
+</ParamField>
+
+<ParamField body="due_at" type="date" required>
+Due date of the bill.
+</ParamField>
+
+**Payment Details (required for ACH)**
+
+<ParamField body="payment_arrival_date" type="date" required>
+The expected date the payment will arrive in the vendor's bank account.
+</ParamField>
+
+<ParamField body="source_bank_account_id" type="uuid" required>
+Unique identifier of the bank account to pay the bill from. Must have usage_type=BILL_PAY_BANK_ACCOUNT.
+
+[GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities)
+</ParamField>
+
+<ParamField body="vendor_account_id" type="uuid" required>
+Unique identifier of the vendor account to pay the bill to.
+
+[GET /vendors/&#123;id&#125;/accounts](/api-reference/vendor/list-vendor-bank-accounts#get-developer-v1-vendors-vendor-id-accounts)
+</ParamField>
+
+<AccordionGroup>
+<Accordion title="Optional Fields">
+
+<ParamField body="memo" type="string">
+Memo of the bill. Max 1000 characters.
+</ParamField>
+
+<ParamField body="attachment_id" type="uuid">
+UUID of a previously uploaded file to attach to this bill.
+
+[POST /bills/drafts/&#123;draft_bill_id&#125;/attachments](/api-reference/bill/upload-a-file-attachment-to-an-existing-draft-bill#post-developer-v1-bills-drafts-draft-bill-id-attachments)
+</ParamField>
+
+<ParamField body="enable_accounting_sync" type="boolean">
+Set to false to prevent this bill from syncing to your ERP. Must be true when remote_id is provided.
+</ParamField>
+
+<ParamField body="posting_date" type="date">
+The date the bill is posted to the accounting system.
+</ParamField>
+
+<ParamField body="remote_id" type="string">
+An ID that identifies the bill on client's side. Note: enable_accounting_sync must be true when remote_id is provided.
+</ParamField>
+
+<Accordion title="line_items (array)">
+
+List of line items related to the bill.
+
+**Item 1**
+
+<ParamField body="amount" type="number">
+Amount for the line item.
+</ParamField>
+
+<ParamField body="memo" type="string">
+Memo for the line item.
+</ParamField>
+
+</Accordion>
+
+<Accordion title="inventory_line_items (array)">
+
+List of inventory line items related to the bill.
+
+**Item 1**
+
+<ParamField body="amount" type="number">
+Amount for the inventory line item.
+</ParamField>
+
+<ParamField body="memo" type="string">
+Memo for the inventory line item.
+</ParamField>
+
+</Accordion>
+
+</Accordion>
+</AccordionGroup>
+
+<ParamField body="accounting_field_selections" type="array">
+
+List of accounting field options selected to code the bill.
+
+<AccordionGroup>
+<Accordion title=" ">
+
+**Selection 1**
+
+<ParamField body="accounting_field_id" type="uuid">
+
+[GET /accounting/fields](/api-reference/accounting/list-custom-accounting-fields#get-developer-v1-accounting-fields)
+
+Unique identifier of the accounting field.
+
+</ParamField>
+
+<ParamField body="accounting_field_option_id" type="uuid">
+
+[GET /accounting/fields](/api-reference/accounting/list-custom-accounting-fields#get-developer-v1-accounting-fields)
+
+Unique identifier of the accounting field option.
+
+</ParamField>
+
+</Accordion>
+</AccordionGroup>
+
+</ParamField>
+
+<ParamField body="purchase_order_ids" type="array">
+
+Unique identifiers of the purchase orders to match this bill to.
+
+<AccordionGroup>
+<Accordion title=" ">
+
+**ID 1**
+
+<ParamField body="purchase_order_id" type="uuid">
+
+[GET /purchase-orders](/api-reference/purchase-order/list-purchase-orders#get-developer-v1-purchase-orders)
+
+UUID of a purchase order to match to this bill.
+
+</ParamField>
+
+</Accordion>
+</AccordionGroup>
+
+</ParamField>
+
+---
+
+POST /developer/v1/bills
+
+```json
+{
+  "vendor_id": "<uuid>",
+  "vendor_contact_id": "<uuid>",
+  "entity_id": "<uuid>",
+  "invoice_number": "INV-2024-001",
+  "invoice_currency": "USD",
+  "issued_at": "2024-11-15",
+  "due_at": "2024-12-15",
+  "payment_method": "ACH",
+  "payment_details": {
+    "payment_arrival_date": "2024-12-15",
+    "source_bank_account_id": "<uuid>",
+    "vendor_account_id": "<uuid>"
+  }
+}
+```
+</Tab>
+<Tab title="Paid Manually">
+
+Mark bill as already paid outside of Ramp
+
+**Required Fields**
+
+<ParamField body="vendor_id" type="uuid" required>
+Unique identifier of bill vendor.
+
+[GET /vendors](/api-reference/vendor/list-vendors#get-developer-v1-vendors)
+</ParamField>
+
+<ParamField body="vendor_contact_id" type="uuid" required>
+Unique identifier of vendor contact, must be associated with passed vendor.
+
+[GET /vendors/&#123;id&#125;/contacts](/api-reference/vendor/list-vendor-contacts-for-vendor#get-developer-v1-vendors-vendor-id-contacts)
+</ParamField>
+
+<ParamField body="entity_id" type="uuid" required>
+Associated business entity.
+
+[GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities)
+</ParamField>
+
+<ParamField body="invoice_number" type="string" required>
+The invoice number on the bill. Max 20 characters.
+</ParamField>
+
+<ParamField body="invoice_currency" type="string" required>
+Currency of the invoice (ISO 4217 code).
+</ParamField>
+
+<ParamField body="issued_at" type="date" required>
+Issued date of the bill.
+</ParamField>
+
+<ParamField body="due_at" type="date" required>
+Due date of the bill.
+</ParamField>
+
+**Payment Details (required for ACH)**
+
+<ParamField body="payment_arrival_date" type="date" required>
+The expected date the payment will arrive in the vendor's bank account.
+</ParamField>
+
+<ParamField body="source_bank_account_id" type="uuid" required>
+Unique identifier of the bank account to pay the bill from. Must have usage_type=BILL_PAY_BANK_ACCOUNT.
+
+[GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities)
+</ParamField>
+
+<ParamField body="vendor_account_id" type="uuid" required>
+Unique identifier of the vendor account to pay the bill to.
+
+[GET /vendors/&#123;id&#125;/accounts](/api-reference/vendor/list-vendor-bank-accounts#get-developer-v1-vendors-vendor-id-accounts)
+</ParamField>
+
+<AccordionGroup>
+<Accordion title="Optional Fields">
+
+<ParamField body="memo" type="string">
+Memo of the bill. Max 1000 characters.
+</ParamField>
+
+<ParamField body="attachment_id" type="uuid">
+UUID of a previously uploaded file to attach to this bill.
+
+[POST /bills/drafts/&#123;draft_bill_id&#125;/attachments](/api-reference/bill/upload-a-file-attachment-to-an-existing-draft-bill#post-developer-v1-bills-drafts-draft-bill-id-attachments)
+</ParamField>
+
+<ParamField body="enable_accounting_sync" type="boolean">
+Set to false to prevent this bill from syncing to your ERP. Must be true when remote_id is provided.
+</ParamField>
+
+<ParamField body="posting_date" type="date">
+The date the bill is posted to the accounting system.
+</ParamField>
+
+<ParamField body="remote_id" type="string">
+An ID that identifies the bill on client's side. Note: enable_accounting_sync must be true when remote_id is provided.
+</ParamField>
+
+<Accordion title="line_items (array)">
+
+List of line items related to the bill.
+
+**Item 1**
+
+<ParamField body="amount" type="number">
+Amount for the line item.
+</ParamField>
+
+<ParamField body="memo" type="string">
+Memo for the line item.
+</ParamField>
+
+</Accordion>
+
+<Accordion title="inventory_line_items (array)">
+
+List of inventory line items related to the bill.
+
+**Item 1**
+
+<ParamField body="amount" type="number">
+Amount for the inventory line item.
+</ParamField>
+
+<ParamField body="memo" type="string">
+Memo for the inventory line item.
+</ParamField>
+
+</Accordion>
+
+</Accordion>
+</AccordionGroup>
+
+<ParamField body="accounting_field_selections" type="array">
+
+List of accounting field options selected to code the bill.
+
+<AccordionGroup>
+<Accordion title=" ">
+
+**Selection 1**
+
+<ParamField body="accounting_field_id" type="uuid">
+
+[GET /accounting/fields](/api-reference/accounting/list-custom-accounting-fields#get-developer-v1-accounting-fields)
+
+Unique identifier of the accounting field.
+
+</ParamField>
+
+<ParamField body="accounting_field_option_id" type="uuid">
+
+[GET /accounting/fields](/api-reference/accounting/list-custom-accounting-fields#get-developer-v1-accounting-fields)
+
+Unique identifier of the accounting field option.
+
+</ParamField>
+
+</Accordion>
+</AccordionGroup>
+
+</ParamField>
+
+<ParamField body="purchase_order_ids" type="array">
+
+Unique identifiers of the purchase orders to match this bill to.
+
+<AccordionGroup>
+<Accordion title=" ">
+
+**ID 1**
+
+<ParamField body="purchase_order_id" type="uuid">
+
+[GET /purchase-orders](/api-reference/purchase-order/list-purchase-orders#get-developer-v1-purchase-orders)
+
+UUID of a purchase order to match to this bill.
+
+</ParamField>
+
+</Accordion>
+</AccordionGroup>
+
+</ParamField>
+
+---
+
+POST /developer/v1/bills
+
+```json
+{
+  "vendor_id": "<uuid>",
+  "vendor_contact_id": "<uuid>",
+  "entity_id": "<uuid>",
+  "invoice_number": "INV-2024-001",
+  "invoice_currency": "USD",
+  "issued_at": "2024-11-15",
+  "due_at": "2024-12-15",
+  "payment_method": "ACH",
+  "payment_details": {
+    "payment_arrival_date": "2024-12-15",
+    "source_bank_account_id": "<uuid>",
+    "vendor_account_id": "<uuid>"
+  }
+}
+```
+</Tab>
+</Tabs>
 
 ### Attaching documents
 
-Upload invoice PDFs or supporting documents using [POST `/bills/{bill_id}/attachments`](/api-reference/bill/upload-a-file-attachment-to-an-existing-bill#post-developer-v1-bills-bill-id-attachments). This endpoint accepts `multipart/form-data`.
+Upload invoice PDFs or supporting documents using [POST /bills/&#123;bill_id&#125;/attachments](/api-reference/bill/upload-a-file-attachment-to-an-existing-bill#post-developer-v1-bills-bill-id-attachments). This endpoint accepts `multipart/form-data`.
 
 ```bash
 curl -X POST \
@@ -182,40 +1425,38 @@ curl -X POST \
 
 ## Payment Methods
 
-<Tabs>
-  <Tab title="Card">
-    Paying by Ramp Card earns cashback on bill payments. Two options:
+### Card
 
-    **Existing Ramp Card** – Use already-created cards for bill payments. Manually share card details with vendors, then use transaction matching to link the payment to the bill once it clears.
+Paying by Ramp Card earns cashback on bill payments. Two options:
 
-    **Single-Use Virtual Card** – Ramp generates a unique virtual card for each bill with the limit set to the bill amount. Two delivery options:
+**Existing Ramp Card** – Use already-created cards for bill payments. Manually share card details with vendors, then use transaction matching to link the payment to the bill once it clears.
 
-    - **Card delivery disabled** – Card details become available once the bill is approved; manually share with vendors
-    - **Card delivery enabled** – Ramp automatically emails card details to the vendor's primary contact on the due date, with reminders at 2, 4, and 7 days
+**Single-Use Virtual Card** – Ramp generates a unique virtual card for each bill with the limit set to the bill amount. Two delivery options:
 
-    Single-use cards auto-lock when the spending limit is reached, after 14 days (delivery enabled) or 21 days (delivery disabled). Transaction matching happens automatically once payments clear. Supports international bills in local currency.
+- **Card delivery disabled** – Card details become available once the bill is approved; manually share with vendors
+- **Card delivery enabled** – Ramp automatically emails card details to the vendor's primary contact on the due date, with reminders at 2, 4, and 7 days
 
-    For programmatic access to full card details (PAN/CVV) or custom spending controls, see the [Virtual Cards guide](/developer-api/v1/virtual-cards).
+Single-use cards auto-lock when the spending limit is reached, after 14 days (delivery enabled) or 21 days (delivery disabled). Transaction matching happens automatically once payments clear. Supports international bills in local currency.
 
-    To filter out one-time card transactions in the Transactions API, set `has_no_sync_commit=true`.
-  </Tab>
+For programmatic access to full card details (PAN/CVV) or custom spending controls, see the [Virtual Cards guide](/developer-api/v1/virtual-cards).
 
-  <Tab title="ACH, Check, Wire, and SWIFT">
-    These payment methods require a `source_bank_account_id` from [GET /entities](/api-reference/business-entities/list-business-entities).
+To filter out one-time card transactions in the Transactions API, set `has_no_sync_commit=true`.
 
-    | Method | Requirements | Timing |
-    | --- | --- | --- |
-    | **ACH** | Verified vendor bank account | 2–3 business days |
-    | **Check** | Vendor address | 5–7 business days |
-    | **Wire** | Verified vendor bank account | Same-day (domestic) |
-    | **SWIFT** | Verified vendor bank account | Varies (international) |
+### ACH, Check, Wire, and SWIFT
 
-    - Payments arrive by `payment_arrival_date` (cannot be a weekend or bank holiday)
-    - Non-check payments require a verified vendor bank account via [GET `/vendors/{id}/accounts`](/api-reference/vendor/list-vendors). See [Create Bill Request Builder](#create-bill-request-builder) for full schema details.
-    - Check payments require a vendor address on file
-    - Expedited ACH and Wire payments are not available via API
-  </Tab>
-</Tabs>
+These payment methods require a `source_bank_account_id` from [GET /entities](/api-reference/business-entities/list-business-entities#get-developer-v1-entities).
+
+| Method | Requirements | Timing |
+|--------|--------------|--------|
+| **ACH** | Verified vendor bank account | 2–3 business days |
+| **Check** | Vendor address | 5–7 business days |
+| **Wire** | Verified vendor bank account | Same-day (domestic) |
+| **SWIFT** | Verified vendor bank account | Varies (international) |
+
+- Payments arrive by `payment_arrival_date` (cannot be a weekend or bank holiday)
+- Non-check payments require a verified vendor bank account via [GET /vendors/&#123;id&#125;/accounts](/api-reference/vendor/list-vendor-bank-accounts#get-developer-v1-vendors-vendor-id-accounts). See [Create Bill Request Builder](#create-bill-request-builder) for full schema details.
+- Check payments require a vendor address on file
+- Expedited ACH and Wire payments are not available via API
 
 ---
 
@@ -267,12 +1508,14 @@ When all three documents share the same line item IDs, you have a verified match
 
 ### Document and file management
 
+### Document and file management
+
 - OCR upload for draft bills is not currently supported via API
 - Images of invoices cannot be attached through the API
 
 ### Other limitations
 
-- Managing entity bank accounts is not supported via API (vendor bank accounts can be managed through [vendor accounts endpoints](/api-reference/vendor/list-vendors))
+- Managing entity bank accounts is not supported via API (vendor bank accounts can be managed through [vendor accounts endpoints](/api-reference/vendor/list-vendor-bank-accounts#get-developer-v1-vendors-vendor-id-accounts))
 
 ---
 

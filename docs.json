@@ -6,12 +6,12 @@
   "colors": {
     "primary": "#0F172A",
     "light": "#059669",
-    "dark": "#34D399"
+    "dark": "#047857"
   },
   "icons": {
     "library": "lucide"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/logo/ramp.png",
   "logo": {
     "light": "/logo/ramp_light.png",
     "dark": "/logo/ramp-dark.png",
